@@ -1,0 +1,56 @@
+@startuml Design Class Diagram (DCD)
+
+class User {
+    + Id: string
+    + UserName: string
+    + Email: string
+    + Password: string
+    + Role: string        
+}
+
+class Product {
+    + Id: int
+    + Sku: string
+    + Ean: string
+    + Name: string
+    + Description: string
+    + Category: Array<Int>
+    + Color: string
+    + Material: string
+    + ProductType: string
+    + ProductGroup: string
+    + Price: float
+    + SpecialPrice: float     
+}
+
+class Category {
+    + Id: int
+    + Name: string
+    + Description: string
+    + BottomDescription : string
+}
+
+class Website {
+    + Id: int
+    + Domain: string
+    + Currency: string
+    + Language : string
+}
+
+class Platform {
+    + Id: int
+    + Name: string
+}
+
+' class Localization {
+'     + Id: int
+'     + Language: string
+' }
+
+Product "1..*" -- "1..*" Category
+Product "0..*" -- "0..*" Website
+' Website "0..1" -- "0..1" Localization
+Website "0..*" -- "0..*" Platform
+
+
+@enduml

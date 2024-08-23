@@ -1,0 +1,52 @@
+@startuml Domain Model
+
+object "Product" as product {
+    sku = "LC01-76-1038-1"
+    ean = "EAN090909"
+    name = "iPhone 12 / 12 Pro cover - Black"
+    description = "A black iPhone 12 / 12 Pro cover"
+    color = "Black"
+    material = "Silicone / TPU"
+    product_type = "Cover"
+    product_group = "Smartphone"
+    price = "17.00"
+    special_price = "12.95"
+    currency = "EUR"  
+}
+
+object "Category" as category {    
+    name = "iPhone 12"  
+    description = "A description texts"
+    bottom_description = "A bottom description"
+    parent_categories = "Smartphone"
+    child_categories = ""
+}
+
+object "Localization" as localization {    
+    language = "Danish"      
+}
+
+object "Platform" as platform {    
+    name = "Magento"      
+}
+
+object "Website" as website {    
+    domain = "lux-case.dk"      
+}
+
+object "User" as user {    
+    username = "UserName"  
+    email = "UserName@example.com"  
+    password = "secure_password"
+    role = "admin"
+}
+
+product -- category
+product -- platform
+category -- platform
+website -- platform
+website -- localization
+
+@enduml
+
+
