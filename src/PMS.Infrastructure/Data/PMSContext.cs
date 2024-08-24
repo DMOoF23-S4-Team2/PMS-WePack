@@ -34,7 +34,7 @@ namespace PMS.Infrastructure.Data
             builder.Property(p => p.ProductType).HasMaxLength(50);
             builder.Property(p => p.ProductGroup).HasMaxLength(50);
             builder.Property(p => p.Price).IsRequired();
-            builder.Property(p => p.SpecialPrice)
+            builder.Property(p => p.SpecialPrice);
         }
 
         private void ConfigureCategory(EntityTypeBuilder<Category> builder)
