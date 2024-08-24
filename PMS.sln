@@ -4,8 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}"
-	ProjectSection(SolutionItems) = preProject
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2C2721AD-53D0-414B-9FD9-B0A575A09B56}"
 EndProject
@@ -17,13 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.Application", "src\PMS.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.API", "src\PMS.API\PMS.API.csproj", "{0B03843F-F778-4AB7-B54F-D499DEF69A4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.Core.Test", "test\PMS.Core.Test\PMS.Core.Test.csproj", "{E8BE4CC8-648D-4984-8143-016ED93CFBA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2992FF6A-F8AA-4925-963E-6D2D04C5C29B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -42,11 +39,19 @@ Global
 		{0B03843F-F778-4AB7-B54F-D499DEF69A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B03843F-F778-4AB7-B54F-D499DEF69A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B03843F-F778-4AB7-B54F-D499DEF69A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8BE4CC8-648D-4984-8143-016ED93CFBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8BE4CC8-648D-4984-8143-016ED93CFBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8BE4CC8-648D-4984-8143-016ED93CFBA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8BE4CC8-648D-4984-8143-016ED93CFBA4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2992FF6A-F8AA-4925-963E-6D2D04C5C29B} = {3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}
 		{BC8B11E7-CD03-4913-82DF-79EC84F072E8} = {3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}
 		{7309A749-FBE4-496A-BAA5-A2E0BFBA7E81} = {3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}
 		{0B03843F-F778-4AB7-B54F-D499DEF69A4F} = {3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}
+		{E8BE4CC8-648D-4984-8143-016ED93CFBA4} = {2C2721AD-53D0-414B-9FD9-B0A575A09B56}
 	EndGlobalSection
 EndGlobal
