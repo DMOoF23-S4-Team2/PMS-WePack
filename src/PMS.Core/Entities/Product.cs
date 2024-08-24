@@ -1,15 +1,18 @@
-public class Product
+namespace PMS.Core.Entities
 {
-    public int Id { get; set; }
-    public string Sku { get; set; }
-    public string Ean { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public List<Category> Category { get; set; }
-    public string Color {get; set;}
-    public string Material {get; set;}
-    public string ProductType {get; set;}
-    public string ProductGroup {get; set;}
-    public float Price {get; set;}
-    public float SpecialPrice {get; set; }
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Sku { get; set; } = string.Empty;
+        public string Ean { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<Category> Category { get; set; } = new List<Category>();
+        public string Color {get; set;} = string.Empty;
+        public string Material {get; set;} = string.Empty;
+        public string ProductType {get; set;} = string.Empty;
+        public string ProductGroup {get; set;} = string.Empty;
+        public float Price {get; set;}
+        public float SpecialPrice {get; set; }
+    }
 }
