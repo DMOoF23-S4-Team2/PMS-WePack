@@ -1,15 +1,15 @@
 @startuml
 legend top left
     Use Case: Slet Produkt
-    Bruger navigerer til produkter, vælger produktet, trykker slet
+    Bruger navigerer til produkter, vælger produktet, vælger sider der skal slettes fra og trykker slet
 end legend
 
 actor User
 participant ":System" as System
 
-User -> System: Naviger til Produkt side (id)
-User -> System: Vælger produkt
-User -> System: Trykker send
+User -> System: Naviger til Produkt side(id)
+User -> System: Vælger sider det skal slettes fra
+User -> System: Trykker slet
 System --> User: Valider data
 System --> User: Bruger besked
 
