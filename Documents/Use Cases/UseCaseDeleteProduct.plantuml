@@ -1,0 +1,16 @@
+@startuml
+legend top left
+    Use Case: Slet Produkt
+    Bruger navigerer til produkter, vælger produktet, trykker slet
+end legend
+
+actor User
+participant ":System" as System
+
+User -> System: Naviger til Produkt side (id)
+User -> System: Vælger produkt
+User -> System: Trykker send
+System --> User: Valider data
+System --> User: Bruger besked
+
+@enduml
