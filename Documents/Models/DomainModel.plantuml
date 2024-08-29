@@ -8,7 +8,7 @@ object "Product" as product {
     color = "Black"
     material = "Silicone / TPU"
     product_type = "Cover"
-    product_group = "Smartphone"
+    product_group = "Smartphone"    //REVIEW - Er dette Category?
     price = "17.00"
     special_price = "12.95"
     currency = "EUR"  

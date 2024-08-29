@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PMS.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using PMS.Infrastructure.Data;
 namespace PMS.Infrastructure.Migrations
 {
     [DbContext(typeof(PMSContext))]
-    partial class PMSContextModelSnapshot : ModelSnapshot
+    [Migration("20240829050052_seeding")]
+    partial class seeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,12 +29,12 @@ namespace PMS.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("ProductsId")
                         .HasColumnType("int");
 
-                    b.HasKey("CategoryId", "ProductId");
+                    b.HasKey("CategoryId", "ProductsId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductsId");
 
                     b.ToTable("CategoryProduct");
 
@@ -39,22 +42,17 @@ namespace PMS.Infrastructure.Migrations
                         new
                         {
                             CategoryId = 1,
-                            ProductId = 1
+                            ProductsId = 1
                         },
                         new
                         {
                             CategoryId = 1,
-                            ProductId = 2
+                            ProductsId = 2
                         },
                         new
                         {
                             CategoryId = 2,
-                            ProductId = 3
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            ProductId = 4
+                            ProductsId = 3
                         });
                 });
 
@@ -99,13 +97,6 @@ namespace PMS.Infrastructure.Migrations
                             BottomDescription = "Various books",
                             Description = "Books of all genres",
                             Name = "Books"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            BottomDescription = "A bottom description",
-                            Description = "A description texts",
-                            Name = "iPhone 12"
                         });
                 });
 
@@ -121,11 +112,6 @@ namespace PMS.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -177,7 +163,6 @@ namespace PMS.Infrastructure.Migrations
                         {
                             Id = 1,
                             Color = "",
-                            Currency = "",
                             Description = "A high-performance laptop",
                             Ean = "",
                             Material = "",
@@ -192,7 +177,6 @@ namespace PMS.Infrastructure.Migrations
                         {
                             Id = 2,
                             Color = "",
-                            Currency = "",
                             Description = "A latest model smartphone",
                             Ean = "",
                             Material = "",
@@ -207,7 +191,6 @@ namespace PMS.Infrastructure.Migrations
                         {
                             Id = 3,
                             Color = "",
-                            Currency = "",
                             Description = "A best-selling novel",
                             Ean = "",
                             Material = "",
@@ -217,21 +200,6 @@ namespace PMS.Infrastructure.Migrations
                             ProductType = "",
                             Sku = "",
                             SpecialPrice = 0f
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Color = "Black",
-                            Currency = "EUR",
-                            Description = "A black iPhone 12 / 12 Pro cover",
-                            Ean = "EAN090909",
-                            Material = "Silicone / TPU",
-                            Name = "iPhone 12 / 12 Pro cover - Black",
-                            Price = 17f,
-                            ProductGroup = "Smartphone",
-                            ProductType = "Cover",
-                            Sku = "LC01-76-1038-1",
-                            SpecialPrice = 12.95f
                         });
                 });
 
@@ -245,7 +213,7 @@ namespace PMS.Infrastructure.Migrations
 
                     b.HasOne("PMS.Core.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
