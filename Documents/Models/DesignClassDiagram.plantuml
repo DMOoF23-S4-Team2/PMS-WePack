@@ -14,13 +14,13 @@ class Product {
     + Ean: string
     + Name: string
     + Description: string
-    + Category: Array<Int>
     + Color: string
     + Material: string
     + ProductType: string
     + ProductGroup: string
     + Price: float
     + SpecialPrice: float     
+    + Category: Array<Category>
 }
 
 class Category {
@@ -28,6 +28,7 @@ class Category {
     + Name: string
     + Description: string
     + BottomDescription : string
+    + Products: Array<Product>
 }
 
 class Website {

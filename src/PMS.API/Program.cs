@@ -13,9 +13,10 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 //! Register DbContext with local DB (WePackTest)
+//NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB
 builder.Services.AddDbContext<PMSContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"));
 });
 
 
