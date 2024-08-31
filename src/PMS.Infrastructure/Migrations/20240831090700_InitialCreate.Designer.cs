@@ -11,7 +11,7 @@ using PMS.Infrastructure.Data;
 namespace PMS.Infrastructure.Migrations
 {
     [DbContext(typeof(PMSContext))]
-    [Migration("20240829023144_InitialCreate")]
+    [Migration("20240831090700_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -29,14 +29,36 @@ namespace PMS.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.HasKey("CategoryId", "ProductsId");
+                    b.HasKey("CategoryId", "ProductId");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("CategoryProduct");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            ProductId = 1
+                        },
+                        new
+                        {
+                            CategoryId = 1,
+                            ProductId = 2
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            ProductId = 3
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            ProductId = 4
+                        });
                 });
 
             modelBuilder.Entity("PMS.Core.Entities.Category", b =>
@@ -65,6 +87,29 @@ namespace PMS.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BottomDescription = "Various electronic items",
+                            Description = "Electronic items",
+                            Name = "Electronics"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BottomDescription = "Various books",
+                            Description = "Books of all genres",
+                            Name = "Books"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BottomDescription = "A bottom description",
+                            Description = "A description texts",
+                            Name = "iPhone 12"
+                        });
                 });
 
             modelBuilder.Entity("PMS.Core.Entities.Product", b =>
@@ -79,6 +124,11 @@ namespace PMS.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -124,6 +174,68 @@ namespace PMS.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Color = "",
+                            Currency = "",
+                            Description = "A high-performance laptop",
+                            Ean = "",
+                            Material = "",
+                            Name = "Laptop",
+                            Price = 0f,
+                            ProductGroup = "",
+                            ProductType = "",
+                            Sku = "",
+                            SpecialPrice = 0f
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Color = "",
+                            Currency = "",
+                            Description = "A latest model smartphone",
+                            Ean = "",
+                            Material = "",
+                            Name = "Smartphone",
+                            Price = 0f,
+                            ProductGroup = "",
+                            ProductType = "",
+                            Sku = "",
+                            SpecialPrice = 0f
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Color = "",
+                            Currency = "",
+                            Description = "A best-selling novel",
+                            Ean = "",
+                            Material = "",
+                            Name = "Novel",
+                            Price = 0f,
+                            ProductGroup = "",
+                            ProductType = "",
+                            Sku = "",
+                            SpecialPrice = 0f
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Color = "Black",
+                            Currency = "EUR",
+                            Description = "A black iPhone 12 / 12 Pro cover",
+                            Ean = "EAN090909",
+                            Material = "Silicone / TPU",
+                            Name = "iPhone 12 / 12 Pro cover - Black",
+                            Price = 17f,
+                            ProductGroup = "Smartphone",
+                            ProductType = "Cover",
+                            Sku = "LC01-76-1038-1",
+                            SpecialPrice = 12.95f
+                        });
                 });
 
             modelBuilder.Entity("CategoryProduct", b =>
@@ -136,7 +248,7 @@ namespace PMS.Infrastructure.Migrations
 
                     b.HasOne("PMS.Core.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
