@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Team2Semester4"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+    # volumes:
+    #   - ./apply-migrations.sh:/app/apply-migrations.sh
+    # command: /bin/bash /app/apply-migrations.sh && dotnet PMS.API.dll
+
+volumes:
+  sqlserverdata:

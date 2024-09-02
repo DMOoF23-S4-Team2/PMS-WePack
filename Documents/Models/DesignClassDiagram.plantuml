@@ -8,19 +8,21 @@ class User {
     + Role: string        
 }
 
+//REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
 class Product {
     + Id: int
     + Sku: string
     + Ean: string
     + Name: string
     + Description: string
-    + Category: Array<Int>
     + Color: string
     + Material: string
     + ProductType: string
     + ProductGroup: string
     + Price: float
     + SpecialPrice: float     
+    + Currency: string
+    + Category: Array<Category>
 }
 
 class Category {
@@ -28,6 +30,7 @@ class Category {
     + Name: string
     + Description: string
     + BottomDescription : string
+    + Products: Array<Product>
 }
 
 class Website {
