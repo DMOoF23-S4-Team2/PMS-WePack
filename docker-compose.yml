@@ -21,9 +21,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - sqlserver
-    volumes:
-      - ./apply-migrations.sh:/app/apply-migrations.sh
-    command: /bin/bash /app/apply-migrations.sh && dotnet PMS.API.dll
+    # volumes:
+    #   - ./apply-migrations.sh:/app/apply-migrations.sh
+    # command: /bin/bash /app/apply-migrations.sh && dotnet PMS.API.dll
 
 volumes:
   sqlserverdata:
