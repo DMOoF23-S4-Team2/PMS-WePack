@@ -1,0 +1,16 @@
+@startuml
+legend top left
+    Use Case: Rediger Produkt
+    Bruger navigerer til opret produkt, indtaster de nye data og trykker gem.
+end legend
+
+actor User
+participant ":System" as System
+
+User -> System: Vælg produkt (id)
+User -> System: Indtast data
+User -> System: Gem
+System --> User: Valider data
+System --> User: Bruger besked
+
+@enduml
