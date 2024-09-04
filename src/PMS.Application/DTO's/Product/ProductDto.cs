@@ -1,4 +1,5 @@
 using System;
+using PMS.Application.DTO_s.Category;
 
 namespace PMS.Application.DTO_s.Product;
 
@@ -16,7 +17,7 @@ public class ProductDto
         public string Currency {get; set;} = string.Empty;
         public float Price {get; set;}
         public float SpecialPrice {get; set; }
-        
-        // public ICollection<Category> Category { get; set; } = [];
+
+        public ICollection<CategoryDto> Category { get; set; } = [];
 
 }

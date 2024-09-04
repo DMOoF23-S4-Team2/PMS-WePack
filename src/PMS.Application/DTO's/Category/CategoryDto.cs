@@ -1,4 +1,5 @@
 using System;
+using PMS.Application.DTO_s.Product;
 
 namespace PMS.Application.DTO_s.Category;
 
@@ -9,6 +10,6 @@ public class CategoryDto
         public string Description { get; set; } = string.Empty;
         public string BottomDescription { get; set; } = string.Empty;
 
-        // public ICollection<Product> Products { get; set; } = [];
+        public ICollection<ProductDto> Products { get; set; } = [];
 
 }
