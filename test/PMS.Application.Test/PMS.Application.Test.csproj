@@ -24,4 +24,8 @@
     <Folder Include="Mapping\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PMS.Application\PMS.Application.csproj" />
+  </ItemGroup>
+
 </Project>
