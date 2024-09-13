@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.Core.Test", "test\PMS.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.Infrastructure.Test", "test\PMS.Infrastructure.Test\PMS.Infrastructure.Test.csproj", "{8E9A249B-44FA-4800-94C2-9E4420399DDA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMS.Application.Test", "test\PMS.Application.Test\PMS.Application.Test.csproj", "{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{8E9A249B-44FA-4800-94C2-9E4420399DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E9A249B-44FA-4800-94C2-9E4420399DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E9A249B-44FA-4800-94C2-9E4420399DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{0B03843F-F778-4AB7-B54F-D499DEF69A4F} = {3DF69EDA-E78D-4E2D-BC57-88D5FC4B74DB}
 		{E8BE4CC8-648D-4984-8143-016ED93CFBA4} = {2C2721AD-53D0-414B-9FD9-B0A575A09B56}
 		{8E9A249B-44FA-4800-94C2-9E4420399DDA} = {2C2721AD-53D0-414B-9FD9-B0A575A09B56}
+		{AF4EB4E9-71EF-4745-8CCC-28B523BBC4F2} = {2C2721AD-53D0-414B-9FD9-B0A575A09B56}
 	EndGlobalSection
 EndGlobal
