@@ -7,7 +7,7 @@ namespace PMS.Core.Entities
         public int Id { get; set; }        
         
         [Required]
-        [MaxLength(50)]
+        [MaxLength(255)]
         public string Sku { get; set; } = string.Empty;
         
         [MaxLength(255)]
