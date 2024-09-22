@@ -1,59 +1,70 @@
 @startuml Design Class Diagram (DCD)
 
-class User {
-    + Id: string
-    + UserName: string
-    + Email: string
-    + Password: string
-    + Role: string        
-}
+package Core <<Folder>> {
 
-//REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
-class Product {
-    + Id: int
-    + Sku: string
-    + Ean: string
-    + Name: string
-    + Description: string
-    + Color: string
-    + Material: string
-    + ProductType: string
-    + ProductGroup: string
-    + Price: float
-    + SpecialPrice: float     
-    + Currency: string
-    + Category: Array<Category>
-}
+    package Entities <<Folder>> {
+        class User {
+            + Id: string
+            + UserName: string
+            + Email: string
+            + Password: string
+            + Role: string        
+        }
 
-class Category {
-    + Id: int
-    + Name: string
-    + Description: string
-    + BottomDescription : string
-    + Products: Array<Product>
-}
+        ' REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
+        class Product {
+            + Id: int
+            + Sku: string
+            + Ean: string
+            + Name: string
+            + Description: string
+            + Color: string
+            + Material: string
+            + ProductType: string
+            + ProductGroup: string
+            + Price: float
+            + SpecialPrice: float     
+            + Currency: string
+            + Category: Array<Category>
+        }
 
-class Website {
-    + Id: int
-    + Domain: string
-    + Currency: string
-    + Language : string
-}
+        class Category {
+            + Id: int
+            + Name: string
+            + Description: string
+            + BottomDescription : string
+            + Products: Array<Product>
+        }
 
-class Platform {
-    + Id: int
-    + Name: string
-}
+        class Website {
+            + Id: int
+            + Domain: string
+            + Currency: string
+            + Language : string
+        }
 
-' class Localization {
-'     + Id: int
-'     + Language: string
-' }
+        class Platform {
+            + Id: int
+            + Name: string
+        }
+
+        ' class Localization {
+        '     + Id: int
+        '     + Language: string
+        ' }
+    }
+}
+package Application <<Folder>> {
+    package Controllers <<Folder>> {
+        class Controller
+    }
+}
 
 Product "1..*" -- "1..*" Category
 Product "0..*" -- "0..*" Website
 ' Website "0..1" -- "0..1" Localization
 Website "0..*" -- "0..*" Platform
+
 
 
 @enduml
