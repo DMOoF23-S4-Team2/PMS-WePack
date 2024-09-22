@@ -31,7 +31,7 @@ namespace PMS.Infrastructure.Data
                     j => j.HasOne<Product>().WithMany().HasForeignKey("ProductId")
                 );
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.Sku).IsRequired().HasMaxLength(50);
+            builder.Property(p => p.Sku).IsRequired().HasMaxLength(255);
             builder.Property(p => p.Ean).HasMaxLength(255);
             builder.Property(p => p.Name).IsRequired().HasMaxLength(255);
             builder.Property(p => p.Description).HasMaxLength(5000);
