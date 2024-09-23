@@ -19,6 +19,7 @@ namespace PMS.Infrastructure.Data
         }
 
             //REVIEW - Vi burde tage en snak om hvilke properties der skal være IsRequired og hvilke der ikke skal.
+            // De er rettet til her, og under Entities
 
             private void ConfigureProduct(EntityTypeBuilder<Product> builder)
         {
@@ -30,14 +31,14 @@ namespace PMS.Infrastructure.Data
                     j => j.HasOne<Product>().WithMany().HasForeignKey("ProductId")
                 );
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.Sku).IsRequired().HasMaxLength(50);
-            builder.Property(p => p.Ean).IsRequired().HasMaxLength(50);
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
-            builder.Property(p => p.Description).IsRequired().HasMaxLength(500);
-            builder.Property(p => p.Color).HasMaxLength(50);
-            builder.Property(p => p.Material).HasMaxLength(50);
-            builder.Property(p => p.ProductType).HasMaxLength(50);
-            builder.Property(p => p.ProductGroup).HasMaxLength(50);
+            builder.Property(p => p.Sku).IsRequired().HasMaxLength(255);
+            builder.Property(p => p.Ean).HasMaxLength(255);
+            builder.Property(p => p.Name).IsRequired().HasMaxLength(255);
+            builder.Property(p => p.Description).HasMaxLength(5000);
+            builder.Property(p => p.Color).HasMaxLength(255);
+            builder.Property(p => p.Material).HasMaxLength(255);
+            builder.Property(p => p.ProductType).HasMaxLength(255);
+            builder.Property(p => p.ProductGroup).HasMaxLength(255);
             builder.Property(p => p.Price).IsRequired();
             builder.Property(p => p.SpecialPrice);
             builder.Property(p => p.Currency).HasMaxLength(10);
@@ -53,9 +54,9 @@ namespace PMS.Infrastructure.Data
                     j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId")
                 );
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
-            builder.Property(c => c.Name).IsRequired().HasMaxLength(100);
-            builder.Property(c => c.Description).HasMaxLength(500);
-            builder.Property(c => c.BottomDescription).HasMaxLength(500);
+            builder.Property(c => c.Name).IsRequired().HasMaxLength(255);
+            builder.Property(c => c.Description).HasMaxLength(5000);
+            builder.Property(c => c.BottomDescription).HasMaxLength(65535);
         }
 
         private void SeedData(ModelBuilder modelBuilder)
