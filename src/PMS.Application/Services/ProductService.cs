@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Interfaces;
 using PMS.Application.Mapper;
+using PMS.Application.Validators;
 using PMS.Core.Entities;
 using PMS.Core.Repositories;
 
@@ -13,6 +15,7 @@ namespace PMS.Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly ProductValidator _productValidator;
 
         public ProductService(IProductRepository productRepository)
         {
@@ -27,7 +30,9 @@ namespace PMS.Application.Services
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            //TODO - Implement Validation
+            var validationResult = await _productValidator.ValidateAsync(product);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
 
             var newProduct = await _productRepository.AddAsync(product);
 
@@ -71,6 +76,9 @@ namespace PMS.Application.Services
 
         public async Task UpdateProduct(int id, ProductDto productDto)
         {
+            if (productDto == null)
+                throw new ArgumentNullException(nameof(productDto));
+
             var oldProduct = await _productRepository.GetByIdAsync(id);
             if (oldProduct == null)
                 throw new ArgumentNullException(nameof(oldProduct));
@@ -79,7 +87,9 @@ namespace PMS.Application.Services
             if (newProduct == null)
                 throw new ArgumentNullException(nameof(newProduct));
 
-            //TODO - Implement Validation
+            var validationResult = await _productValidator.ValidateAsync(newProduct);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
 
             await _productRepository.UpdateAsync(ObjectMapper.Mapper.Map(newProduct, oldProduct));
         }

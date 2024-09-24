@@ -1,6 +1,8 @@
+using FluentValidation;
 using PMS.Application.DTOs.Category;
 using PMS.Application.Interfaces;
 using PMS.Application.Mapper;
+using PMS.Application.Validators;
 using PMS.Core.Entities;
 using PMS.Core.Repositories;
 
@@ -9,6 +11,7 @@ namespace PMS.Application.Services
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly CategoryValidator _categoryValidator;
 
         public CategoryService(ICategoryRepository categoryRepository)
         {
@@ -23,7 +26,9 @@ namespace PMS.Application.Services
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
 
-            //TODO - Implement Validation
+            var validationResult = await _categoryValidator.ValidateAsync(category);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
 
             var newCategory = await _categoryRepository.AddAsync(category);
 
@@ -75,7 +80,9 @@ namespace PMS.Application.Services
             if (newCategory == null)
                 throw new ArgumentNullException(nameof(newCategory));
 
-            //TODO - Implement Validation
+            var validationResult = await _categoryValidator.ValidateAsync(newCategory);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
 
             await _categoryRepository.UpdateAsync(ObjectMapper.Mapper.Map(newCategory, oldCategory));
 
