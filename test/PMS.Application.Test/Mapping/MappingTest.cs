@@ -1,6 +1,6 @@
 using System;
 using AutoMapper;
-using PMS.Application.DTO_s.Product;
+using PMS.Application.DTOs.Product;
 using PMS.Application.Mapper;
 using PMS.Core.Entities;
 

@@ -1,7 +1,7 @@
 using System;
 using AutoMapper;
-using PMS.Application.DTO_s.Category;
-using PMS.Application.DTO_s.Product;
+using PMS.Application.DTOs.Category;
+using PMS.Application.DTOs.Product;
 using PMS.Core.Entities;
 
 namespace PMS.Application.Mapper;

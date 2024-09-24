@@ -1,6 +1,6 @@
 using System;
-using PMS.Application.DTO_s.Category;
-using PMS.Application.DTO_s.Product;
+using PMS.Application.DTOs.Category;
+using PMS.Application.DTOs.Product;
 namespace PMS.Application.Test.DTO;
 
 public class DtoTest
