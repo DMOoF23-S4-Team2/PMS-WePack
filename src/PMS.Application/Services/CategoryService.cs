@@ -4,7 +4,7 @@ using PMS.Application.Mapper;
 using PMS.Core.Entities;
 using PMS.Core.Repositories;
 
-namespace PMS.Application.Servises
+namespace PMS.Application.Services
 {
     public class CategoryService : ICategoryService
     {
@@ -35,7 +35,7 @@ namespace PMS.Application.Servises
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
-            
+
             await _categoryRepository.DeleteAsync(category);
         }
 
@@ -45,10 +45,10 @@ namespace PMS.Application.Servises
             if (categories == null)
                 throw new ArgumentNullException(nameof(categories));
 
-             var mappedCategories = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(categories);
-             if (mappedCategories == null)
+            var mappedCategories = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(categories);
+            if (mappedCategories == null)
                 throw new ArgumentNullException(nameof(mappedCategories));
-            
+
             return mappedCategories;
         }
 
@@ -61,7 +61,7 @@ namespace PMS.Application.Servises
             var mappedCategory = ObjectMapper.Mapper.Map<CategoryDto>(category);
             if (mappedCategory == null)
                 throw new ArgumentNullException(nameof(mappedCategory));
-            
+
             return mappedCategory;
         }
 
@@ -70,11 +70,11 @@ namespace PMS.Application.Servises
             var oldCategory = await _categoryRepository.GetByIdAsync(id);
             if (oldCategory == null)
                 throw new ArgumentNullException(nameof(oldCategory));
-            
+
             var newCategory = ObjectMapper.Mapper.Map<Category>(categoryDto);
             if (newCategory == null)
                 throw new ArgumentNullException(nameof(newCategory));
-            
+
             //TODO - Implement Validation
 
             await _categoryRepository.UpdateAsync(ObjectMapper.Mapper.Map(newCategory, oldCategory));

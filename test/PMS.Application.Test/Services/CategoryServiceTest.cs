@@ -1,7 +1,7 @@
 using Moq;
 using PMS.Application.DTOs.Category;
 using PMS.Application.Interfaces;
-using PMS.Application.Servises;
+using PMS.Application.Services;
 using PMS.Core.Entities;
 using PMS.Core.Repositories;
 

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PMS.Application.Interfaces;
-using PMS.Application.Servises;
+using PMS.Application.Services;
 using PMS.Core.Repositories;
 using PMS.Core.Repositories.Base;
 using PMS.Infrastructure.Data;
