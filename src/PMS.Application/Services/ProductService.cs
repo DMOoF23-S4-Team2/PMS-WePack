@@ -20,6 +20,7 @@ namespace PMS.Application.Services
         public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
+            _productValidator = new ProductValidator();
         }
 
         public async Task<ProductDto> CreateProduct(ProductDto productDto)

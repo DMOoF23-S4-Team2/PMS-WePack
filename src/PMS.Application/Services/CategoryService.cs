@@ -16,6 +16,7 @@ namespace PMS.Application.Services
         public CategoryService(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+            _categoryValidator = new CategoryValidator();
         }
 
         public async Task<CategoryDto> CreateCategory(CategoryDto categoryDto)

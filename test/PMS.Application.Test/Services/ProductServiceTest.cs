@@ -32,8 +32,8 @@ public class ProductServiceTest
     public async Task CreateProduct_ShouldReturnProductDto_WhenProductIsCreated()
     {
         // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Test Product" };
-        var product = new Product { Id = 1, Name = "Test Product" };
+        var productDto = new ProductDto { Id = 1, Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
+        var product = new Product { Id = 1, Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
         _mockProductRepository.Setup(repo => repo.AddAsync(It.IsAny<Product>())).ReturnsAsync(product);
 
         // Act
@@ -50,7 +50,7 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        var product = new Product { Id = productId, Name = "Test Product" };
+        var product = new Product { Id = productId, Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
         _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync(product);
 
         // Act
@@ -85,7 +85,7 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        var product = new Product { Id = productId, Name = "Test Product" };
+        var product = new Product {Id = productId, Sku = "SKU123", Price = 10, SpecialPrice = 5};
         _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync(product);
         _mockProductRepository.Setup(repo => repo.DeleteAsync(product)).Returns(Task.CompletedTask);
 
@@ -112,18 +112,21 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        var oldProduct = new Product { Id = productId, Name = "Old Product" };
-        var newProductDto = new ProductDto { Id = productId, Name = "New Product" };
-        var newProduct = new Product { Id = productId, Name = "New Product" };
+        var productDto = new ProductDto { Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5};
+        var oldProduct = new Product { Id = productId, Name = "Old Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
+        var newProduct = new Product { Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
 
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync(oldProduct);
-        _mockProductRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Product>())).Returns(Task.CompletedTask);
+        var mockProductRepository = new Mock<IProductRepository>();
+        mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync(oldProduct);
+        mockProductRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Product>())).Returns(Task.CompletedTask);
+
+        var productService = new ProductService(mockProductRepository.Object);
 
         // Act
-        await _productService.UpdateProduct(productId, newProductDto);
+        await productService.UpdateProduct(productId, productDto);
 
         // Assert
-        _mockProductRepository.Verify(repo => repo.UpdateAsync(It.Is<Product>(p => p.Name == newProduct.Name)), Times.Once);
+        mockProductRepository.Verify(repo => repo.UpdateAsync(It.Is<Product>(p => p.Name == newProduct.Name)), Times.Once);
     }
 
     [Fact]

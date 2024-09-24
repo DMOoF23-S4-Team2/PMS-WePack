@@ -32,8 +32,8 @@ public class CategoryServiceTest
     public async Task CreateCategory_ShouldReturnCategoryDto_WhenCategoryIsCreated()
     {
         // Arrange
-        var categoryDto = new CategoryDto { Id = 1, Name = "Test Category" };
-        var category = new Category { Id = 1, Name = "Test Category" };
+        var categoryDto = new CategoryDto { Id = 1, Name = "Test Category", BottomDescription = "Test Description", Description = "Test Description"};
+        var category = new Category { Id = 1, Name = "Test Category", BottomDescription = "Test Description", Description = "Test Description" };
         _mockCategoryRepository.Setup(repo => repo.AddAsync(It.IsAny<Category>())).ReturnsAsync(category);
 
         // Act
@@ -112,9 +112,9 @@ public class CategoryServiceTest
     {
         // Arrange
         var categoryId = 1;
-        var oldCategory = new Category { Id = categoryId, Name = "Old Category" };
-        var newCategoryDto = new CategoryDto { Id = categoryId, Name = "New Category" };
-        var newCategory = new Category { Id = categoryId, Name = "New Category" };
+        var oldCategory = new Category { Id = categoryId, Name = "Old Category", BottomDescription = "Old Description", Description = "Old Description" };
+        var newCategoryDto = new CategoryDto { Id = categoryId, Name = "New Category", BottomDescription = "New Description", Description = "New Description" };
+        var newCategory = new Category { Id = categoryId, Name = "New Category", BottomDescription = "New Description", Description = "New Description" };
 
         _mockCategoryRepository.Setup(repo => repo.GetByIdAsync(categoryId)).ReturnsAsync(oldCategory);
         _mockCategoryRepository.Setup(repo => repo.UpdateAsync(It.IsAny<Category>())).Returns(Task.CompletedTask);
