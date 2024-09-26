@@ -11,7 +11,7 @@ public class CategoryController : ControllerBase {
     private readonly ICategoryService? categoryService;
     public CategoryController(ICategoryService categoryService)
     {
-        categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
+        this.categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
     }
 
     // POST: New Category
@@ -23,6 +23,11 @@ public class CategoryController : ControllerBase {
     // DELETE: Delete Category from ID
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(int id) {
+        if (categoryService == null) 
+        {
+            return BadRequest("Service unavailable.");
+        }
+
         try {
             await categoryService.DeleteCategory(id);
         }
@@ -36,7 +41,21 @@ public class CategoryController : ControllerBase {
     [HttpGet]
     public async Task<IActionResult> GetCategories()
     {
+        // Ensure categoryService is not null
+        if (categoryService == null)
+        {
+            return Problem("Category service is not available.");
+        }
+        // Getting categories
         var categories = await categoryService.GetCategories();
+        
+        // If categories where not found
+        if (categories == null)
+        {
+            return NotFound("No categories found.");
+        }
+        
+        // All good? Return!
         return Ok(categories);
     }
 

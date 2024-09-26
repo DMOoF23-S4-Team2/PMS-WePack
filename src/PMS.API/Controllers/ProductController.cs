@@ -10,7 +10,7 @@ public class ProductController : ControllerBase{
     private readonly IProductService? productService;
 
     public ProductController(IProductService productService){
-        productService = productService ?? throw new ArgumentNullException(nameof(productService));
+        this.productService = productService ?? throw new ArgumentNullException(nameof(productService));
     }
 
     // POST: New Product
@@ -23,6 +23,11 @@ public class ProductController : ControllerBase{
     // DELETE: Delete Product from ID
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id) {
+        if (productService == null) 
+        {
+            return BadRequest("Service unavailable.");
+        }
+
         try {
             await productService.DeleteProduct(id);
         }
@@ -46,8 +51,23 @@ public class ProductController : ControllerBase{
     [HttpGet]
     public async Task<IActionResult> GetProducts()
     {
+        // Ensure productService is not null
+        if (productService == null)
+        {
+            return Problem("Category service is not available.");
+        }        
+        
+        // Get Products
         var products = await productService.GetProducts();
-        return Ok(categories);
+        
+        // If products where not found
+        if (products == null)
+        {
+            return NotFound("No products found.");
+        }
+
+        // Return if everything is awesome
+        return Ok(products);
     }
 
     // // PUT: Update Category from ID
