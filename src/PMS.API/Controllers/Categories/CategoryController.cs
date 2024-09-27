@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.DTOs.Category;
 using PMS.Application.Interfaces;
 
-namespace PMS.API.Controllers;
 
-[Route("pms_api/[controller]")]
-[ApiController]
-public class CategoryController : ControllerBase {    
-    
+namespace PMS.API.Controllers
+{    
+    [Route("api/[controller]")]    
+    [ApiController]
+    public class CategoryController : ControllerBase
+    {
     private readonly ICategoryService? categoryService;
     public CategoryController(ICategoryService categoryService)
     {
@@ -73,5 +75,6 @@ public class CategoryController : ControllerBase {
     // [HttpPut("{id}")]
     // public async Task<IActionResult UpdateCategory(int id){
     //     return;
-    // }
+    // } 
+    }
 }
