@@ -1,3 +1,4 @@
+using System.Text.Json; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.DTOs.Category;
@@ -17,15 +18,21 @@ namespace PMS.API.Controllers
         }
 
         // POST: New Category
-        // [HttpPost]
-        // public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto){
-        //     var category = categoryService.CreateCategory(categoryDto);        
-        // }
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto){   
+            try {
+                var category = categoryService.CreateCategory(categoryDto);   
+                return Ok(category);
+            }
+            catch (Exception ex) {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }                           
+        }
 
         //GET: Single Category from ID
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategory(int id){
-            var category = await categoryService.GetCategory(id);
+        public async Task<IActionResult> GetCategory(int id){            
+            var category = await categoryService.GetCategory(id);            
             if (category == null){
                 return NotFound();
             }
