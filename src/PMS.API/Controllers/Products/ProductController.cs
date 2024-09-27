@@ -4,7 +4,7 @@ using PMS.Application.Interfaces;
 
 namespace PMS.API.Controllers;
 
-[Route("pms_api/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase{    
     private readonly IProductService? productService;
@@ -48,7 +48,7 @@ public class ProductController : ControllerBase{
     }
 
     // GET: Products
-    [HttpGet]
+    [HttpGet("{products}")]
     public async Task<IActionResult> GetProducts()
     {
         // Ensure productService is not null

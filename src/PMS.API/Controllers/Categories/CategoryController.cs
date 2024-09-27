@@ -22,27 +22,20 @@ namespace PMS.API.Controllers
         //     var category = categoryService.CreateCategory(categoryDto);        
         // }
 
-        // DELETE: Delete Category from ID
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id) {
-            if (categoryService == null) 
-            {
-                return BadRequest("Service unavailable.");
-            }
-
-            try {
-                await categoryService.DeleteCategory(id);
-            }
-            catch (ArgumentNullException){
+        //GET: Single Category from ID
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCategory(int id){
+            var category = await categoryService.GetCategory(id);
+            if (category == null){
                 return NotFound();
             }
-            return NoContent();
+            return Ok(category);
         }
-        
+
         // GET: Categories
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories()
-        {
+        {            
             // Ensure categoryService is not null
             if (categoryService == null)
             {
@@ -60,15 +53,21 @@ namespace PMS.API.Controllers
             // All good? Return!
             return Ok(categories);
         }
+        // DELETE: Delete Category from ID
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(int id) {
+            if (categoryService == null) 
+            {
+                return BadRequest("Service unavailable.");
+            }
 
-        //GET: Single Category from ID
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategory(int id){
-            var category = await categoryService.GetCategory(id);
-            if (category == null){
+            try {
+                await categoryService.DeleteCategory(id);
+            }
+            catch (ArgumentNullException){
                 return NotFound();
             }
-            return Ok(category);
+            return NoContent();
         }
         
         // PUT: Update Category from ID
