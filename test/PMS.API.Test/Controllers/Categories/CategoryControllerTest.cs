@@ -20,9 +20,8 @@ public class CategoryControllerTest
     // Test : Category created
     [Fact]
     public async Task PostCategory_ReturnsOkResult_WithCategory(){
-        // Arrange
-        var mockCategoryService = new Mock<ICategoryService>();        
-        var newCategory = new CategoryDto { Id = 1, Name = "New Category" };        
+        // Arrange        
+        var newCategory = new CategoryDto { Id = 1, Name = "New Category" };
         // Set up the mock service to return the newCategory (async) when CreateCategory is called
         mockCategoryService
             .Setup(service => service.CreateCategory(It.IsAny<CategoryDto>()))
@@ -76,11 +75,9 @@ public class CategoryControllerTest
         // Arrange        
         var categoryId = 1;
         // Inject the mock service into the controller
-        var controller = new CategoryController(mockCategoryService.Object);
-        
+        var controller = new CategoryController(mockCategoryService.Object);        
         // Act
-        var result = await controller.GetCategory(categoryId);
-        
+        var result = await controller.GetCategory(categoryId);        
         // Assert        
         Assert.IsType<NotFoundResult>(result);
     }
@@ -152,7 +149,8 @@ public class CategoryControllerTest
     public async Task DeleteCategory_ReturnsNotFound_WhenCategoryDoesNotExist()
     {
         // Arrange
-        var nonExistentCategoryId = 999; // Assume this category doesn't exist
+        // Assume this category doesn't exist
+        var nonExistentCategoryId = 99999;
 
         // Setup the mock to throw an exception when trying to delete a non-existing category
         mockCategoryService
@@ -171,4 +169,44 @@ public class CategoryControllerTest
         // Verify that DeleteCategory was called once with the given ID
         mockCategoryService.Verify(service => service.DeleteCategory(nonExistentCategoryId), Times.Once);
     }   
+
+    // [Fact]
+    public async Task PutCategory_ReturnNoContent_UpdateSuccess(){
+        // Arrange
+        var sampleCategory = new CategoryDto { Id = 1, Name = "Updated Category" };
+        
+        // Mock the service call to simulate successful update
+        mockCategoryService
+            .Setup(service => service.UpdateCategory(sampleCategory.Id, sampleCategory))
+            .Returns(Task.CompletedTask); // Return a completed task for void method
+
+        var controller = new CategoryController(mockCategoryService.Object);
+
+        // Act
+        var result = await controller.UpdateCategory(sampleCategory.Id, sampleCategory);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result); // Check if the result is 204 No Content
+
+    }
+
+    // [Fact]
+    public async Task PutCategory_ReturnNotFound_WhenCategoryDoesNotExist(){
+        // Arrange
+        var sampleCategory = new CategoryDto { Id = 99, Name = "Nonexistent Category" };
+        
+        // Mock the service to throw ArgumentNullException when category is not found
+        mockCategoryService
+            .Setup(service => service.UpdateCategory(sampleCategory.Id, sampleCategory))
+            .Throws(new ArgumentNullException());
+
+        var controller = new CategoryController(mockCategoryService.Object);
+
+        // Act
+        var result = await controller.UpdateCategory(sampleCategory.Id, sampleCategory);
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result); // Check if 404 is returned
+        Assert.Equal($"Category with ID {sampleCategory.Id} not found.", notFoundResult.Value); // Verify message
+    }
 }
