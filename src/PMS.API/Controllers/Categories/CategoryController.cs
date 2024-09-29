@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,10 @@ namespace PMS.API.Controllers
 
         // POST: New Category
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto){   
-            try {
-                var category = categoryService.CreateCategory(categoryDto);   
-                return Ok(category);
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto){
+            try {                                
+                var category = await categoryService.CreateCategory(categoryDto);
+                return Ok(category);                        
             }
             catch (Exception ex) {
                 return StatusCode(500, $"Error: {ex.Message}");
@@ -60,6 +61,7 @@ namespace PMS.API.Controllers
             // All good? Return!
             return Ok(categories);
         }
+        
         // DELETE: Delete Category from ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id) {
@@ -78,9 +80,25 @@ namespace PMS.API.Controllers
         }
         
         // PUT: Update Category from ID
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult UpdateCategory(int id){
-        //     return;
-        // } 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto categoryDto)
+        {                        
+            try {
+                // Try to update the category
+                await categoryService.UpdateCategory(id, categoryDto);
+                // Returns 204
+                return NoContent();
+            }
+            catch (ArgumentNullException)
+            {
+                // Return a 404 if the category was not found
+                return NotFound($"Category with ID {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                // Catch any other exceptions and return a 500 error
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        } 
     }
 }
