@@ -14,11 +14,16 @@ public class ProductController : ControllerBase{
     }
 
     // POST: New Product
-    // [HttpPost]
-    // public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto){
-    //     var product = productService.CreateProduct(productDto);
-    //     return "Product created";
-    // }
+    [HttpPost]
+    public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto){
+        try {                                
+            var product = await productService.CreateProduct(productDto);
+            return Ok(product);                        
+        }
+        catch (Exception ex) {
+            return StatusCode(500, $"Error: {ex.Message}");
+        } 
+    }
 
     // DELETE: Delete Product from ID
     [HttpDelete("{id}")]
@@ -70,9 +75,25 @@ public class ProductController : ControllerBase{
         return Ok(products);
     }
 
-    // // PUT: Update Category from ID
-    // [HttpPut("{id}")]
-    // public async Task<IActionResult UpdateProduct(int id){
-    //     return;
-    // }       
+    // PUT: Update Category from ID
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
+    {                        
+        try {
+            // Try to update the category
+            await productService.UpdateProduct(id, productDto);
+            // Returns 204
+            return NoContent();
+        }
+        catch (ArgumentNullException)
+        {
+            // Return a 404 if the category was not found
+            return NotFound($"Product with ID {id} not found.");
+        }
+        catch (Exception ex)
+        {
+            // Catch any other exceptions and return a 500 error
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }       
 }
