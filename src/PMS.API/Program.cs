@@ -25,7 +25,8 @@ builder.Services.AddDbContext<PMSContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"));
 });
 
-
+// Register controllers
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -39,5 +40,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.MapControllers();
 
 app.Run();
