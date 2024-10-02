@@ -26,83 +26,113 @@ namespace PMS.Application.Services
         public async Task<ProductDto> CreateProduct(ProductDto productDto)
         {
             await ValidateIfExist(productDto);
-
-            var product = ObjectMapper.Mapper.Map<Product>(productDto);
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
-            var validationResult = await _productValidator.ValidateAsync(product);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
-
-            var newProduct = await _productRepository.AddAsync(product);
-
-            return ObjectMapper.Mapper.Map<ProductDto>(newProduct);
+            var product = MappedEntityOf(productDto);
+            await ValidateEntity(product);
+            var newProduct = await CreateEntityInRepository(product);
+            return MappedDtoOf(newProduct);
         }
 
         public async Task DeleteProduct(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
+            var product = await GetEntityFromRepositoryWith(id);
             await _productRepository.DeleteAsync(product);
         }
 
         public async Task<ProductDto> GetProduct(int id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
-            var mappedProduct = ObjectMapper.Mapper.Map<ProductDto>(product);
-            if (mappedProduct == null)
-                throw new ArgumentNullException(nameof(mappedProduct));
-
-            return mappedProduct;
+            var product = await GetEntityFromRepositoryWith(id);
+            return MappedDtoOf(product);
         }
 
         public async Task<IEnumerable<ProductDto>> GetProducts()
         {
-            var products = await _productRepository.GetAllAsync();
-            if (products == null)
-                throw new ArgumentNullException(nameof(products));
-
-            var mappedProducts = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
-            if (mappedProducts == null)
-                throw new ArgumentNullException(nameof(mappedProducts));
-
-            return mappedProducts;
+            var products = await GetAllEntitiesFromRepository();
+            return MappedDtoOf(products);
         }
 
         public async Task UpdateProduct(int id, ProductDto productDto)
         {
-            if (productDto == null)
-                throw new ArgumentNullException(nameof(productDto));
-
-            var oldProduct = await _productRepository.GetByIdAsync(id);
-            if (oldProduct == null)
-                throw new ArgumentNullException(nameof(oldProduct));
-
-            var newProduct = ObjectMapper.Mapper.Map<Product>(productDto);
-            if (newProduct == null)
-                throw new ArgumentNullException(nameof(newProduct));
-
-            var validationResult = await _productValidator.ValidateAsync(newProduct);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
-
-            await _productRepository.UpdateAsync(ObjectMapper.Mapper.Map(newProduct, oldProduct));
+            var oldProduct = await GetEntityFromRepositoryWith(id);
+            var newProduct = MappedEntityOf(productDto);
+            await ValidateEntity(newProduct);
+            await UpdateEntityInRepository(newProduct, oldProduct);
         }
 
+        //!SECTION Private Methods
         private async Task ValidateIfExist(ProductDto productDto)
         {
-            if (productDto.Id != 0)
+            IfZeroThrowArgumentException(productDto.Id);
+            var product = await _productRepository.GetByIdAsync(productDto.Id);
+            if (product != null)
+                throw new ValidationException("Product already exists.");
+        }
+
+        private static IEnumerable<ProductDto> MappedDtoOf(IEnumerable<Product> products)
+        {
+            var productDtos = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
+            IfNullThrowArgumentNullException(productDtos, nameof(productDtos));
+            return productDtos;
+        }
+
+        private static ProductDto MappedDtoOf(Product product)
+        {
+            var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
+            IfNullThrowArgumentNullException(productDto, nameof(productDto));
+            return productDto;
+        }
+
+        private static Product MappedEntityOf(ProductDto productDto)
+        {
+            var product = ObjectMapper.Mapper.Map<Product>(productDto);
+            IfNullThrowArgumentNullException(product, nameof(product));
+            return product;
+        }
+
+        private async Task ValidateEntity(Product product)
+        {
+            var validationResult = await _productValidator.ValidateAsync(product);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+        }
+
+        private async Task<Product> CreateEntityInRepository(Product product)
+        {
+            return await _productRepository.AddAsync(product);
+        }
+
+        private async Task<Product> GetEntityFromRepositoryWith(int id)
+        {
+            IfZeroThrowArgumentException(id);
+            var product = await _productRepository.GetByIdAsync(id);
+            IfNullThrowArgumentNullException(product, nameof(product));
+            return product;
+        }
+
+        private async Task<IEnumerable<Product>> GetAllEntitiesFromRepository()
+        {
+            var products = await _productRepository.GetAllAsync();
+            IfNullThrowArgumentNullException(products, nameof(products));
+            return products;
+        }
+
+        private async Task UpdateEntityInRepository(Product newProduct, Product oldProduct)
+        {
+            var mappedProduct = ObjectMapper.Mapper.Map(newProduct, oldProduct);
+            await _productRepository.UpdateAsync(mappedProduct);
+        }
+
+        private static void IfNullThrowArgumentNullException(object obj, string paramName)
+        {
+            if (obj == null)
             {
-                var product = await _productRepository.GetByIdAsync(productDto.Id);
-                if (product != null)
-                    throw new ArgumentNullException(nameof(product));
+                throw new ArgumentNullException(paramName, "Object cannot be null.");
             }
+        }
+
+        private static void IfZeroThrowArgumentException(int id)
+        {
+            if (id == 0)
+                throw new ArgumentException("ID cannot be zero.", nameof(id));
         }
     }
 }

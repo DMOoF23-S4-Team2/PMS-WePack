@@ -112,6 +112,8 @@ namespace PMS.Application.Services
 
         private async Task<Category> GetEntityFromRepositoryWith(int id)
         {
+            if (id == 0)
+                throw new ArgumentNullException(nameof(id));
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
