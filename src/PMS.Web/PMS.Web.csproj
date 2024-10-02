@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Assests\" />
     <Folder Include="Components\" />
-    <Folder Include="Pages\" />
     <Folder Include="Services\" />
     <Folder Include="Styles\" />
   </ItemGroup>
