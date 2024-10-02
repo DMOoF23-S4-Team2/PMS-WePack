@@ -6,7 +6,7 @@ productsNav.addEventListener('click', () => {
     heroEl.innerHTML = `
             <div class="products-section">
                 <div class="search-container">
-                    <input class="search-product" type="text" aria-label="Search" placeholder="Iphone">
+                    <input class="search-product" type="text" aria-label="Search" placeholder="Iphone 13 cover">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 
