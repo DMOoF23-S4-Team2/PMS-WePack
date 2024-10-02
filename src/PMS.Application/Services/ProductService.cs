@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using PMS.Application.DTOs.Product;
+using PMS.Application.Exceptions;
 using PMS.Application.Interfaces;
 using PMS.Application.Mapper;
 using PMS.Application.Validators;
@@ -61,7 +62,7 @@ namespace PMS.Application.Services
         //!SECTION Private Methods
         private async Task ValidateIfExist(ProductDto productDto)
         {
-            IfZeroThrowArgumentException(productDto.Id);
+            ThrowArgument.ExceptionIfZero(productDto.Id);
             var product = await _productRepository.GetByIdAsync(productDto.Id);
             if (product != null)
                 throw new ValidationException("Product already exists.");
@@ -70,21 +71,21 @@ namespace PMS.Application.Services
         private static IEnumerable<ProductDto> MappedDtoOf(IEnumerable<Product> products)
         {
             var productDtos = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
-            IfNullThrowArgumentNullException(productDtos, nameof(productDtos));
+            ThrowArgument.NullExceptionIfNull(productDtos);
             return productDtos;
         }
 
         private static ProductDto MappedDtoOf(Product product)
         {
             var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
-            IfNullThrowArgumentNullException(productDto, nameof(productDto));
+            ThrowArgument.NullExceptionIfNull(productDto);
             return productDto;
         }
 
         private static Product MappedEntityOf(ProductDto productDto)
         {
             var product = ObjectMapper.Mapper.Map<Product>(productDto);
-            IfNullThrowArgumentNullException(product, nameof(product));
+            ThrowArgument.NullExceptionIfNull(product);
             return product;
         }
 
@@ -102,16 +103,16 @@ namespace PMS.Application.Services
 
         private async Task<Product> GetEntityFromRepositoryWith(int id)
         {
-            IfZeroThrowArgumentException(id);
+            ThrowArgument.ExceptionIfZero(id);
             var product = await _productRepository.GetByIdAsync(id);
-            IfNullThrowArgumentNullException(product, nameof(product));
+            ThrowArgument.NullExceptionIfNull(product);
             return product;
         }
 
         private async Task<IEnumerable<Product>> GetAllEntitiesFromRepository()
         {
             var products = await _productRepository.GetAllAsync();
-            IfNullThrowArgumentNullException(products, nameof(products));
+            ThrowArgument.NullExceptionIfNull(products);
             return products;
         }
 
@@ -119,20 +120,6 @@ namespace PMS.Application.Services
         {
             var mappedProduct = ObjectMapper.Mapper.Map(newProduct, oldProduct);
             await _productRepository.UpdateAsync(mappedProduct);
-        }
-
-        private static void IfNullThrowArgumentNullException(object obj, string paramName)
-        {
-            if (obj == null)
-            {
-                throw new ArgumentNullException(paramName, "Object cannot be null.");
-            }
-        }
-
-        private static void IfZeroThrowArgumentException(int id)
-        {
-            if (id == 0)
-                throw new ArgumentException("ID cannot be zero.", nameof(id));
         }
     }
 }

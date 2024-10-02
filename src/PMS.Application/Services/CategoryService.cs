@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using PMS.Application.DTOs.Category;
+using PMS.Application.Exceptions;
 using PMS.Application.Interfaces;
 using PMS.Application.Mapper;
 using PMS.Application.Validators;
@@ -58,41 +59,30 @@ namespace PMS.Application.Services
         //!SECTION: Private methods
         private async Task ValidateIfExist(CategoryDto categoryDto)
         {
-            if (categoryDto.Id != 0)
-            {
-                var category = await _categoryRepository.GetByIdAsync(categoryDto.Id);
-                if (category != null)
-                    throw new ArgumentException("Category already exists");
-            }
+            ThrowArgument.ExceptionIfZero(categoryDto.Id);
+            var category = await _categoryRepository.GetByIdAsync(categoryDto.Id);
+            if (category != null)
+                throw new ArgumentException("Category already exists");
         }
 
         private static Category MappedEntityOf(CategoryDto categoryDto)
         {
             var category = ObjectMapper.Mapper.Map<Category>(categoryDto);
-            if (category == null)
-            {
-                throw new ArgumentNullException(nameof(category));
-            }
+            ThrowArgument.NullExceptionIfNull(category);
             return category;
         }
 
         private static IEnumerable<CategoryDto> MappedDtoOf(IEnumerable<Category> category)
         {
             var categoryDtos = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(category);
-            if (categoryDtos == null)
-            {
-                throw new ArgumentNullException(nameof(categoryDtos));
-            }
+            ThrowArgument.NullExceptionIfNull(categoryDtos);
             return categoryDtos;
         }
 
         private static CategoryDto MappedDtoOf(Category category)
         {
             var categoryDto = ObjectMapper.Mapper.Map<CategoryDto>(category);
-            if (categoryDto == null)
-            {
-                throw new ArgumentNullException(nameof(categoryDto));
-            }
+            ThrowArgument.NullExceptionIfNull(categoryDto);
             return categoryDto;
         }
 
@@ -112,21 +102,16 @@ namespace PMS.Application.Services
 
         private async Task<Category> GetEntityFromRepositoryWith(int id)
         {
-            if (id == 0)
-                throw new ArgumentNullException(nameof(id));
+            ThrowArgument.ExceptionIfZero(id);
             var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-                throw new ArgumentNullException(nameof(category));
-
+            ThrowArgument.NullExceptionIfNull(category);
             return category;
         }
 
         private async Task<IEnumerable<Category>> GetAllEntityFromRepository()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            if (categories == null)
-                throw new ArgumentNullException(nameof(categories));
-
+            ThrowArgument.NullExceptionIfNull(categories);
             return categories;
         }
 
