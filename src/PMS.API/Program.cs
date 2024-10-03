@@ -9,6 +9,18 @@ using PMS.Infrastructure.Repository.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS to allow specific origins
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowPmsWeb",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5002") // Add other origins as needed
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // Register Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -31,6 +43,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("AllowPmsWeb");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
