@@ -53,7 +53,7 @@ public class ProductController : ControllerBase{
     }
 
     // GET: Products
-    [HttpGet("/products")]
+    [HttpGet("products")]
     public async Task<IActionResult> GetProducts()
     {
         // Ensure productService is not null
