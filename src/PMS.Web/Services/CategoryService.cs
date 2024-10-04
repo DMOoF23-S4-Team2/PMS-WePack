@@ -11,28 +11,77 @@ public class CategoryService : ICategoryService
         _httpClient = httpClient;
     }
 
-    public Task<Category> CreateCategory(Category category)
+    public async Task<Category> CreateCategory(Category category)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/categories", category);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<Category>()
+                ?? throw new Exception("Error creating category");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error creating category", ex);
+        }
     }
 
-    public Task DeleteCategory(int id)
+    public async Task DeleteCategory(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/categories/{id}");
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error deleting category", ex);
+        }
     }
 
-    public Task<IEnumerable<Category>> GetCategories()
+    public async Task<IEnumerable<Category>> GetCategories()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.GetAsync("api/categories");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Category>>()
+                ?? throw new Exception("Error getting categories");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error getting categories", ex);
+        }
     }
 
-    public Task<Category> GetCategory(int id)
+    public async Task<Category> GetCategory(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/categories/{id}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<Category>()
+                ?? throw new Exception("Error getting category");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error getting category", ex);
+        }
     }
 
-    public Task UpdateCategory(int id, Category category)
+    public async Task UpdateCategory(int id, Category category)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/categories/{id}", category);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error updating category", ex);
+        }
     }
 }
