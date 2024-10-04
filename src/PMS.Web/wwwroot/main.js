@@ -68,18 +68,18 @@ singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
         <form>
             <div class="form-container">
-                <label>SKU</label>
+                <label required>SKU</label>
                 <input>
                 <label>EAN</label>
                 <input>
-                <label>Name</label>
+                <label required>Name</label>
                 <input>
                 <label>Description</label>
                 <textarea></textarea>
-                <label>Price</label>
-                <input>
+                <label required>Price</label>
+                <input type="number">
                 <label>Special price</label>
-                <input>
+                <input type="number">
             </div>
             <div class="form-container">
                 <label>Category</label>
@@ -94,7 +94,7 @@ singleProductNav.addEventListener('click', () => {
                 <input>
                 <label>Color</label>
                 <input>
-                <button>Add Product</button>
+                <button class="add-product">Add Product</button>
             </div>
         </form>
     `;

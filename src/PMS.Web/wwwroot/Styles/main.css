@@ -92,6 +92,20 @@ section {
     flex-direction: column;
 }
 
+.add-product {
+    padding: .5em 1em;
+    cursor: pointer;
+    background-color: limegreen;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+.add-product:hover, 
+.add-product:focus {
+    background-color: whitesmoke;
+    color: limegreen;
+}
+
 .search-container {
     position: relative;
 }
