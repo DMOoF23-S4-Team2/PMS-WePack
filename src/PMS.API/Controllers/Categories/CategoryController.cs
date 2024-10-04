@@ -12,7 +12,7 @@ namespace PMS.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryService? categoryService;
+        private readonly ICategoryService categoryService;
         public CategoryController(ICategoryService categoryService)
         {
             this.categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));

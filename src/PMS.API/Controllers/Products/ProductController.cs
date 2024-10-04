@@ -7,7 +7,7 @@ namespace PMS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase{    
-    private readonly IProductService? productService;
+    private readonly IProductService productService;
 
     public ProductController(IProductService productService){
         this.productService = productService ?? throw new ArgumentNullException(nameof(productService));
