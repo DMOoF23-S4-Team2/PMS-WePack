@@ -30,6 +30,7 @@ namespace PMS.Application.Services
             await ValidateEntity(product);
             var newProduct = await CreateEntityInRepository(product);
             var newProductDto = ObjectMapper.Mapper.Map<ProductWithoutIdDto>(newProduct);
+            ThrowArgument.ExceptionIfNull(newProductDto);
             return newProductDto;
         }
 
@@ -49,7 +50,9 @@ namespace PMS.Application.Services
         public async Task<IEnumerable<ProductDto>> GetProducts()
         {
             var products = await GetAllEntitiesFromRepository();
-            return MappedDtoOf(products);
+            var productsDto = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
+            ThrowArgument.ExceptionIfNull(productsDto);
+            return productsDto;
         }
 
         public async Task UpdateProduct(int id, ProductWithoutIdDto productDto)
@@ -61,13 +64,6 @@ namespace PMS.Application.Services
         }
 
         //!SECTION Private Methods
-        private static IEnumerable<ProductDto> MappedDtoOf(IEnumerable<Product> products)
-        {
-            var productDtos = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
-            ThrowArgument.ExceptionIfNull(productDtos);
-            return productDtos;
-        }
-
         private static Product MappedEntityOf(object productDto)
         {
             Product product = null;
