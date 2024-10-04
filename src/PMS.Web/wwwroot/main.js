@@ -1,51 +1,10 @@
-
-// Main code
+// main.js
 const heroEl = document.getElementById('hero-section');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
-let products = [];
 
-async function getAllProducts() {
-    const res = await fetch("https://localhost:7225/api/Product/products");
-    const data = await res.json();
-    products = data;
-    renderAllProducts();  // Call renderAllProducts after fetching the products
-}
-
-function renderAllProducts() {
-    const productsContainer = document.querySelector(".products-container");  // Target the products container
-    productsContainer.innerHTML = "";  // Clear the container before rendering new products
-
-    // Create the table structure
-    const tableHTML = `
-        <table class="products-table">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>SKU</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Currency</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${products.map(product => `
-                    <tr>
-                        <td>${product.id}</td>
-                        <td>${product.sku}</td>
-                        <td>${product.name}</td>
-                        <td>$${product.price}</td>
-                        <td>${product.currency}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
-
-    // Insert the table into the container
-    productsContainer.innerHTML = tableHTML;
-}
-
+// Import the getAllProducts function from getProducts.js
+import { getAllProducts } from "./Javascript/GetProducts.js"; // Make sure the path is correct
 
 productsNav.addEventListener('click', async () => {
     heroEl.innerHTML = `
@@ -63,37 +22,47 @@ productsNav.addEventListener('click', async () => {
     await getAllProducts();  // Wait for the products to be fetched and rendered
 });
 
-
 singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
         <form>
             <div class="form-container">
-                <label required>SKU</label>
-                <input>
-                <label>EAN</label>
-                <input>
-                <label required>Name</label>
-                <input>
-                <label>Description</label>
+                <label for="sku">SKU</label>
+                <input required id="sku" name="sku">
+
+                <label for="ean">EAN</label>
+                <input id="ean" name="ean">
+
+                <label for="name">Name</label>
+                <input required id="name" name="name">
+
+                <label for="">Description</label>
                 <textarea></textarea>
-                <label required>Price</label>
-                <input type="number">
-                <label>Special price</label>
-                <input type="number">
+
+                <label for="price">Price</label>
+                <input required id="price" type="number" name="price">
+
+                <label for="specialPrice">Special price</label>
+                <input id="specialPrice" type="number" name="specialPrice">
             </div>
             <div class="form-container">
-                <label>Category</label>
-                <input>
-                <label>Product type</label>
-                <input>
-                <label>Product group</label>
-                <input>
-                <label>Currency</label>
-                <input>
-                <label>Material</label>
-                <input>
-                <label>Color</label>
-                <input>
+                <label for="category">Category</label>
+                <input id="category" name="category">
+
+                <label for="productType">Product type</label>
+                <input id="productType" name="productType">
+
+                <label for="productGroup">Product group</label>
+                <input id="productGroup" name="productGroup">
+
+                <label for="currency">Currency</label>
+                <input id="currency" name="currency">
+
+                <label for="material">Material</label>
+                <input id="material" name="material">
+
+                <label for="color">Color</label>
+                <input id="color" name="color">
+
                 <button class="add-product">Add Product</button>
             </div>
         </form>
