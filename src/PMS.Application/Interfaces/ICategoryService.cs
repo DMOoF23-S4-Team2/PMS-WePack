@@ -10,8 +10,8 @@ namespace PMS.Application.Interfaces
     {
         public Task<IEnumerable<CategoryDto>> GetCategories();
         public Task<CategoryDto> GetCategory(int id);
-        public Task<CategoryDto> CreateCategory(CategoryDto categoryDto);
-        public Task UpdateCategory(int id, CategoryDto categoryDto);
+        public Task<CategoryWithoutIdDto> CreateCategory(CategoryWithoutIdDto categoryDto);
+        public Task UpdateCategory(int id, CategoryWithoutIdDto categoryDto);
         public Task DeleteCategory(int id);
     }
 }
