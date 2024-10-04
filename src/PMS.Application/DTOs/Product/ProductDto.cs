@@ -15,6 +15,4 @@ public class ProductDto
         public string Currency {get; set;} = string.Empty;
         public float Price {get; set;}
         public float SpecialPrice {get; set; }
-        public ICollection<CategoryDto> Category { get; set; } = [];
-
 }

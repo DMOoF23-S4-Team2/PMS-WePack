@@ -21,13 +21,14 @@ namespace PMS.Application.Services
             _categoryValidator = new CategoryValidator();
         }
 
-        public async Task<CategoryDto> CreateCategory(CategoryDto categoryDto)
+        public async Task<CategoryWithoutIdDto> CreateCategory(CategoryWithoutIdDto categoryDto)
         {
-            await ValidateIfExist(categoryDto);
-            var category = MappedEntityOf(categoryDto);
+            var category = ObjectMapper.Mapper.Map<Category>(categoryDto);
             await ValidateEntity(category);
             var newCategory = await AddEntityToRepository(category);
-            return MappedDtoOf(newCategory);
+            var newCategoryDto = ObjectMapper.Mapper.Map<CategoryWithoutIdDto>(newCategory);
+            ThrowArgument.ExceptionIfNull(newCategoryDto);
+            return newCategoryDto;
         }
 
         public async Task DeleteCategory(int id)
@@ -39,53 +40,28 @@ namespace PMS.Application.Services
         public async Task<IEnumerable<CategoryDto>> GetCategories()
         {
             var categories = await GetAllEntityFromRepository();
-            return MappedDtoOf(categories);
+            var categoriesDto = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(categories);
+            ThrowArgument.ExceptionIfNull(categoriesDto);
+            return categoriesDto;
         }
 
         public async Task<CategoryDto> GetCategory(int id)
         {
             var category = await GetEntityFromRepositoryWith(id);
-            return MappedDtoOf(category);
-        }
-
-        public async Task UpdateCategory(int id, CategoryDto categoryDto)
-        {
-            var oldCategory = await GetEntityFromRepositoryWith(id);
-            var newCategory = MappedEntityOf(categoryDto);
-            await ValidateEntity(newCategory);
-            await UpdateEntityInRepository(newCategory, oldCategory);
-        }
-
-        //!SECTION: Private methods
-        private async Task ValidateIfExist(CategoryDto categoryDto)
-        {
-            ThrowArgument.ExceptionIfZero(categoryDto.Id);
-            var category = await _categoryRepository.GetByIdAsync(categoryDto.Id);
-            if (category != null)
-                throw new ArgumentException("Category already exists");
-        }
-
-        private static Category MappedEntityOf(CategoryDto categoryDto)
-        {
-            var category = ObjectMapper.Mapper.Map<Category>(categoryDto);
-            ThrowArgument.NullExceptionIfNull(category);
-            return category;
-        }
-
-        private static IEnumerable<CategoryDto> MappedDtoOf(IEnumerable<Category> category)
-        {
-            var categoryDtos = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(category);
-            ThrowArgument.NullExceptionIfNull(categoryDtos);
-            return categoryDtos;
-        }
-
-        private static CategoryDto MappedDtoOf(Category category)
-        {
             var categoryDto = ObjectMapper.Mapper.Map<CategoryDto>(category);
-            ThrowArgument.NullExceptionIfNull(categoryDto);
+            ThrowArgument.ExceptionIfNull(categoryDto);
             return categoryDto;
         }
 
+        public async Task UpdateCategory(int id, CategoryWithoutIdDto categoryDto)
+        {
+            var oldCategory = await GetEntityFromRepositoryWith(id);
+            var newCategory = ObjectMapper.Mapper.Map<Category>(categoryDto);
+            await ValidateEntity(newCategory);
+            await UpdateEntityInRepository(categoryDto, oldCategory);
+        }
+
+        //!SECTION: Private methods
         private async Task ValidateEntity(Category category)
         {
             var validationResult = await _categoryValidator.ValidateAsync(category);
@@ -104,20 +80,20 @@ namespace PMS.Application.Services
         {
             ThrowArgument.ExceptionIfZero(id);
             var category = await _categoryRepository.GetByIdAsync(id);
-            ThrowArgument.NullExceptionIfNull(category);
+            ThrowArgument.ExceptionIfNull(category);
             return category;
         }
 
         private async Task<IEnumerable<Category>> GetAllEntityFromRepository()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            ThrowArgument.NullExceptionIfNull(categories);
+            ThrowArgument.ExceptionIfNull(categories);
             return categories;
         }
 
-        private async Task UpdateEntityInRepository(Category newCategory, Category oldCategory)
+        private async Task UpdateEntityInRepository(CategoryWithoutIdDto categoryDto, Category oldCategory)
         {
-            var mappedCategory = ObjectMapper.Mapper.Map(newCategory, oldCategory);
+            var mappedCategory = ObjectMapper.Mapper.Map(categoryDto, oldCategory);
             await _categoryRepository.UpdateAsync(mappedCategory);
         }
     }

@@ -15,7 +15,7 @@ public class ProductController : ControllerBase{
 
     // POST: New Product
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto){
+    public async Task<IActionResult> CreateProduct([FromBody] ProductWithoutIdDto productDto){
         try {                                
             var product = await productService.CreateProduct(productDto);
             return Ok(product);                        
@@ -77,7 +77,7 @@ public class ProductController : ControllerBase{
 
     // PUT: Update Category from ID
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductWithoutIdDto productDto)
     {                        
         try {
             // Try to update the category

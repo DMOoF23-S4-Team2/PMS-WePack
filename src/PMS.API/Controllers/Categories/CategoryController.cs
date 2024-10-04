@@ -20,7 +20,7 @@ namespace PMS.API.Controllers
 
         // POST: New Category
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto){
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryWithoutIdDto categoryDto){
             try {                                
                 var category = await categoryService.CreateCategory(categoryDto);
                 return Ok(category);                        
@@ -81,7 +81,7 @@ namespace PMS.API.Controllers
         
         // PUT: Update Category from ID
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto categoryDto)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryWithoutIdDto categoryDto)
         {                        
             try {
                 // Try to update the category

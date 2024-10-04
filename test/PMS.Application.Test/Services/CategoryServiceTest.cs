@@ -22,17 +22,17 @@ public class CategoryServiceTest
     public async Task CreateCategory_ShouldThrowException_WhenCategoryDtoIsNull()
     {
         // Arrange
-        CategoryDto categoryDto = null;
+        CategoryWithoutIdDto categoryDto = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<NullReferenceException>(() => _categoryService.CreateCategory(categoryDto));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _categoryService.CreateCategory(categoryDto));
     }
 
     [Fact]
     public async Task CreateCategory_ShouldReturnCategoryDto_WhenCategoryIsCreated()
     {
         // Arrange
-        var categoryDto = new CategoryDto { Id = 1, Name = "Test Category", BottomDescription = "Test Description", Description = "Test Description"};
+        var categoryDto = new CategoryWithoutIdDto { Name = "Test Category", BottomDescription = "Test Description", Description = "Test Description"};
         var category = new Category { Id = 1, Name = "Test Category", BottomDescription = "Test Description", Description = "Test Description" };
         _mockCategoryRepository.Setup(repo => repo.AddAsync(It.IsAny<Category>())).ReturnsAsync(category);
 
@@ -41,7 +41,7 @@ public class CategoryServiceTest
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(categoryDto.Id, result.Id);
+        Assert.Equal(categoryDto.BottomDescription, result.BottomDescription);
         Assert.Equal(categoryDto.Name, result.Name);
     }
 
@@ -101,10 +101,10 @@ public class CategoryServiceTest
     {
         // Arrange
         var categoryId = 1;
-        CategoryDto categoryDto = null;
+        CategoryWithoutIdDto categoryDto = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _categoryService.UpdateCategory(categoryId, categoryDto));
+        await Assert.ThrowsAsync<ArgumentException>(() => _categoryService.UpdateCategory(categoryId, categoryDto));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class CategoryServiceTest
         // Arrange
         var categoryId = 1;
         var oldCategory = new Category { Id = categoryId, Name = "Old Category", BottomDescription = "Old Description", Description = "Old Description" };
-        var newCategoryDto = new CategoryDto { Id = categoryId, Name = "New Category", BottomDescription = "New Description", Description = "New Description" };
+        var newCategoryDto = new CategoryWithoutIdDto { Name = "New Category", BottomDescription = "New Description", Description = "New Description" };
         var newCategory = new Category { Id = categoryId, Name = "New Category", BottomDescription = "New Description", Description = "New Description" };
 
         _mockCategoryRepository.Setup(repo => repo.GetByIdAsync(categoryId)).ReturnsAsync(oldCategory);
@@ -134,7 +134,7 @@ public class CategoryServiceTest
         _mockCategoryRepository.Setup(repo => repo.GetByIdAsync(categoryId)).ReturnsAsync((Category)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _categoryService.GetCategory(categoryId));
+        await Assert.ThrowsAsync<ArgumentException>(() => _categoryService.GetCategory(categoryId));
     }
 
     [Fact]
@@ -145,6 +145,6 @@ public class CategoryServiceTest
         _mockCategoryRepository.Setup(repo => repo.GetByIdAsync(categoryId)).ReturnsAsync((Category)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _categoryService.DeleteCategory(categoryId));
+        await Assert.ThrowsAsync<ArgumentException>(() => _categoryService.DeleteCategory(categoryId));
     }
 }

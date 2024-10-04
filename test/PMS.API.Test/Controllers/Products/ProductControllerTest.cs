@@ -25,8 +25,8 @@ public class ProductControllerTest
     public async Task CreateProduct_ReturnsOkResult_WithCreatedProduct()
     {
         // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Test Product" };
-        _mockProductService.Setup(service => service.CreateProduct(It.IsAny<ProductDto>()))
+        var productDto = new ProductWithoutIdDto { Name = "Test Product" };
+        _mockProductService.Setup(service => service.CreateProduct(It.IsAny<ProductWithoutIdDto>()))
                             .ReturnsAsync(productDto);
 
         // Act
@@ -34,8 +34,8 @@ public class ProductControllerTest
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsType<ProductDto>(okResult.Value);
-        Assert.Equal(productDto.Id, returnValue.Id);
+        var returnValue = Assert.IsType<ProductWithoutIdDto>(okResult.Value);
+        Assert.Equal(productDto.Name, returnValue.Name);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class ProductControllerTest
     public async Task UpdateProduct_ReturnsNoContent_WhenUpdateSuccessful()
     {
         // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Updated Product" };
+        var productDto = new ProductWithoutIdDto {Name = "Updated Product" };
         _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
                             .Returns(Task.CompletedTask);
 
@@ -138,7 +138,7 @@ public class ProductControllerTest
     public async Task UpdateProduct_ReturnsNotFound_WhenProductNotFound()
     {
         // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Updated Product" };
+        var productDto = new ProductWithoutIdDto {Name = "Updated Product" };
         _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
                             .Throws(new ArgumentNullException());
 

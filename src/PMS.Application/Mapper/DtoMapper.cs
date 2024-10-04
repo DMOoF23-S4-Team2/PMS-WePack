@@ -12,9 +12,13 @@ public class DtoMapper : Profile
     {
         // Category Mapping
         CreateMap<Category, CategoryDto>().ReverseMap();
+        CreateMap<Category, CategoryWithoutIdDto>().ReverseMap();
+        CreateMap<Category, CategoryWithProductsDto>().ReverseMap();
 
         // Product Mapping
         CreateMap<Product, ProductDto>().ReverseMap();
+        CreateMap<Product, ProductWithoutIdDto>().ReverseMap();
+        CreateMap<Product, ProductWithCategoriesDto>().ReverseMap();
     }
 
 }
