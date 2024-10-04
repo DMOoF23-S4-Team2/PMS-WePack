@@ -60,7 +60,7 @@ namespace PMS.Application.Services
             var oldProduct = await GetEntityFromRepositoryWith(id);
             var newProduct = MappedEntityOf(productDto);
             await ValidateEntity(newProduct);
-            await UpdateEntityInRepository(newProduct, oldProduct);
+            await UpdateEntityInRepository(productDto, oldProduct);
         }
 
         //!SECTION Private Methods
@@ -111,9 +111,9 @@ namespace PMS.Application.Services
             return products;
         }
 
-        private async Task UpdateEntityInRepository(Product newProduct, Product oldProduct)
+        private async Task UpdateEntityInRepository(ProductWithoutIdDto productDto, Product oldProduct)
         {
-            var mappedProduct = ObjectMapper.Mapper.Map(newProduct, oldProduct);
+            var mappedProduct = ObjectMapper.Mapper.Map(productDto, oldProduct);
             await _productRepository.UpdateAsync(mappedProduct);
         }
     }

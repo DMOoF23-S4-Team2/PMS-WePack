@@ -58,7 +58,7 @@ namespace PMS.Application.Services
             var oldCategory = await GetEntityFromRepositoryWith(id);
             var newCategory = ObjectMapper.Mapper.Map<Category>(categoryDto);
             await ValidateEntity(newCategory);
-            await UpdateEntityInRepository(newCategory, oldCategory);
+            await UpdateEntityInRepository(categoryDto, oldCategory);
         }
 
         //!SECTION: Private methods
@@ -91,9 +91,9 @@ namespace PMS.Application.Services
             return categories;
         }
 
-        private async Task UpdateEntityInRepository(Category newCategory, Category oldCategory)
+        private async Task UpdateEntityInRepository(CategoryWithoutIdDto categoryDto, Category oldCategory)
         {
-            var mappedCategory = ObjectMapper.Mapper.Map(newCategory, oldCategory);
+            var mappedCategory = ObjectMapper.Mapper.Map(categoryDto, oldCategory);
             await _categoryRepository.UpdateAsync(mappedCategory);
         }
     }
