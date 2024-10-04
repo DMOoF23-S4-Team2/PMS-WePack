@@ -1,9 +1,51 @@
-// Function to fetch the products from the API
-import { fetchProducts, displayProducts } from './api.js';
+
 // Main code
 const heroEl = document.getElementById('hero-section');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
+let products = [];
+
+async function getAllProducts() {
+    const res = await fetch("https://localhost:7225/api/Product/products");
+    const data = await res.json();
+    products = data;
+    renderAllProducts();  // Call renderAllProducts after fetching the products
+}
+
+function renderAllProducts() {
+    const productsContainer = document.querySelector(".products-container");  // Target the products container
+    productsContainer.innerHTML = "";  // Clear the container before rendering new products
+
+    // Create the table structure
+    const tableHTML = `
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>SKU</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Currency</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${products.map(product => `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.sku}</td>
+                        <td>${product.name}</td>
+                        <td>$${product.price}</td>
+                        <td>${product.currency}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    // Insert the table into the container
+    productsContainer.innerHTML = tableHTML;
+}
+
 
 productsNav.addEventListener('click', async () => {
     heroEl.innerHTML = `
@@ -17,11 +59,10 @@ productsNav.addEventListener('click', async () => {
             </div>
         </div>
     `;
-
-    // Fetch the products and display them
-    const products = await fetchProducts();  // Fetch products data
-    displayProducts(products);               // Display the products in a table
+    
+    await getAllProducts();  // Wait for the products to be fetched and rendered
 });
+
 
 singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
