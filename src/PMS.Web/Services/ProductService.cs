@@ -11,28 +11,77 @@ public class ProductService : IProductService
         _httpClient = httpClient;
     }
 
-    public Task<Product> CreateProduct(Product product)
+    public async Task<Product> CreateProduct(Product product)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/products", product);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<Product>()
+                ?? throw new Exception("Error creating product");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error creating product", ex);
+        }
     }
 
-    public Task DeleteProduct(int id)
+    public async Task DeleteProduct(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/products/{id}");
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error deleting product", ex);
+        }
     }
 
-    public Task<Product> GetProduct(int id)
+    public async Task<Product> GetProduct(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/products/{id}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<Product>()
+                ?? throw new Exception("Error getting product");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error getting product", ex);
+        }
     }
 
-    public Task<IEnumerable<Product>> GetProducts()
+    public async Task<IEnumerable<Product>> GetProducts()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.GetAsync("api/products");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<IEnumerable<Product>>()
+                ?? throw new Exception("Error getting products");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error getting products", ex);
+        }
     }
 
-    public Task UpdateProduct(int id, Product product)
+    public async Task UpdateProduct(int id, Product product)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/products/{id}", product);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error updating product", ex);
+        }
     }
 }
