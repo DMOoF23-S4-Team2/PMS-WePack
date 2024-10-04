@@ -22,18 +22,18 @@ public class ProductServiceTest
     public async Task CreateProduct_ShouldThrowException_WhenProductDtoIsNull()
     {
         // Arrange
-        ProductDto productDto = null;
+        ProductWithoutIdDto productDto = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<NullReferenceException>(() => _productService.CreateProduct(productDto));
+        await Assert.ThrowsAsync<ArgumentException>(() => _productService.CreateProduct(productDto));
     }
 
     [Fact]
     public async Task CreateProduct_ShouldReturnProductDto_WhenProductIsCreated()
     {
         // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
-        var product = new Product { Id = 1, Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
+        var productDto = new ProductWithoutIdDto { Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
+        var product = new Product { Name = "Test Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
         _mockProductRepository.Setup(repo => repo.AddAsync(It.IsAny<Product>())).ReturnsAsync(product);
 
         // Act
@@ -41,7 +41,7 @@ public class ProductServiceTest
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(productDto.Id, result.Id);
+        Assert.Equal(productDto.Sku, result.Sku);
         Assert.Equal(productDto.Name, result.Name);
     }
 
@@ -101,10 +101,10 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        ProductDto productDto = null;
+        ProductWithoutIdDto productDto = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _productService.UpdateProduct(productId, productDto));
+        await Assert.ThrowsAsync<ArgumentException>(() => _productService.UpdateProduct(productId, productDto));
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        var productDto = new ProductDto { Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5};
+        var productDto = new ProductWithoutIdDto {Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5};
         var oldProduct = new Product { Id = productId, Name = "Old Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
         var newProduct = new Product { Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
 
@@ -137,7 +137,7 @@ public class ProductServiceTest
         _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync((Product)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _productService.GetProduct(productId));
+        await Assert.ThrowsAsync<ArgumentException>(() => _productService.GetProduct(productId));
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class ProductServiceTest
         _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync((Product)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _productService.DeleteProduct(productId));
+        await Assert.ThrowsAsync<ArgumentException>(() => _productService.DeleteProduct(productId));
     }
 
 }

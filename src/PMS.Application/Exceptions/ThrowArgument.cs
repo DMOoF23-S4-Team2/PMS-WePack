@@ -1,24 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace PMS.Application.Exceptions;
 
-namespace PMS.Application.Exceptions
+public class ThrowArgument
 {
-    public class ThrowArgument
+    public static void ExceptionIfNull(object argument)
     {
-        public static void NullExceptionIfNull(object argument)
+        if (argument == null)
         {
-            if (argument == null)
-            {
-                throw new ArgumentNullException("Cannot be null", nameof(argument));
-            }
+            throw new ArgumentException("Cannot be null", nameof(argument));
         }
+    }
 
-        public static void ExceptionIfZero(int id)
-        {
-            if (id == 0)
-                throw new ArgumentException("ID cannot be zero.", nameof(id));
-        }
+    public static void ExceptionIfZero(int id)
+    {
+        if (id == 0)
+            throw new ArgumentException("ID cannot be zero.", nameof(id));
     }
 }

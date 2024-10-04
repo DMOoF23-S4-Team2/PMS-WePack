@@ -68,21 +68,21 @@ namespace PMS.Application.Services
         private static Category MappedEntityOf(CategoryDto categoryDto)
         {
             var category = ObjectMapper.Mapper.Map<Category>(categoryDto);
-            ThrowArgument.NullExceptionIfNull(category);
+            ThrowArgument.ExceptionIfNull(category);
             return category;
         }
 
         private static IEnumerable<CategoryDto> MappedDtoOf(IEnumerable<Category> category)
         {
             var categoryDtos = ObjectMapper.Mapper.Map<IEnumerable<CategoryDto>>(category);
-            ThrowArgument.NullExceptionIfNull(categoryDtos);
+            ThrowArgument.ExceptionIfNull(categoryDtos);
             return categoryDtos;
         }
 
         private static CategoryDto MappedDtoOf(Category category)
         {
             var categoryDto = ObjectMapper.Mapper.Map<CategoryDto>(category);
-            ThrowArgument.NullExceptionIfNull(categoryDto);
+            ThrowArgument.ExceptionIfNull(categoryDto);
             return categoryDto;
         }
 
@@ -104,14 +104,14 @@ namespace PMS.Application.Services
         {
             ThrowArgument.ExceptionIfZero(id);
             var category = await _categoryRepository.GetByIdAsync(id);
-            ThrowArgument.NullExceptionIfNull(category);
+            ThrowArgument.ExceptionIfNull(category);
             return category;
         }
 
         private async Task<IEnumerable<Category>> GetAllEntityFromRepository()
         {
             var categories = await _categoryRepository.GetAllAsync();
-            ThrowArgument.NullExceptionIfNull(categories);
+            ThrowArgument.ExceptionIfNull(categories);
             return categories;
         }
 

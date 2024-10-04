@@ -24,13 +24,13 @@ namespace PMS.Application.Services
             _productValidator = new ProductValidator();
         }
 
-        public async Task<ProductDto> CreateProduct(ProductDto productDto)
+        public async Task<ProductWithoutIdDto> CreateProduct(ProductWithoutIdDto productDto)
         {
-            await ValidateIfExist(productDto);
             var product = MappedEntityOf(productDto);
             await ValidateEntity(product);
             var newProduct = await CreateEntityInRepository(product);
-            return MappedDtoOf(newProduct);
+            var newProductDto = ObjectMapper.Mapper.Map<ProductWithoutIdDto>(newProduct);
+            return newProductDto;
         }
 
         public async Task DeleteProduct(int id)
@@ -42,7 +42,8 @@ namespace PMS.Application.Services
         public async Task<ProductDto> GetProduct(int id)
         {
             var product = await GetEntityFromRepositoryWith(id);
-            return MappedDtoOf(product);
+            var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
+            return productDto;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProducts()
@@ -51,7 +52,7 @@ namespace PMS.Application.Services
             return MappedDtoOf(products);
         }
 
-        public async Task UpdateProduct(int id, ProductDto productDto)
+        public async Task UpdateProduct(int id, ProductWithoutIdDto productDto)
         {
             var oldProduct = await GetEntityFromRepositoryWith(id);
             var newProduct = MappedEntityOf(productDto);
@@ -60,32 +61,30 @@ namespace PMS.Application.Services
         }
 
         //!SECTION Private Methods
-        private async Task ValidateIfExist(ProductDto productDto)
-        {
-            ThrowArgument.ExceptionIfZero(productDto.Id);
-            var product = await _productRepository.GetByIdAsync(productDto.Id);
-            if (product != null)
-                throw new ValidationException("Product already exists.");
-        }
-
         private static IEnumerable<ProductDto> MappedDtoOf(IEnumerable<Product> products)
         {
             var productDtos = ObjectMapper.Mapper.Map<IEnumerable<ProductDto>>(products);
-            ThrowArgument.NullExceptionIfNull(productDtos);
+            ThrowArgument.ExceptionIfNull(productDtos);
             return productDtos;
         }
 
-        private static ProductDto MappedDtoOf(Product product)
+        private static Product MappedEntityOf(object productDto)
         {
-            var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
-            ThrowArgument.NullExceptionIfNull(productDto);
-            return productDto;
-        }
+            Product product = null;
 
-        private static Product MappedEntityOf(ProductDto productDto)
-        {
-            var product = ObjectMapper.Mapper.Map<Product>(productDto);
-            ThrowArgument.NullExceptionIfNull(product);
+            if (productDto is Product)
+            {
+                product = ObjectMapper.Mapper.Map<Product>(productDto);
+            }
+            else if (productDto is ProductWithoutIdDto)
+            {
+                product = ObjectMapper.Mapper.Map<Product>(productDto);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid type");
+            }
+            ThrowArgument.ExceptionIfNull(product);
             return product;
         }
 
@@ -105,14 +104,14 @@ namespace PMS.Application.Services
         {
             ThrowArgument.ExceptionIfZero(id);
             var product = await _productRepository.GetByIdAsync(id);
-            ThrowArgument.NullExceptionIfNull(product);
+            ThrowArgument.ExceptionIfNull(product);
             return product;
         }
 
         private async Task<IEnumerable<Product>> GetAllEntitiesFromRepository()
         {
             var products = await _productRepository.GetAllAsync();
-            ThrowArgument.NullExceptionIfNull(products);
+            ThrowArgument.ExceptionIfNull(products);
             return products;
         }
 
