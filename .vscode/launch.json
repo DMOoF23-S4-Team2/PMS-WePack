@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "PMS All",
+            "configurations": ["PMS.Api", "PMS.Web"]
+        }
+    ],
+    "configurations": [
+       
+        {
+            "name": "PMS.Api",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/PMS.API/PMS.API.csproj"
+        },
+        {
+            "name": "PMS.Web",
+            "type": "dotnet",
+            "request": "launch",            
+            "projectPath": "${workspaceFolder}/src/PMS.Web/PMS.Web.csproj",            
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "Now listening on: (http?://\\S+)"
+            }
+        }
+    ]
+}
+ 
