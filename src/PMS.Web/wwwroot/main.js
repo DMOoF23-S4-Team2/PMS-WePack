@@ -3,6 +3,7 @@ const heroEl = document.getElementById('hero-section');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
 
+import { addProduct } from "./Javascript/AddProduct.js";
 // Import the getAllProducts function from getProducts.js
 import { getAllProducts } from "./Javascript/GetProducts.js"; // Make sure the path is correct
 
@@ -24,7 +25,7 @@ productsNav.addEventListener('click', async () => {
 
 singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
-        <form>
+        <form id="add-product-form">
             <div class="form-container">
                 <label for="sku">SKU</label>
                 <input required id="sku" name="sku">
@@ -35,8 +36,8 @@ singleProductNav.addEventListener('click', () => {
                 <label for="name">Name</label>
                 <input required id="name" name="name">
 
-                <label for="">Description</label>
-                <textarea></textarea>
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
 
                 <label for="price">Price</label>
                 <input required id="price" type="number" name="price">
@@ -67,4 +68,32 @@ singleProductNav.addEventListener('click', () => {
             </div>
         </form>
     `;
+
+    const form = document.getElementById("add-product-form")
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+
+        let productData = new FormData(form)
+
+        const Data  = {
+            sku: productData.get('sku'),
+            ean: productData.get('ean'),
+            name: productData.get('name'),
+            description: productData.get('description'),
+            price: productData.get('price'),
+            specialPrice: productData.get('specialPrice'),
+            productType: productData.get('productType'),
+            productGroup: productData.get('productGroup'),
+            currency: productData.get('currency'),
+            material: productData.get('material'),
+            color: productData.get('color')
+        }
+        
+        console.log("Data being sent:", Data);
+
+        addProduct(Data)
+
+    })  
 });
+    
