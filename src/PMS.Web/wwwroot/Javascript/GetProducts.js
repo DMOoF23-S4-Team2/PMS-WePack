@@ -15,29 +15,35 @@ function renderAllProducts() {
 
     // Create the table structure
     const tableHTML = `
-        <table class="products-table">
-            <thead>
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Currency</th>
+                <th>Actions</th> <!-- New header for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            ${products.map(product => `
                 <tr>
-                    <th>Id</th>
-                    <th>SKU</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Currency</th>
+                    <td>${product.id}</td>
+                    <td>${product.sku}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.currency}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                ${products.map(product => `
-                    <tr>
-                        <td>${product.id}</td>
-                        <td>${product.sku}</td>
-                        <td>${product.name}</td>
-                        <td>$${product.price}</td>
-                        <td>${product.currency}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
+            `).join('')}
+        </tbody>
+    </table>
+`;
+
 
     // Insert the table into the container
     productsContainer.innerHTML = tableHTML;

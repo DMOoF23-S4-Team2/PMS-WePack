@@ -1,5 +1,5 @@
 // main.js
-const heroEl = document.getElementById('hero-section');
+const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
 
@@ -89,10 +89,12 @@ singleProductNav.addEventListener('click', () => {
             material: productData.get('material'),
             color: productData.get('color')
         }
-        
+
         console.log("Data being sent:", Data);
 
         addProduct(Data)
+
+        // form.reset()
 
     })  
 });
