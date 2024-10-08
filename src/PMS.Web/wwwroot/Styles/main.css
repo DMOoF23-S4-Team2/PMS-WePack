@@ -41,13 +41,13 @@ header {
 }
 
 #hero-section {
-    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
 }
 
-#hero-container{
-    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
+#hero-container{    
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
     border: 1px solid gray;
-    width: 800px;
+    width: 900px;
     height: 70vh;
     padding: 2em 5em;
     border-radius: 10px;
@@ -107,7 +107,7 @@ section {
     flex-direction: column;
 }
 
-.add-product {
+.add-product-btn {
     padding: .5em 1em;
     cursor: pointer;
     background-color: limegreen;
@@ -115,8 +115,8 @@ section {
     border-radius: 5px;
     border: none;
 }
-.add-product:hover, 
-.add-product:focus {
+.add-product-btn:hover, 
+.add-product-btn:focus {
     background-color: whitesmoke;
     color: limegreen;
 }

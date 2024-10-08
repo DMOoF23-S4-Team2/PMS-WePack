@@ -6,6 +6,9 @@ const singleProductNav = document.getElementById('add-product-nav');
 import { addProduct } from "./Javascript/AddProduct.js";
 // Import the getAllProducts function from getProducts.js
 import { getAllProducts } from "./Javascript/GetProducts.js"; // Make sure the path is correct
+ 
+
+
 
 productsNav.addEventListener('click', async () => {
     heroEl.innerHTML = `
@@ -22,6 +25,7 @@ productsNav.addEventListener('click', async () => {
     
     await getAllProducts();  // Wait for the products to be fetched and rendered
 });
+
 
 singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
@@ -64,7 +68,7 @@ singleProductNav.addEventListener('click', () => {
                 <label for="color">Color</label>
                 <input id="color" name="color">
 
-                <button class="add-product">Add Product</button>
+                <button class="add-product-btn">Add Product</button>
             </div>
         </form>
     `;
@@ -94,7 +98,7 @@ singleProductNav.addEventListener('click', () => {
 
         addProduct(Data)
 
-        // form.reset()
+        form.reset()
 
     })  
 });
