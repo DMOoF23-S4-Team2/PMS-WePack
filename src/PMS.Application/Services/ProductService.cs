@@ -63,10 +63,42 @@ namespace PMS.Application.Services
             await UpdateEntityInRepository(productDto, oldProduct);
         }
 
+        public async Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
+        {
+            var products = productDtos.Select(MappedEntityOf).ToList();
+            foreach (var product in products)
+            {
+                await ValidateEntity(product);
+            }
+            await _productRepository.AddManyAsync(products);
+        }
+
+        public async Task UpdateManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
+        {
+            var products = productDtos.Select(MappedEntityOf).ToList();
+            foreach (var product in products)
+            {
+                await ValidateEntity(product);
+                var existingProduct = await GetEntityFromRepositoryWith(product.Id);
+                ObjectMapper.Mapper.Map(product, existingProduct);
+                await _productRepository.UpdateAsync(existingProduct);
+            }
+        }
+
+        public async Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
+        {
+            var products = productDtos.Select(MappedEntityOf).ToList();
+            foreach (var product in products)
+            {
+                var existingProduct = await GetEntityFromRepositoryWith(product.Id);
+                await _productRepository.DeleteAsync(existingProduct);
+            }
+        }
+
         //!SECTION Private Methods
         private static Product MappedEntityOf(object productDto)
         {
-            Product product = null;
+            Product? product = null;
 
             if (productDto is Product)
             {
@@ -80,6 +112,7 @@ namespace PMS.Application.Services
             {
                 throw new ArgumentException("Invalid type");
             }
+            
             ThrowArgument.ExceptionIfNull(product);
             return product;
         }
