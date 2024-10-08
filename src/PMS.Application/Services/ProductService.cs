@@ -61,7 +61,6 @@ namespace PMS.Application.Services
             await UpdateEntityInRepository(productDto, oldProduct);
         }
 
-        //REVIEW: Needs validation and error handling
         public async Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
             var products = productDtos.Select(MappedEntityOf).ToList();
