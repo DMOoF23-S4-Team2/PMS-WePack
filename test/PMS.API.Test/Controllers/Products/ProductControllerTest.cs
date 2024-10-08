@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
 namespace PMS.API.Test;
@@ -147,5 +148,65 @@ public class ProductControllerTest
 
         // Assert
         Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task AddManyProducts_ReturnsNoContent_WhenProductsAdded()
+    {
+        // Arrange
+        var productDtos = new List<ProductWithoutIdDto>
+        {
+            new ProductWithoutIdDto { Name = "Product 1" },
+            new ProductWithoutIdDto { Name = "Product 2" }
+        };
+
+        _mockProductService.Setup(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()))
+                            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _controller.AddManyProducts(productDtos);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
+    public async Task DeleteManyProducts_ReturnsNoContent_WhenProductsDeleted()
+    {
+        // Arrange
+        var productDtos = new List<ProductDto>
+        {
+            new ProductDto { Id = 1, Name = "Product 1" },
+            new ProductDto { Id = 2, Name = "Product 2" }
+        };
+
+        _mockProductService.Setup(service => service.DeleteManyProducts(It.IsAny<IEnumerable<ProductDto>>()))
+                            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _controller.DeleteManyProducts(productDtos);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
+    public async Task UpdateManyProducts_ReturnsNoContent_WhenProductsUpdated()
+    {
+        // Arrange
+        var productDtos = new List<ProductDto>
+        {
+            new ProductDto { Id = 1, Name = "Updated Product 1" },
+            new ProductDto { Id = 2, Name = "Updated Product 2" }
+        };
+
+        _mockProductService.Setup(service => service.UpdateManyProducts(It.IsAny<IEnumerable<ProductDto>>()))
+                            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _controller.UpdateManyProducts(productDtos);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
     }
 }
