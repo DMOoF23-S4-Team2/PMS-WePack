@@ -32,6 +32,20 @@ namespace PMS.Core.Entities
         [MaxLength(255)]
         public string ProductGroup {get; set;} = string.Empty;
         
+        [MaxLength(255)]
+        public string Supplier { get; set; } = string.Empty;
+        
+        [MaxLength(255)]
+        public string SupplierSku { get; set; } = string.Empty;
+                
+        public int TemplateNo { get; set; }
+                
+        public int List { get; set; }
+                
+        public float Weight { get; set; }
+                
+        public float Cost { get; set; }
+
         [MaxLength(10)]
         public string Currency {get; set;} = string.Empty;
         

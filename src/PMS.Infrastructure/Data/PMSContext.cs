@@ -39,9 +39,15 @@ namespace PMS.Infrastructure.Data
             builder.Property(p => p.Material).HasMaxLength(255);
             builder.Property(p => p.ProductType).HasMaxLength(255);
             builder.Property(p => p.ProductGroup).HasMaxLength(255);
+            builder.Property(p => p.Supplier).HasMaxLength(255);
+            builder.Property(p => p.SupplierSku).HasMaxLength(255);
+            builder.Property(p => p.TemplateNo);
+            builder.Property(p => p.List);
+            builder.Property(p => p.Weight);
+            builder.Property(p => p.Cost);
             builder.Property(p => p.Price).IsRequired();
             builder.Property(p => p.SpecialPrice);
-            builder.Property(p => p.Currency).HasMaxLength(10);
+            builder.Property(p => p.Currency).HasMaxLength(10);    
         }
 
         private void ConfigureCategory(EntityTypeBuilder<Category> builder)
@@ -71,7 +77,23 @@ namespace PMS.Infrastructure.Data
                 new Product { Id = 1, Name = "Laptop", Description = "A high-performance laptop" },
                 new Product { Id = 2, Name = "Smartphone", Description = "A latest model smartphone" },
                 new Product { Id = 3, Name = "Novel", Description = "A best-selling novel" },
-                new Product { Id = 4, Sku = "LC01-76-1038-1", Ean = "EAN090909", Name = "iPhone 12 / 12 Pro cover - Black", Description = "A black iPhone 12 / 12 Pro cover", Color = "Black", Material = "Silicone / TPU", ProductType = "Cover", ProductGroup = "Smartphone", Price = (float)17.00m, SpecialPrice = (float)12.95m, Currency = "EUR" }
+                new Product { 
+                    Id = 4,
+                    Sku = "LC01-76-1038-1",
+                    Ean = "EAN090909",
+                    Name = "iPhone 12 / 12 Pro cover - Black",
+                    Description = "A black iPhone 12 / 12 Pro cover",
+                    Color = "Black",
+                    Material = "Silicone / TPU",
+                    ProductType = "Cover",
+                    ProductGroup = "Smartphone",
+                    Supplier = "TVC",
+                    SupplierSku = "101123911A",
+                    TemplateNo = 11,
+                    List = 447,
+                    Weight = (float)0.026m,
+                    Cost  = (float)5.00m,
+                    Price = (float)17.00m, SpecialPrice = (float)12.95m, Currency = "EUR"}
             );
 
                 modelBuilder.Entity("CategoryProduct").HasData(
