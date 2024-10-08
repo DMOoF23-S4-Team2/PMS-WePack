@@ -6,8 +6,59 @@ const singleProductNav = document.getElementById('add-product-nav');
 import { addProduct } from "./Javascript/AddProduct.js";
 // Import the getAllProducts function from getProducts.js
 import { getAllProducts } from "./Javascript/GetProducts.js"; // Make sure the path is correct
- 
+import { deleteProduct } from "./Javascript/DeleteProduct.js"; // Make sure the path is correct
 
+
+
+function renderAllProducts(products) {
+    const productsContainer = document.querySelector(".products-container");  // Target the products container
+    productsContainer.innerHTML = "";  // Clear the container before rendering new products
+
+    // Create the table structure
+    const tableHTML = `
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Currency</th>
+                <th>Actions</th> <!-- New header for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            ${products.map(product => `
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.sku}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.currency}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+`;
+
+
+    // Insert the table into the container
+    productsContainer.innerHTML = tableHTML;
+
+    // Attach event listeners for delete buttons
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', async (e) => {
+            await deleteProduct(e); // Call the deleteProduct function
+            const updatedProducts = await getAllProducts(); // Refresh products after deletion
+            renderAllProducts(updatedProducts); // Re-render the updated product list
+        });
+    });
+}
 
 
 productsNav.addEventListener('click', async () => {
@@ -23,7 +74,8 @@ productsNav.addEventListener('click', async () => {
         </div>
     `;
     
-    await getAllProducts();  // Wait for the products to be fetched and rendered
+    const products = await getAllProducts();  // Wait for the products to be fetched
+    renderAllProducts(products);  // Call renderAllProducts after fetching products
 });
 
 
