@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Exceptions;
@@ -63,36 +59,23 @@ namespace PMS.Application.Services
             await UpdateEntityInRepository(productDto, oldProduct);
         }
 
+        //REVIEW: Needs validation and error handling
         public async Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
             var products = productDtos.Select(MappedEntityOf).ToList();
-            foreach (var product in products)
-            {
-                await ValidateEntity(product);
-            }
             await _productRepository.AddManyAsync(products);
         }
 
-        public async Task UpdateManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
+        public async Task UpdateManyProducts(IEnumerable<ProductDto> productDtos)
         {
-            var products = productDtos.Select(MappedEntityOf).ToList();
-            foreach (var product in products)
-            {
-                await ValidateEntity(product);
-                var existingProduct = await GetEntityFromRepositoryWith(product.Id);
-                ObjectMapper.Mapper.Map(product, existingProduct);
-                await _productRepository.UpdateAsync(existingProduct);
-            }
+            var products = ObjectMapper.Mapper.Map<IEnumerable<Product>>(productDtos);
+            await _productRepository.UpdateManyAsync(products);
         }
 
-        public async Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
+        public async Task DeleteManyProducts(IEnumerable<ProductDto> productDtos)
         {
-            var products = productDtos.Select(MappedEntityOf).ToList();
-            foreach (var product in products)
-            {
-                var existingProduct = await GetEntityFromRepositoryWith(product.Id);
-                await _productRepository.DeleteAsync(existingProduct);
-            }
+            var products = ObjectMapper.Mapper.Map<IEnumerable<Product>>(productDtos);
+            await _productRepository.DeleteManyAsync(products);
         }
 
         //!SECTION Private Methods
