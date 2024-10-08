@@ -1,3 +1,5 @@
+using System.Net.WebSockets;
+using AutoMapper.Execution;
 using FluentValidation;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Exceptions;
@@ -63,12 +65,14 @@ namespace PMS.Application.Services
         public async Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
             var products = productDtos.Select(MappedEntityOf).ToList();
+            await ValidateEntity(products);
             await _productRepository.AddManyAsync(products);
         }
 
         public async Task UpdateManyProducts(IEnumerable<ProductDto> productDtos)
         {
             var products = ObjectMapper.Mapper.Map<IEnumerable<Product>>(productDtos);
+            await ValidateEntity(products);
             await _productRepository.UpdateManyAsync(products);
         }
 
@@ -81,23 +85,14 @@ namespace PMS.Application.Services
         //!SECTION Private Methods
         private static Product MappedEntityOf(object productDto)
         {
-            Product? product = null;
+            if (productDto is ProductWithoutIdDto or Product)
+            {
+                var product = ObjectMapper.Mapper.Map<Product>(productDto);
+                ThrowArgument.ExceptionIfNull(product);
+                return product;
+            }
 
-            if (productDto is Product)
-            {
-                product = ObjectMapper.Mapper.Map<Product>(productDto);
-            }
-            else if (productDto is ProductWithoutIdDto)
-            {
-                product = ObjectMapper.Mapper.Map<Product>(productDto);
-            }
-            else
-            {
-                throw new ArgumentException("Invalid type");
-            }
-            
-            ThrowArgument.ExceptionIfNull(product);
-            return product;
+            throw new ArgumentException($"Invalid type");
         }
 
         private async Task ValidateEntity(Product product)
@@ -105,6 +100,19 @@ namespace PMS.Application.Services
             var validationResult = await _productValidator.ValidateAsync(product);
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
+        }
+        private async Task ValidateEntity(IEnumerable<Product> products)
+        {
+            var validationTasks = products.Select(async product =>
+            {
+                var validationResult = await _productValidator.ValidateAsync(product);
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
+                }
+            });
+
+            await Task.WhenAll(validationTasks);
         }
 
         private async Task<Product> CreateEntityInRepository(Product product)
