@@ -1,3 +1,4 @@
+using AutoMapper;
 using Moq;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Interfaces;
@@ -11,11 +12,14 @@ public class ProductServiceTest
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly IProductService _productService;
+    private readonly Mock<IMapper> _mockMapper = new Mock<IMapper>();
 
     public ProductServiceTest()
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _productService = new ProductService(_mockProductRepository.Object);
+        _mockMapper = new Mock<IMapper>();
+
     }
 
     [Fact]
@@ -149,6 +153,83 @@ public class ProductServiceTest
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => _productService.DeleteProduct(productId));
+    }
+
+    [Fact]
+    public async Task AddManyProducts_ShouldAddMultipleProducts()
+    {
+        // Arrange
+        var productsDto = new List<ProductWithoutIdDto>
+    {
+        new ProductWithoutIdDto { Name = "Product 1", Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+        new ProductWithoutIdDto { Name = "Product 2", Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+    };
+        var products = productsDto.Select(dto => new Product { Name = dto.Name, Sku = dto.Sku, Price = dto.Price, SpecialPrice = dto.SpecialPrice }).ToList();
+
+        // Mock the mapping from ProductWithoutIdDto to Product
+        _mockMapper.Setup(m => m.Map<List<Product>>(productsDto)).Returns(products);
+
+        // Mock the repository method
+        _mockProductRepository.Setup(repo => repo.AddManyAsync(It.IsAny<IEnumerable<Product>>())).Returns(Task.CompletedTask);
+
+        // Act
+        await _productService.AddManyProducts(productsDto);
+
+        // Assert
+        _mockProductRepository.Verify(repo => repo.AddManyAsync(It.Is<IEnumerable<Product>>(p => p.Count() == productsDto.Count)), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteManyProducts_ShouldCallRepositoryDeleteManyMethod()
+    {
+        // Arrange
+        var products = new List<Product>
+    {
+        new Product { Id = 1, Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+        new Product { Id = 2, Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+    };
+        var productsDto = new List<ProductDto>
+    {
+        new ProductDto { Id = 1, Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+        new ProductDto { Id = 2, Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+    };
+
+        // Mock the mapping from ProductDto to Product
+        _mockMapper.Setup(m => m.Map<List<Product>>(productsDto)).Returns(products);
+
+        // Mock the repository method
+        _mockProductRepository.Setup(repo => repo.DeleteManyAsync(It.IsAny<IEnumerable<Product>>())).Returns(Task.CompletedTask);
+
+        // Act
+        await _productService.DeleteManyProducts(productsDto);
+
+        // Assert
+        _mockProductRepository.Verify(repo => repo.DeleteManyAsync(It.Is<IEnumerable<Product>>(p => p.Count() == productsDto.Count)), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateManyProducts_ShouldUpdateMultipleProducts()
+    {
+        // Arrange
+        var productsDto = new List<ProductDto>
+        {
+            new ProductDto { Id = 1, Name = "Updated Product 1", Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+            new ProductDto { Id = 2, Name = "Updated Product 2", Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+        };
+        var oldProducts = new List<Product>
+        {
+            new Product { Id = 1, Name = "Old Product 1", Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+            new Product { Id = 2, Name = "Old Product 2", Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+        };
+        var newProducts = productsDto.Select(dto => new Product { Id = dto.Id, Name = dto.Name, Sku = dto.Sku, Price = dto.Price, SpecialPrice = dto.SpecialPrice }).ToList();
+
+        _mockProductRepository.Setup(repo => repo.UpdateManyAsync(It.IsAny<IEnumerable<Product>>())).Returns(Task.CompletedTask);
+
+        // Act
+        await _productService.UpdateManyProducts(productsDto);
+
+        // Assert
+        _mockProductRepository.Verify(repo => repo.UpdateManyAsync(It.Is<IEnumerable<Product>>(p => p.ElementAt(0).Name == newProducts[0].Name && p.ElementAt(1).Name == newProducts[1].Name)), Times.Once);
     }
 
 }
