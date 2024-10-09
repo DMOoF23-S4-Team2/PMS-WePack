@@ -46,11 +46,29 @@ header {
 
 #hero-container{    
     background: linear-gradient(to top, #232526 30%, #414345 100%);
+    display: flex;
+    align-items: center;
     border: 1px solid gray;
     width: 900px;
     height: 70vh;
     padding: 2em 5em;
     border-radius: 10px;
+}
+
+.message-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: .5em;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 5px;
+    padding: 1em;
+    font-weight: 700;
+    height: 50px;
+    width: 250px;
+    border: 1 solid black;
 }
 
 nav {
@@ -93,7 +111,7 @@ section {
     background-color: gray;
 }
 
-/* PRODUCTS */
+/* ALL PRODUCTS */
 
 .products-section{
     display: flex;
@@ -107,18 +125,10 @@ section {
     flex-direction: column;
 }
 
-.add-product-btn {
-    padding: .5em 1em;
-    cursor: pointer;
-    background-color: limegreen;
-    color: white;
-    border-radius: 5px;
-    border: none;
-}
-.add-product-btn:hover, 
-.add-product-btn:focus {
-    background-color: whitesmoke;
-    color: limegreen;
+.actions-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .search-container {
@@ -139,13 +149,12 @@ section {
 
 }
 
-/* FORM */
-
+/* ADD PRODUCT FORM */
 
 form {
     min-width: 300px;
     display: flex;
-    gap: 5em;
+    gap: 3em;
 }
 .form-container {
     display: flex;
@@ -153,6 +162,40 @@ form {
     gap: 1em;
     width: 100%;
     max-width: 300px;
+}
+
+.units-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+}
+.units-container label {
+    display: block;
+    margin-bottom: 1em;
+}
+.units-container input {
+    width: 100%;
+}
+
+textarea {
+    resize: none;
+    height: 93px;
+}
+
+.add-product-btn {
+    padding: .5em 1em;
+    cursor: pointer;
+    font-weight: 700;
+    background-color: green;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    margin-top: auto;
+}   
+.add-product-btn:hover, 
+.add-product-btn:focus {
+    background-color: limegreen;
 }
 
 /* TABLE */
@@ -167,10 +210,10 @@ th, td {
     padding: .3em;
   }
 
-  /* BUTTON ACTION */   
+  /* ACTION BUTTONS */   
 
   .edit-btn, .delete-btn {
-    padding: .5em 1em;
+    padding: .3em 1em;
     margin: 0 .3em;
     cursor: pointer;
     color: white;
@@ -179,9 +222,17 @@ th, td {
 }
 
 .edit-btn {
-    background-color: #4CAF50; /* Green */
+    background-color: green; /* Green */
+}
+.edit-btn:hover,
+.edit-btn:focus {
+    background-color: limegreen;
 }
 
 .delete-btn {
     background-color: #f44336; /* Red */
+}
+.delete-btn:hover,
+.delete-btn:focus {
+    background-color: #b71c1c;
 }
