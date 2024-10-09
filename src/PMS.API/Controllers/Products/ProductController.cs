@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Interfaces;
+using PMS.Core.Entities;
 
 namespace PMS.API.Controllers;
 
@@ -25,6 +26,21 @@ public class ProductController : ControllerBase{
         } 
     }
 
+    // POST: Add multiple products
+    [HttpPost("addMany")]
+    public async Task<IActionResult> AddManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> productDtos)
+    {
+        try
+        {
+            await productService.AddManyProducts(productDtos);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
+    }
+
     // DELETE: Delete Product from ID
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id) {
@@ -40,6 +56,21 @@ public class ProductController : ControllerBase{
             return NotFound();
         }
         return NoContent();
+    }
+
+    // DELETE: Delete multiple products by IDs
+    [HttpDelete("deleteMany")]
+    public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductDto> dtoList)
+    {
+        try
+        {
+            await productService.DeleteManyProducts(dtoList);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
     }
 
     // GET: Single Product from ID
@@ -95,5 +126,20 @@ public class ProductController : ControllerBase{
             // Catch any other exceptions and return a 500 error
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-    }       
+    }  
+
+        // PUT: Update multiple products
+        [HttpPut("updateMany")]
+        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductDto> productDtos)
+        {
+            try
+            {
+                await productService.UpdateManyProducts(productDtos);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
 }

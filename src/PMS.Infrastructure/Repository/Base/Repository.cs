@@ -80,5 +80,43 @@ namespace PMS.Infrastructure.Repository.Base
             }
         }
 
+        public async Task AddManyAsync(IEnumerable<T> entities)
+        {
+            try
+            {
+            await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            throw new InfrastructureException("Error adding entities");
+            }
+        }
+
+        public async Task UpdateManyAsync(IEnumerable<T> entities)
+        {
+            try
+            {
+            _dbContext.Set<T>().UpdateRange(entities);
+            await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            throw new InfrastructureException("Error updating entities");
+            }
+        }
+
+        public async Task DeleteManyAsync(IEnumerable<T> entities)
+        {
+            try
+            {
+            _dbContext.Set<T>().RemoveRange(entities);
+            await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            throw new InfrastructureException("Error deleting entities");
+            }
+        }
     }
 }
