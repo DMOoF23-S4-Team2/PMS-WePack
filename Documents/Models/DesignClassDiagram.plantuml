@@ -4,7 +4,7 @@ package src <<Folder>> {
     package Core <<Folder>> {
         package Repositories <<Folder>> {
             package Base <<Folder>> {
-                interface IRepository<T> {
+                interface IRepository {
                     + GetAllAsync(): Task<IReadOnlyList<T>>
                     + GetByIdAsync(int id): Task<T>
                     + AddAsync(T entity): Task<T>
@@ -21,6 +21,7 @@ package src <<Folder>> {
             IRepository <|-- ICategoryRepository
             IRepository <|-- IProductRepository
         }
+        
         package Entities <<Folder>> {
             
             class User {
@@ -73,25 +74,62 @@ package src <<Folder>> {
                 + Id: int
                 + Name: string
             }
-
-            ' class Localization {
-            '     + Id: int
-            '     + Language: string
-            ' }
         }
     }
+
+    Package Infrastructure <<Folder>> {
+        package Data <<Folder>> {
+            class PMSContext{
+                + Products: DbSet<Product>
+                + Categories: DbSet<Category>
+            }
+        }
+        package Migrations <<Folder>> {
+            class PMSContextModelSnapshot {}
+        }
+
+        package Repository <<Folder>> {
+            package Base <<Folder>> {
+                class Repository {
+                    + GetAllAsync(): Task<IReadOnlyList<T>>
+                    + GetByIdAsync(int id): Task<T>
+                    + AddAsync(T entity): Task<T>
+                    + UpdateAsync(T entity): Task
+                    + DeleteAsync(T entity): Task
+                    + AddManyAsync(IEnumerable<T> entities): Task
+                    + UpdateManyAsync(IEnumerable<T> entities): Task
+                    + DeleteManyAsync(IEnumerable<T> entities): Task
+                }
+            }
+            class CategoryRepository {}
+            class ProductRepository {}
+
+            Base.Repository <|-- CategoryRepository
+            Base.Repository <|-- ProductRepository
+        }
+        
+    }
+
     package Application <<Folder>> {
         package Controllers <<Folder>> {
             class Controller
+        }
+    }
+
+    package API <<Folder>> {
+        package Controllers <<Folder>> {
+            class ProductController
+            class CategoryController
         }
     }
 }
 
 Product "1..*" -- "1..*" Category
 Product "0..*" -- "0..*" Website
-' Website "0..1" -- "0..1" Localization
 Website "0..*" -- "0..*" Platform
 
-
+Application <..down- Core : depends on
+Infrastructure <..down- Core : depends on
+API <..down- Application : depends on
 
 @enduml
