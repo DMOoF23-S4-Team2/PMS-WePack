@@ -5,6 +5,7 @@ const singleProductNav = document.getElementById('add-product-nav');
 import { addProduct } from "./Javascript/AddProduct.js";
 import { getAllProducts } from "./Javascript/GetProducts.js"; 
 import { deleteProduct, showDeleteModal } from "./Javascript/DeleteProduct.js"; 
+import { updateProduct, showUpdateModal } from "./Javascript/UpdateProduct.js"; 
 
 
 
@@ -53,6 +54,16 @@ export function renderAllProducts(products) {
         button.addEventListener('click', (e) => {
             const productId = e.target.dataset.id;  // Get the product ID from the button
             showDeleteModal(productId, deleteProduct);  // Show the delete modal and pass the product ID
+            
+        });
+    });
+
+    // Attach event listeners for edit buttons
+    const editButtons = document.querySelectorAll(".edit-btn");
+    editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const productId = e.target.dataset.id;  // Get the product ID from the button
+            showUpdateModal(productId, updateProduct);  // Show the edit modal and pass the product ID
             
         });
     });
