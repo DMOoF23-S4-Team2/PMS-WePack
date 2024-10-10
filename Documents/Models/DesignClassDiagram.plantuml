@@ -1,62 +1,89 @@
 @startuml Design Class Diagram (DCD)
 
-package Core <<Folder>> {
+package src <<Folder>> {
+    package Core <<Folder>> {
+        package Repositories <<Folder>> {
+            package Base <<Folder>> {
+                interface IRepository<T> {
+                    + GetAllAsync(): Task<IReadOnlyList<T>>
+                    + GetByIdAsync(int id): Task<T>
+                    + AddAsync(T entity): Task<T>
+                    + UpdateAsync(T entity): Task
+                    + DeleteAsync(T entity): Task
+                    + AddManyAsync(IEnumerable<T> entities): Task
+                    + UpdateManyAsync(IEnumerable<T> entities): Task
+                    + DeleteManyAsync(IEnumerable<T> entities): Task
+                }
+            }
+            interface ICategoryRepository {}
+            interface IProductRepository {}
 
-    package Entities <<Folder>> {
-        class User {
-            + Id: string
-            + UserName: string
-            + Email: string
-            + Password: string
-            + Role: string        
+            IRepository <|-- ICategoryRepository
+            IRepository <|-- IProductRepository
         }
+        package Entities <<Folder>> {
+            
+            class User {
+                + Id: string
+                + UserName: string
+                + Email: string
+                + Password: string
+                + Role: string        
+            }
 
-        ' REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
-        class Product {
-            + Id: int
-            + Sku: string
-            + Ean: string
-            + Name: string
-            + Description: string
-            + Color: string
-            + Material: string
-            + ProductType: string
-            + ProductGroup: string
-            + Price: float
-            + SpecialPrice: float     
-            + Currency: string
-            + Category: Array<Category>
+            ' REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
+            class Product {
+                + Id: int
+                + Sku: string
+                + Ean: string
+                + Name: string
+                + Description: string
+                + Color: string
+                + Material: string
+                + ProductType: string
+                + ProductGroup: string
+                + Price: float
+                + SpecialPrice: float     
+                + Currency: string
+                + Supplier: string
+                + SupplierSku: string
+                + TemplateNo: int
+                + List: int
+                + Weight: float
+                + Cost: float
+                + Category: Array<Category>
+            }
+
+            class Category {
+                + Id: int
+                + Name: string
+                + Description: string
+                + BottomDescription : string
+                + Products: Array<Product>
+            }
+
+            class Website {
+                + Id: int
+                + Domain: string
+                + Currency: string
+                + Language : string
+            }
+
+            class Platform {
+                + Id: int
+                + Name: string
+            }
+
+            ' class Localization {
+            '     + Id: int
+            '     + Language: string
+            ' }
         }
-
-        class Category {
-            + Id: int
-            + Name: string
-            + Description: string
-            + BottomDescription : string
-            + Products: Array<Product>
-        }
-
-        class Website {
-            + Id: int
-            + Domain: string
-            + Currency: string
-            + Language : string
-        }
-
-        class Platform {
-            + Id: int
-            + Name: string
-        }
-
-        ' class Localization {
-        '     + Id: int
-        '     + Language: string
-        ' }
     }
-}
-package Application <<Folder>> {
-    package Controllers <<Folder>> {
-        class Controller
+    package Application <<Folder>> {
+        package Controllers <<Folder>> {
+            class Controller
+        }
     }
 }
 
