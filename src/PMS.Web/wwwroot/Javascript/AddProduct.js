@@ -28,7 +28,7 @@ export async function addProduct(productData) {
     }
 }
 
-function showMessage(message, isSuccess) {
+export function showMessage(message, isSuccess) {
 
     const messageContainer = document.createElement('div')
     messageContainer.classList.add('message-container')
@@ -39,7 +39,7 @@ function showMessage(message, isSuccess) {
 
     // Create the <i> element for the icon related to the message
     const icon = document.createElement('i');
-    icon.classList.add('fa-solid');  // FontAwesome base class
+    icon.classList.add('fa-solid');  
 
     icon.classList.add(isSuccess ? 'fa-circle-check' : 'fa-circle-xmark');
 
@@ -54,7 +54,7 @@ function showMessage(message, isSuccess) {
 
     setTimeout(() => {
         messageContainer.remove()
-    }, 7000)
+    }, 5000)
     
 
 }

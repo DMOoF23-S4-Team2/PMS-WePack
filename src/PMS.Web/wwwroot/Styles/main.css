@@ -67,7 +67,7 @@ header {
     padding: 1em;
     font-weight: 700;
     height: 50px;
-    width: 250px;
+    width: 270px;
     border: 1 solid black;
 }
 
@@ -109,44 +109,6 @@ section {
 .nav-container:hover, 
 .nav-container:focus {
     background-color: gray;
-}
-
-/* ALL PRODUCTS */
-
-.products-section{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-.products-container {
-    height: 60vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.actions-container {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.search-container {
-    position: relative;
-}
-
-.search-container i {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 1em;
-    color: #ccc;
-}
-
-.search-product {
-    width: 100%;
-    padding: 1em 0 1em 3em;
-
 }
 
 /* ADD PRODUCT FORM */
@@ -198,6 +160,68 @@ textarea {
     background-color: limegreen;
 }
 
+/* ALL PRODUCTS */
+
+.products-section{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.products-container {
+    height: 60vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-container i {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1em;
+    color: #ccc;
+}
+
+.search-product {
+    width: 100%;
+    padding: 1em 0 1em 3em;
+}
+
+.delete-modal {
+    text-align: center;
+    border: 1px solid white;
+    gap: 1em;
+    padding: 1em;
+    background-color: #232526;
+    color: white;
+    border-radius: 5px;
+    width: 400px;
+    height: 100px;
+    position: fixed;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+}
+.delete-modal button {
+    margin-top: 1em;
+    width: 40%;
+    padding: .3em 0;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
 /* TABLE */
 
 .products-table {
@@ -210,7 +234,7 @@ th, td {
     padding: .3em;
   }
 
-  /* ACTION BUTTONS */   
+/* ACTION BUTTONS */   
 
   .edit-btn, .delete-btn {
     padding: .3em 1em;

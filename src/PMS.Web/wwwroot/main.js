@@ -53,9 +53,40 @@ function renderAllProducts(products) {
     const deleteButtons = document.querySelectorAll(".delete-btn");
     deleteButtons.forEach(button => {
         button.addEventListener('click', async (e) => {
-            await deleteProduct(e); // Call the deleteProduct function
-            const updatedProducts = await getAllProducts(); // Refresh products after deletion
-            renderAllProducts(updatedProducts); // Re-render the updated product list
+    
+            // Create the modal container
+            const deleteModal = document.createElement('div');
+            deleteModal.classList.add('delete-modal');
+            deleteModal.textContent = `Are you sure you want to delete this product?`;
+    
+            // Create Yes and No buttons
+            const yesBtn = document.createElement('button');
+            yesBtn.classList.add('yes-delete-btn')
+            yesBtn.textContent = 'Yes';
+    
+            const noBtn = document.createElement('button');
+            noBtn.classList.add('no-delete-btn')
+            noBtn.textContent = 'No';
+    
+            // Append buttons to modal
+            deleteModal.appendChild(yesBtn);
+            deleteModal.appendChild(noBtn);
+    
+            // Append the modal to the document body (or wherever appropriate)
+            heroEl.appendChild(deleteModal);
+    
+            // Event listener for the "Yes" button
+            yesBtn.addEventListener('click', async () => {
+                await deleteProduct(e); 
+                const updatedProducts = await getAllProducts(); // Refresh products after deletion
+                renderAllProducts(updatedProducts); // Re-render the updated product list
+                deleteModal.remove(); 
+            });
+    
+            // Event listener for the "No" button
+            noBtn.addEventListener('click', () => {
+                deleteModal.remove(); 
+            });
         });
     });
 }
@@ -106,7 +137,7 @@ singleProductNav.addEventListener('click', () => {
                         <input required id="price" type="number" name="price">
                     </div>
                     <div>
-                        <label for="specialPrice">Special price</label>
+                        <label for="specialPrice">Special Price</label>
                         <input id="specialPrice" type="number" name="specialPrice">
                     </div>    
                 </div>                 
