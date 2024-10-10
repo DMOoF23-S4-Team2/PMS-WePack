@@ -1,70 +1,189 @@
 @startuml Design Class Diagram (DCD)
 
-package Core <<Folder>> {
+package src <<Folder>> {
+    package Core <<Folder>> {
+        package Repositories <<Folder>> {
+            package Base <<Folder>> {
+                interface IRepository {
+                    + GetAllAsync(): Task<IReadOnlyList<T>>
+                    + GetByIdAsync(int id): Task<T>
+                    + AddAsync(T entity): Task<T>
+                    + UpdateAsync(T entity): Task
+                    + DeleteAsync(T entity): Task
+                    + AddManyAsync(IEnumerable<T> entities): Task
+                    + UpdateManyAsync(IEnumerable<T> entities): Task
+                    + DeleteManyAsync(IEnumerable<T> entities): Task
+                }
+            }
+            interface ICategoryRepository {}
+            interface IProductRepository {}
 
-    package Entities <<Folder>> {
-        class User {
-            + Id: string
-            + UserName: string
-            + Email: string
-            + Password: string
-            + Role: string        
+            IRepository <|-- ICategoryRepository
+            IRepository <|-- IProductRepository
+        }
+        
+        package Entities <<Folder>> {
+            
+            class User {
+                + Id: string
+                + UserName: string
+                + Email: string
+                + Password: string
+                + Role: string        
+            }
+
+            ' REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
+            class Product {
+                + Id: int
+                + Sku: string
+                + Ean: string
+                + Name: string
+                + Description: string
+                + Color: string
+                + Material: string
+                + ProductType: string
+                + ProductGroup: string
+                + Price: float
+                + SpecialPrice: float     
+                + Currency: string
+                + Supplier: string
+                + SupplierSku: string
+                + TemplateNo: int
+                + List: int
+                + Weight: float
+                + Cost: float
+                + Category: Array<Category>
+            }
+
+            class Category {
+                + Id: int
+                + Name: string
+                + Description: string
+                + BottomDescription : string
+                + Products: Array<Product>
+            }
+
+            class Website {
+                + Id: int
+                + Domain: string
+                + Currency: string
+                + Language : string
+            }
+
+            class Platform {
+                + Id: int
+                + Name: string
+            }
+
+            Product "1..*" -- "1..*" Category
+            Product "0..*" -- "0..*" Website
+            Website "0..*" -- "0..*" Platform
+        }
+    }
+
+    Package Infrastructure <<Folder>> {
+        package Data <<Folder>> {
+            class PMSContext{
+                + Products: DbSet<Product>
+                + Categories: DbSet<Category>
+            }
+        }
+        package Migrations <<Folder>> {
+            class PMSContextModelSnapshot {}
         }
 
-        ' REVIEW - Har tilføjet Currency og ændret navigation property til Arry<Category>
-        class Product {
-            + Id: int
-            + Sku: string
-            + Ean: string
-            + Name: string
-            + Description: string
-            + Color: string
-            + Material: string
-            + ProductType: string
-            + ProductGroup: string
-            + Price: float
-            + SpecialPrice: float     
-            + Currency: string
-            + Category: Array<Category>
+        package Repository <<Folder>> {
+            package Base <<Folder>> {
+                class Repository {
+                    + GetAllAsync(): Task<IReadOnlyList<T>>
+                    + GetByIdAsync(int id): Task<T>
+                    + AddAsync(T entity): Task<T>
+                    + UpdateAsync(T entity): Task
+                    + DeleteAsync(T entity): Task
+                    + AddManyAsync(IEnumerable<T> entities): Task
+                    + UpdateManyAsync(IEnumerable<T> entities): Task
+                    + DeleteManyAsync(IEnumerable<T> entities): Task
+                }
+            }
+            class CategoryRepository {
+                + CategoryRepository(PMSContext context)
+            }
+            class ProductRepository {
+                + ProductRepository(PMSContext context)
+            }
+
+            Base.Repository <|-- CategoryRepository
+            Base.Repository <|-- ProductRepository
+        }
+        
+    }
+
+    package Application <<Folder>> {
+
+        package DTOs <<Folder>> {
+            package Category <<Folder>> {
+                class CategoryDto
+                class CategoryWithoutIdDto
+            }
+            package Product <<Folder>> {
+                class ProductDto
+                class ProductWithoutIdDto
+            }
         }
 
-        class Category {
-            + Id: int
-            + Name: string
-            + Description: string
-            + BottomDescription : string
-            + Products: Array<Product>
+        package Interfaces <<Folder>> {
+            interface ICategoryService {
+                + GetCategories(): Task<IEnumerable<CategoryDto>>
+                + GetCategory(int id): Task<CategoryDto>
+                + CreateCategory(CategoryWithoutIdDto categoryDto): Task<CategoryWithoutIdDto>
+                + UpdateCategory(int id, CategoryWithoutIdDto categoryDto): Task
+                + DeleteCategory(int id): Task
+            }
+            interface IProductService {
+                + GetProducts(): Task<IEnumerable<ProductDto>>
+                + GetProduct(int id): Task<ProductDto>
+                + CreateProduct(ProductWithoutIdDto productDto): Task<ProductWithoutIdDto>
+                + UpdateProduct(int id, ProductWithoutIdDto productDto): Task
+                + DeleteProduct(int id): Task
+                + AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos): Task
+                + UpdateManyProducts(IEnumerable<ProductDto> productDtos): Task
+                + DeleteManyProducts(IEnumerable<ProductDto> productDtos): Task
+            }
         }
 
-        class Website {
-            + Id: int
-            + Domain: string
-            + Currency: string
-            + Language : string
+        package Mapper <<Folder>> {
+            class DtoMapper
+            class ObjectMapper
         }
 
-        class Platform {
-            + Id: int
-            + Name: string
+        package Services <<Folder>> {
+            class CategoryService {
+                + CategoryService(ICategoryRepository categoryRepository)
+            }
+            class ProductService {
+                + ProductService(IProductRepository productRepository)
+            }
         }
 
-        ' class Localization {
-        '     + Id: int
-        '     + Language: string
-        ' }
+        package Validators <<Folder>> {
+            class CategoryValidator
+            class ProductValidator
+        }
+
+        Interfaces.ICategoryService <|-- Services.CategoryService
+        Interfaces.IProductService <|-- Services.ProductService
+    }
+
+    package API <<Folder>> {
+        package Controllers <<Folder>> {
+            class ProductController
+            class CategoryController
+        }
     }
 }
-package Application <<Folder>> {
-    package Controllers <<Folder>> {
-        class Controller
-    }
-}
 
-Product "1..*" -- "1..*" Category
-Product "0..*" -- "0..*" Website
-' Website "0..1" -- "0..1" Localization
-Website "0..*" -- "0..*" Platform
-
-
+Application <.down. Core : depends on
+Infrastructure <.down. Core : depends on
+API <.down. Application : depends on
 
 @enduml
