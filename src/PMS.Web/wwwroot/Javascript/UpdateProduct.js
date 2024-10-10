@@ -1,4 +1,4 @@
-import { showMessage } from "./AddProduct.js";
+import { showMessage } from "../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../main.js";
 

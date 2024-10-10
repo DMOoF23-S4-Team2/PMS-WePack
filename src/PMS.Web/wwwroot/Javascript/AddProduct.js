@@ -1,3 +1,4 @@
+import { showMessage } from "../Components/MessageBox.js"
 
 export async function addProduct(productData) {
     try {
@@ -28,33 +29,45 @@ export async function addProduct(productData) {
     }
 }
 
-export function showMessage(message, isSuccess) {
+export function addProductFormHandler() {
+    const form = document.getElementById("add-product-form");
 
-    const messageContainer = document.createElement('div')
-    messageContainer.classList.add('message-container')
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    // Create the <p> element for the message text
-    const messageElement = document.createElement('p');
-    messageElement.textContent = message;  // Set the text of the <p> element
+        let productData = new FormData(form);
 
-    // Create the <i> element for the icon related to the message
-    const icon = document.createElement('i');
-    icon.classList.add('fa-solid');  
+        const Data = {
+            productDto: {
+                sku: productData.get('sku'),
+                ean: productData.get('ean'),
+                name: productData.get('name'),
+                description: productData.get('description'),
+                price: parseFloat(productData.get('price')),  // Parse as float
+                specialPrice: parseFloat(productData.get('specialPrice')) || 0,  // Default to 0 if empty
+                productType: productData.get('productType'),
+                productGroup: productData.get('productGroup'),
+                currency: productData.get('currency'),
+                material: productData.get('material'),
+                color: productData.get('color'),
+                supplier: productData.get('supplier'),
+                supplierSku: productData.get('supplierSku'),
+                templateNo: parseInt(productData.get('templateNo')) || 0,  // Default to 0 if empty
+                list: parseInt(productData.get('list')) || 0,  // Default to 0 if empty
+                weight: parseFloat(productData.get('weight')) || 0,  // Default to 0 if empty
+                cost: parseFloat(productData.get('cost')) || 0  // Default to 0 if empty
+            }
+        };
 
-    icon.classList.add(isSuccess ? 'fa-circle-check' : 'fa-circle-xmark');
+        console.log("Data being sent:", Data);
 
-    messageContainer.style.background = isSuccess? '#4CAF50' : '#F44336';
-
-    // Append the icon and message text to the message container
-    messageContainer.appendChild(icon);
-    messageContainer.appendChild(messageElement);  // Append the message text
-
-
-    document.getElementById('hero-section').appendChild(messageContainer)
-
-    setTimeout(() => {
-        messageContainer.remove()
-    }, 5000)
-    
-
+        try {
+            await addProduct(Data.productDto);  // Wait for the product to be added
+            form.reset();  // Reset the form after successful submission
+        } catch (error) {
+            console.error("Error adding product:", error);
+        }
+    });
 }
+
+

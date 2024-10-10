@@ -5,6 +5,7 @@
 }
 body {
     color: white;
+    font-family: Roboto, 'sans-serif';
     height: 100vh;
     margin: 0;
     display: grid;
@@ -211,9 +212,9 @@ textarea {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     border: 1px solid black;
     color: white;
-    font-weight: 700;
+    font-weight: 600;
     border-radius: 8px;
-    padding: .5em 1.5em;
+    padding: 1em 1.5em;
     width: 350px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
@@ -237,8 +238,7 @@ textarea {
 .yes-delete-btn {
     background-color: #f44336;
 }
-.yes-delete-btn:hover,
-.yes-delete-btn:focus {
+.yes-delete-btn:hover {
     background-color: #b71c1c;
 }
 
@@ -246,6 +246,7 @@ textarea {
 
 #update-product-form {
     padding: 1em;
+    font-size: .8rem;
 }
 
 #update-product-form .form-container {
@@ -299,7 +300,7 @@ th, td {
 /* ACTION BUTTONS */   
 
 .edit-btn, .delete-btn, 
-.no-delete-btn, .yes-delete-btn, 
+.yes-delete-btn, 
 .yes-update-btn {
     padding: .3em 1em;
     margin: 0 .3em;
@@ -309,13 +310,11 @@ th, td {
     border-radius: 3px;
 }
 
-.edit-btn, .no-delete-btn, .yes-update-btn {
+.edit-btn, .yes-update-btn {
     background-color: #009432;
 }
 .edit-btn:hover,
 .edit-btn:focus, 
-.no-delete-btn:hover,
-.no-delete-btn:focus, 
 .yes-update-btn:hover,
 .yes-update-btn:focus {
     background-color: green;
@@ -326,7 +325,6 @@ th, td {
 }
 .delete-btn:hover,
 .delete-btn:focus, 
-.yes-delete-btn:hover,
-.yes-delete-btn:focus {
+.yes-delete-btn:hover{
     background-color: #b71c1c;
 }

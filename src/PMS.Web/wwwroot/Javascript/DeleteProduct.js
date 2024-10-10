@@ -1,4 +1,4 @@
-import { showMessage } from "./AddProduct.js";
+import { showMessage } from "../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../main.js";
 
@@ -32,12 +32,13 @@ export async function deleteProduct(productId) {
 }
 
 // Function to create and show the delete confirmation dialog
-export function showDeleteModal(productId, deleteProductCallback) {
+export function showDeleteModal(productId, productName, productSku, deleteProductCallback){
     // Create the <dialog> element
     const deleteDialog = document.createElement('dialog');
     deleteDialog.classList.add('delete-dialog');
     deleteDialog.innerHTML = `
-        <p>Are you sure you want to delete this product?</p>
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p>Are you sure you want to delete the product: ${productName} with SKU: ${productSku}?</p>
         <div class="dialog-actions">
             <button class="yes-delete-btn">Yes</button>
             <button class="no-delete-btn">No</button>

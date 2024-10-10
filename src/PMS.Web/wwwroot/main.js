@@ -2,7 +2,7 @@ const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
 
-import { addProduct } from "./Javascript/AddProduct.js";
+import { addProductFormHandler } from "./Javascript/AddProduct.js";
 import { getAllProducts } from "./Javascript/GetProducts.js"; 
 import { deleteProduct, showDeleteModal } from "./Javascript/DeleteProduct.js"; 
 import { updateProduct, showUpdateModal } from "./Javascript/UpdateProduct.js"; 
@@ -53,7 +53,13 @@ export function renderAllProducts(products) {
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.dataset.id;  // Get the product ID from the button
-            showDeleteModal(productId, deleteProduct);  // Show the delete modal and pass the product ID
+             // Find the product details (name and SKU) from the clicked row
+            const productRow = e.target.closest('tr');
+            const productName = productRow.querySelector('td:nth-child(3)').textContent;  // Assuming the 3rd <td> is the name
+            const productSku = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the SKU
+
+        // Show the delete modal and pass the product ID, name, and SKU
+        showDeleteModal(productId, productName, productSku, deleteProduct);
             
         });
     });
@@ -63,7 +69,7 @@ export function renderAllProducts(products) {
     editButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             const productId = e.target.dataset.id;  // Get the product ID from the button
-            showUpdateModal(productId, updateProduct);  // Show the edit modal and pass the product ID
+            showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product ID
             
         });
     });
@@ -168,41 +174,6 @@ singleProductNav.addEventListener('click', () => {
 
     heroEl.style.padding = ''
 
-    const form = document.getElementById("add-product-form")
-    
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
-
-        let productData = new FormData(form)
-
-        const Data  = {
-            productDto: {
-            sku: productData.get('sku'),
-            ean: productData.get('ean'),
-            name: productData.get('name'),
-            description: productData.get('description'),
-            price: parseFloat(productData.get('price')),  // Parse as float
-            specialPrice: productData.get('specialPrice') || 0,  // Set to 0 if empty
-            productType: productData.get('productType'),
-            productGroup: productData.get('productGroup'),
-            currency: productData.get('currency'),
-            material: productData.get('material'),
-            color: productData.get('color'),
-            supplier: productData.get('supplier'),
-            supplierSku: productData.get('supplierSku'),
-            templateNo: parseInt(productData.get('templateNo')) || 0,  // Default to 0 if empty
-            list: parseInt(productData.get('list')) || 0,  // Default to 0 if empty
-            weight: parseFloat(productData.get('weight')) || 0,  // Default to 0 if empty
-            cost: parseFloat(productData.get('cost')) || 0  // Default to 0 if empty
-            }            
-        }
-
-        console.log("Data being sent:", Data);
-
-        addProduct(Data.productDto)
-
-        form.reset()
-
-    })  
+    addProductFormHandler();  // Delegate the form handling to the handler function
 });
     
