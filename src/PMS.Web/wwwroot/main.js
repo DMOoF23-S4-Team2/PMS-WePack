@@ -1,16 +1,14 @@
-// main.js
 const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
 
 import { addProduct } from "./Javascript/AddProduct.js";
-// Import the getAllProducts function from getProducts.js
-import { getAllProducts } from "./Javascript/GetProducts.js"; // Make sure the path is correct
-import { deleteProduct } from "./Javascript/DeleteProduct.js"; // Make sure the path is correct
+import { getAllProducts } from "./Javascript/GetProducts.js"; 
+import { deleteProduct, showDeleteModal } from "./Javascript/DeleteProduct.js"; 
 
 
 
-function renderAllProducts(products) {
+export function renderAllProducts(products) {
     const productsContainer = document.querySelector(".products-container");  // Target the products container
     productsContainer.innerHTML = "";  // Clear the container before rendering new products
 
@@ -49,44 +47,13 @@ function renderAllProducts(products) {
     // Insert the table into the container
     productsContainer.innerHTML = tableHTML;
 
-    // Attach event listeners for delete buttons
+   // Attach event listeners for delete buttons
     const deleteButtons = document.querySelectorAll(".delete-btn");
     deleteButtons.forEach(button => {
-        button.addEventListener('click', async (e) => {
-    
-            // Create the modal container
-            const deleteModal = document.createElement('div');
-            deleteModal.classList.add('delete-modal');
-            deleteModal.textContent = `Are you sure you want to delete this product?`;
-    
-            // Create Yes and No buttons
-            const yesBtn = document.createElement('button');
-            yesBtn.classList.add('yes-delete-btn')
-            yesBtn.textContent = 'Yes';
-    
-            const noBtn = document.createElement('button');
-            noBtn.classList.add('no-delete-btn')
-            noBtn.textContent = 'No';
-    
-            // Append buttons to modal
-            deleteModal.appendChild(yesBtn);
-            deleteModal.appendChild(noBtn);
-    
-            // Append the modal to the document body (or wherever appropriate)
-            heroEl.appendChild(deleteModal);
-    
-            // Event listener for the "Yes" button
-            yesBtn.addEventListener('click', async () => {
-                await deleteProduct(e); 
-                const updatedProducts = await getAllProducts(); // Refresh products after deletion
-                renderAllProducts(updatedProducts); // Re-render the updated product list
-                deleteModal.remove(); 
-            });
-    
-            // Event listener for the "No" button
-            noBtn.addEventListener('click', () => {
-                deleteModal.remove(); 
-            });
+        button.addEventListener('click', (e) => {
+            const productId = e.target.dataset.id;  // Get the product ID from the button
+            showDeleteModal(productId, deleteProduct);  // Show the delete modal and pass the product ID
+            
         });
     });
 }
@@ -104,6 +71,7 @@ productsNav.addEventListener('click', async () => {
             </div>
         </div>
     `;
+    heroEl.style.padding = '0'
     
     const products = await getAllProducts();  // Wait for the products to be fetched
     renderAllProducts(products);  // Call renderAllProducts after fetching products
@@ -186,6 +154,8 @@ singleProductNav.addEventListener('click', () => {
             </div>
         </form>
     `;
+
+    heroEl.style.padding = ''
 
     const form = document.getElementById("add-product-form")
     
