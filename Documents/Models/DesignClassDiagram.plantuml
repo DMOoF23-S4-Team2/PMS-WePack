@@ -74,6 +74,10 @@ package src <<Folder>> {
                 + Id: int
                 + Name: string
             }
+
+            Product "1..*" -- "1..*" Category
+            Product "0..*" -- "0..*" Website
+            Website "0..*" -- "0..*" Platform
         }
     }
 
@@ -101,8 +105,12 @@ package src <<Folder>> {
                     + DeleteManyAsync(IEnumerable<T> entities): Task
                 }
             }
-            class CategoryRepository {}
-            class ProductRepository {}
+            class CategoryRepository {
+                + CategoryRepository(PMSContext context)
+            }
+            class ProductRepository {
+                + ProductRepository(PMSContext context)
+            }
 
             Base.Repository <|-- CategoryRepository
             Base.Repository <|-- ProductRepository
@@ -111,9 +119,59 @@ package src <<Folder>> {
     }
 
     package Application <<Folder>> {
-        package Controllers <<Folder>> {
-            class Controller
+
+        package DTOs <<Folder>> {
+            package Category <<Folder>> {
+                class CategoryDto
+                class CategoryWithoutIdDto
+            }
+            package Product <<Folder>> {
+                class ProductDto
+                class ProductWithoutIdDto
+            }
         }
+
+        package Interfaces <<Folder>> {
+            interface ICategoryService {
+                + GetCategories(): Task<IEnumerable<CategoryDto>>
+                + GetCategory(int id): Task<CategoryDto>
+                + CreateCategory(CategoryWithoutIdDto categoryDto): Task<CategoryWithoutIdDto>
+                + UpdateCategory(int id, CategoryWithoutIdDto categoryDto): Task
+                + DeleteCategory(int id): Task
+            }
+            interface IProductService {
+                + GetProducts(): Task<IEnumerable<ProductDto>>
+                + GetProduct(int id): Task<ProductDto>
+                + CreateProduct(ProductWithoutIdDto productDto): Task<ProductWithoutIdDto>
+                + UpdateProduct(int id, ProductWithoutIdDto productDto): Task
+                + DeleteProduct(int id): Task
+                + AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos): Task
+                + UpdateManyProducts(IEnumerable<ProductDto> productDtos): Task
+                + DeleteManyProducts(IEnumerable<ProductDto> productDtos): Task
+            }
+        }
+
+        package Mapper <<Folder>> {
+            class DtoMapper
+            class ObjectMapper
+        }
+
+        package Services <<Folder>> {
+            class CategoryService {
+                + CategoryService(ICategoryRepository categoryRepository)
+            }
+            class ProductService {
+                + ProductService(IProductRepository productRepository)
+            }
+        }
+
+        package Validators <<Folder>> {
+            class CategoryValidator
+            class ProductValidator
+        }
+
+        Interfaces.ICategoryService <|-- Services.CategoryService
+        Interfaces.IProductService <|-- Services.ProductService
     }
 
     package API <<Folder>> {
@@ -124,12 +182,8 @@ package src <<Folder>> {
     }
 }
 
-Product "1..*" -- "1..*" Category
-Product "0..*" -- "0..*" Website
-Website "0..*" -- "0..*" Platform
-
-Application <..down- Core : depends on
-Infrastructure <..down- Core : depends on
-API <..down- Application : depends on
+Application <.down. Core : depends on
+Infrastructure <.down. Core : depends on
+API <.down. Application : depends on
 
 @enduml
