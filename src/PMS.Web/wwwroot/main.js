@@ -1,49 +1,78 @@
-
-// Main code
-const heroEl = document.getElementById('hero-section');
+const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
-let products = [];
 
-async function getAllProducts() {
-    const res = await fetch("https://localhost:7225/api/Product/products");
-    const data = await res.json();
-    products = data;
-    renderAllProducts();  // Call renderAllProducts after fetching the products
-}
+import { addProductFormHandler } from "./Javascript/AddProduct.js";
+import { getAllProducts } from "./Javascript/GetProducts.js"; 
+import { deleteProduct, showDeleteModal } from "./Javascript/DeleteProduct.js"; 
+import { updateProduct, showUpdateModal } from "./Javascript/UpdateProduct.js"; 
 
-function renderAllProducts() {
+
+
+export function renderAllProducts(products) {
     const productsContainer = document.querySelector(".products-container");  // Target the products container
     productsContainer.innerHTML = "";  // Clear the container before rendering new products
 
     // Create the table structure
     const tableHTML = `
-        <table class="products-table">
-            <thead>
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Currency</th>
+                <th>Actions</th> <!-- New header for actions -->
+            </tr>
+        </thead>
+        <tbody>
+            ${products.map(product => `
                 <tr>
-                    <th>Id</th>
-                    <th>SKU</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Currency</th>
+                    <td>${product.id}</td>
+                    <td>${product.sku}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>${product.currency}</td>
+                    <td class="actions-container">
+                        <button class="edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                ${products.map(product => `
-                    <tr>
-                        <td>${product.id}</td>
-                        <td>${product.sku}</td>
-                        <td>${product.name}</td>
-                        <td>$${product.price}</td>
-                        <td>${product.currency}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
+            `).join('')}
+        </tbody>
+    </table>
+`;
+
 
     // Insert the table into the container
     productsContainer.innerHTML = tableHTML;
+
+   // Attach event listeners for delete buttons
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const productId = e.target.dataset.id;  // Get the product ID from the button
+             // Find the product details (name and SKU) from the clicked row
+            const productRow = e.target.closest('tr');
+            const productName = productRow.querySelector('td:nth-child(3)').textContent;  // Assuming the 3rd <td> is the name
+            const productSku = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the SKU
+
+        // Show the delete modal and pass the product ID, name, and SKU
+        showDeleteModal(productId, productName, productSku, deleteProduct);
+            
+        });
+    });
+
+    // Attach event listeners for edit buttons
+    const editButtons = document.querySelectorAll(".edit-btn");
+    editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const productId = e.target.dataset.id;  // Get the product ID from the button
+            showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product ID
+            
+        });
+    });
 }
 
 
@@ -59,43 +88,92 @@ productsNav.addEventListener('click', async () => {
             </div>
         </div>
     `;
+    heroEl.style.padding = '0'
     
-    await getAllProducts();  // Wait for the products to be fetched and rendered
+    const products = await getAllProducts();  // Wait for the products to be fetched
+    renderAllProducts(products);  // Call renderAllProducts after fetching products
 });
 
 
 singleProductNav.addEventListener('click', () => {
     heroEl.innerHTML = `
-        <form>
+        <form id="add-product-form">
             <div class="form-container">
-                <label required>SKU</label>
-                <input>
-                <label>EAN</label>
-                <input>
-                <label required>Name</label>
-                <input>
-                <label>Description</label>
-                <textarea></textarea>
-                <label required>Price</label>
-                <input type="number">
-                <label>Special price</label>
-                <input type="number">
+                <label for="sku">SKU</label>
+                <input required id="sku" name="sku">
+
+                <label for="ean">EAN</label>
+                <input id="ean" name="ean">
+
+                <label for="name">Name</label>
+                <input required id="name" name="name">
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>  
+                
+                <label for="category">Category</label>
+                <input id="category" name="category">
+                
             </div>
             <div class="form-container">
-                <label>Category</label>
-                <input>
-                <label>Product type</label>
-                <input>
-                <label>Product group</label>
-                <input>
-                <label>Currency</label>
-                <input>
-                <label>Material</label>
-                <input>
-                <label>Color</label>
-                <input>
-                <button class="add-product">Add Product</button>
+                <div class="units-container">
+                    <div>
+                        <label for="price">Price</label>
+                        <input required id="price" type="number" name="price">
+                    </div>
+                    <div>
+                        <label for="specialPrice">Special Price</label>
+                        <input id="specialPrice" type="number" name="specialPrice">
+                    </div>    
+                </div>                 
+
+                <label for="supplier">Supplier</label>
+                <input id="supplier" name="supplier">
+
+                <label for="supplierSku">Supplier SKU</label>
+                <input id="supplierSku" name="supplierSku">
+
+                <label for="templateNo">Template No</label>
+                <input id="templateNo" type="number" name="templateNo">
+
+                <label for="productType">Product type</label>
+                <input id="productType" name="productType">
+
+                <label for="productGroup">Product group</label>
+                <input id="productGroup" name="productGroup">
+            </div>
+            <div class="form-container">                
+
+                <label for="currency">Currency</label>
+                <input id="currency" name="currency">
+
+                <label for="material">Material</label>
+                <input id="material" name="material">
+
+                <label for="color">Color</label>
+                <input id="color" name="color">
+
+                <label for="list">List</label>
+                <input id="list" type="number" name="list">
+
+                <div class="units-container">
+                    <div>
+                        <label for="weight">Weight</label>
+                        <input id="weight" type="number" name="weight">
+                    </div>
+                    <div>
+                        <label for="cost">Cost</label>
+                        <input id="cost" type="number" name="cost">
+                    </div>    
+                </div>    
+
+                <button class="add-product-btn">Add Product</button>
             </div>
         </form>
     `;
+
+    heroEl.style.padding = ''
+
+    addProductFormHandler();  // Delegate the form handling to the handler function
 });
+    
