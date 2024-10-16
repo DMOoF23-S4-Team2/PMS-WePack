@@ -1,3 +1,4 @@
+//CODE TO TEST DOM INTERACTIONS
 /**
  * @jest-environment jsdom
  */
