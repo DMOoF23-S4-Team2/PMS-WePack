@@ -1,4 +1,5 @@
-using System.Net.Http;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace PMS.Infrastructure.Shopify
 {
-  public class ShopifyProductService : IShopifyProductService
+    public class ShopifyProductService : IShopifyProductService
   {
   private readonly HttpClient _httpClient;
   private readonly string _shopifyApiUrl;
@@ -18,95 +19,110 @@ namespace PMS.Infrastructure.Shopify
   public ShopifyProductService(HttpClient httpClient, IConfiguration configuration)
   {
     _httpClient = httpClient;
+    _shopifyApiUrl = configuration["ShopifyApiUrl"];
 
-    // Reading from appsettings.json via IConfiguration
-    _shopifyApiUrl = configuration["Shopify:ApiUrl"] ?? 
-      throw new ArgumentNullException("Shopify:ApiUrl is missing in appsettings.json");
-    _accessToken = configuration["Shopify:AccessToken"] ?? 
-      throw new ArgumentNullException("Shopify:AccessToken is missing in appsettings.json");
+    var keyVaultUrl = configuration["KeyVaultUri"];
 
-    _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+    var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
+
+    _accessToken = GetSecretFromKeyVault(secretClient, "DevStrapAccessToken").Result;
+    var apiKey = GetSecretFromKeyVault(secretClient, "DevStrapAPIKey").Result;
+  }
+
+  // Method to retrieve a secret from Azure Key Vault
+  private async Task<string> GetSecretFromKeyVault(SecretClient secretClient, string secretName)
+  {
+    try
+    {
+      KeyVaultSecret secret = await secretClient.GetSecretAsync(secretName);
+      return secret.Value;
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Error retrieving secret {secretName} from Azure Key Vault: {ex.Message}");
+      throw;
+    }
   }
 
   // Create a single product
   public async Task<Product> AddProductAsync(Product product)
+{
+  var mutation = @"
+    mutation {
+      productCreate(input: {
+      title: """ + product.Name + @""",
+      descriptionHtml: """ + product.Description + @""",
+      sku: """ + product.Sku + @""",
+      ean: """ + product.Ean + @""",
+      color: """ + product.Color + @""",
+      material: """ + product.Material + @""",
+      productType: """ + product.ProductType + @""",
+      productGroup: """ + product.ProductGroup + @""",
+      supplier: """ + product.Supplier + @""",
+      supplierSku: """ + product.SupplierSku + @""",
+      templateNo: " + product.TemplateNo + @",
+      list: " + product.List + @",
+      weight: " + product.Weight + @",
+      cost: " + product.Cost + @",
+      currency: """ + product.Currency + @""",
+      price: " + product.Price + @",
+      specialPrice: " + product.SpecialPrice + @"
+      }) {
+      product {
+        id
+        title
+        descriptionHtml
+        sku
+        ean
+        color
+        material
+        productType
+        productGroup
+        supplier
+        supplierSku
+        templateNo
+        list
+        weight
+        cost
+        currency
+        price
+        specialPrice
+      }
+      }
+    }";
+
+  var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
+  var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
+  response.EnsureSuccessStatusCode();
+
+  var result = await response.Content.ReadAsStringAsync();
+  var json = JsonNode.Parse(result);
+  var productData = json["data"]["productCreate"]["product"];
+
+  return new Product
   {
-    var mutation = @"
-      mutation {
-        productCreate(input: {
-        title: """ + product.Name + @""",
-        descriptionHtml: """ + product.Description + @""",
-        sku: """ + product.Sku + @""",
-        ean: """ + product.Ean + @""",
-        color: """ + product.Color + @""",
-        material: """ + product.Material + @""",
-        productType: """ + product.ProductType + @""",
-        productGroup: """ + product.ProductGroup + @""",
-        supplier: """ + product.Supplier + @""",
-        supplierSku: """ + product.SupplierSku + @""",
-        templateNo: " + product.TemplateNo + @",
-        list: " + product.List + @",
-        weight: " + product.Weight + @",
-        cost: " + product.Cost + @",
-        currency: """ + product.Currency + @""",
-        price: " + product.Price + @",
-        specialPrice: " + product.SpecialPrice + @"
-        }) {
-        product {
-          id
-          title
-          descriptionHtml
-          sku
-          ean
-          color
-          material
-          productType
-          productGroup
-          supplier
-          supplierSku
-          templateNo
-          list
-          weight
-          cost
-          currency
-          price
-          specialPrice
-        }
-        }
-      }";
+    Id = int.Parse(productData["id"].ToString()),
+    Name = productData["title"].ToString(),
+    Description = productData["descriptionHtml"].ToString(),
+    Sku = productData["sku"].ToString(),
+    Ean = productData["ean"].ToString(),
+    Color = productData["color"].ToString(),
+    Material = productData["material"].ToString(),
+    ProductType = productData["productType"].ToString(),
+    ProductGroup = productData["productGroup"].ToString(),
+    Supplier = productData["supplier"].ToString(),
+    SupplierSku = productData["supplierSku"].ToString(),
+    TemplateNo = int.Parse(productData["templateNo"].ToString()),
+    List = int.Parse(productData["list"].ToString()),
+    Weight = float.Parse(productData["weight"].ToString()),
+    Cost = float.Parse(productData["cost"].ToString()),
+    Currency = productData["currency"].ToString(),
+    Price = float.Parse(productData["price"].ToString()),
+    SpecialPrice = float.Parse(productData["specialPrice"].ToString())
+  };
+}
 
-    var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
-    var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-    response.EnsureSuccessStatusCode();
-
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JsonNode.Parse(result);
-    var productData = json["data"]["productCreate"]["product"];
-
-    return new Product
-    {
-      Id = int.Parse(productData["id"].ToString()),
-      Name = productData["title"].ToString(),
-      Description = productData["descriptionHtml"].ToString(),
-      Sku = productData["sku"].ToString(),
-      Ean = productData["ean"].ToString(),
-      Color = productData["color"].ToString(),
-      Material = productData["material"].ToString(),
-      ProductType = productData["productType"].ToString(),
-      ProductGroup = productData["productGroup"].ToString(),
-      Supplier = productData["supplier"].ToString(),
-      SupplierSku = productData["supplierSku"].ToString(),
-      TemplateNo = int.Parse(productData["templateNo"].ToString()),
-      List = int.Parse(productData["list"].ToString()),
-      Weight = float.Parse(productData["weight"].ToString()),
-      Cost = float.Parse(productData["cost"].ToString()),
-      Currency = productData["currency"].ToString(),
-      Price = float.Parse(productData["price"].ToString()),
-      SpecialPrice = float.Parse(productData["specialPrice"].ToString())
-    };
-  }
-
-      // Create multiple products
+  // Create multiple products
   public async Task AddManyProductsAsync(IEnumerable<Product> products)
   {
       foreach (var product in products)
@@ -173,86 +189,86 @@ namespace PMS.Infrastructure.Shopify
       };
   }
 
-    // Get all products
-    public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
+  // Get all products
+  public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
+  {
+    var query = @"
     {
-      var query = @"
-      {
-        products(first: 100) {
-          edges {
-            node {
-              id
-              title
-              descriptionHtml
-              sku
-              ean
-              color
-              material
-              productType
-              productGroup
-              supplier
-              supplierSku
-              templateNo
-              list
-              weight
-              cost
-              currency
-              price
-              specialPrice
-            }
+      products(first: 100) {
+        edges {
+          node {
+            id
+            title
+            descriptionHtml
+            sku
+            ean
+            color
+            material
+            productType
+            productGroup
+            supplier
+            supplierSku
+            templateNo
+            list
+            weight
+            cost
+            currency
+            price
+            specialPrice
           }
         }
-      }";
-
-      var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
-      var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-      response.EnsureSuccessStatusCode();
-
-      var result = await response.Content.ReadAsStringAsync();
-      var jsonDocument = JsonDocument.Parse(result);
-
-      var productList = new List<Product>();
-
-      // Navigate through the JSON structure to retrieve products
-      var productsNode = jsonDocument.RootElement
-        .GetProperty("data")
-        .GetProperty("products")
-        .GetProperty("edges");
-
-      foreach (var productEdge in productsNode.EnumerateArray())
-      {
-        var productNode = productEdge.GetProperty("node");
-
-        var product = new Product
-        {
-          Id = int.Parse(productNode.GetProperty("id").GetString()),
-          Name = productNode.GetProperty("title").GetString(),
-          Description = productNode.GetProperty("descriptionHtml").GetString(),
-          Sku = productNode.GetProperty("sku").GetString(),
-          Ean = productNode.GetProperty("ean").GetString(),
-          Color = productNode.GetProperty("color").GetString(),
-          Material = productNode.GetProperty("material").GetString(),
-          ProductType = productNode.GetProperty("productType").GetString(),
-          ProductGroup = productNode.GetProperty("productGroup").GetString(),
-          Supplier = productNode.GetProperty("supplier").GetString(),
-          SupplierSku = productNode.GetProperty("supplierSku").GetString(),
-          TemplateNo = int.Parse(productNode.GetProperty("templateNo").GetString()),
-          List = int.Parse(productNode.GetProperty("list").GetString()),
-          Weight = float.Parse(productNode.GetProperty("weight").GetString()),
-          Cost = float.Parse(productNode.GetProperty("cost").GetString()),
-          Currency = productNode.GetProperty("currency").GetString(),
-          Price = float.Parse(productNode.GetProperty("price").GetString()),
-          SpecialPrice = float.Parse(productNode.GetProperty("specialPrice").GetString())
-        };
-
-        productList.Add(product);
       }
+    }";
 
-      return productList.AsReadOnly();
+    var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
+    var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
+    response.EnsureSuccessStatusCode();
+
+    var result = await response.Content.ReadAsStringAsync();
+    var jsonDocument = JsonDocument.Parse(result);
+
+    var productList = new List<Product>();
+
+    // Navigate through the JSON structure to retrieve products
+    var productsNode = jsonDocument.RootElement
+      .GetProperty("data")
+      .GetProperty("products")
+      .GetProperty("edges");
+
+    foreach (var productEdge in productsNode.EnumerateArray())
+    {
+      var productNode = productEdge.GetProperty("node");
+
+      var product = new Product
+      {
+        Id = int.Parse(productNode.GetProperty("id").GetString()),
+        Name = productNode.GetProperty("title").GetString(),
+        Description = productNode.GetProperty("descriptionHtml").GetString(),
+        Sku = productNode.GetProperty("sku").GetString(),
+        Ean = productNode.GetProperty("ean").GetString(),
+        Color = productNode.GetProperty("color").GetString(),
+        Material = productNode.GetProperty("material").GetString(),
+        ProductType = productNode.GetProperty("productType").GetString(),
+        ProductGroup = productNode.GetProperty("productGroup").GetString(),
+        Supplier = productNode.GetProperty("supplier").GetString(),
+        SupplierSku = productNode.GetProperty("supplierSku").GetString(),
+        TemplateNo = int.Parse(productNode.GetProperty("templateNo").GetString()),
+        List = int.Parse(productNode.GetProperty("list").GetString()),
+        Weight = float.Parse(productNode.GetProperty("weight").GetString()),
+        Cost = float.Parse(productNode.GetProperty("cost").GetString()),
+        Currency = productNode.GetProperty("currency").GetString(),
+        Price = float.Parse(productNode.GetProperty("price").GetString()),
+        SpecialPrice = float.Parse(productNode.GetProperty("specialPrice").GetString())
+      };
+
+      productList.Add(product);
     }
 
-    // Update a single product
-    public async Task UpdateProductAsync(Product product)
+    return productList.AsReadOnly();
+  }
+
+  // Update a single product
+  public async Task UpdateProductAsync(Product product)
   {
     var mutation = @"
       mutation {
