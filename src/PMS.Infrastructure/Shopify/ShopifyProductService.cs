@@ -42,10 +42,9 @@ namespace PMS.Infrastructure.Shopify
     }
   }
 
-  // Create a single product
-  public async Task<Product> AddProductAsync(Product product)
-{
-  var mutation = @"
+    public async Task<Product> AddProductAsync(Product product)
+    {
+      var mutation = @"
     mutation {
       productCreate(input: {
       title: """ + product.Name + @""",
@@ -89,39 +88,39 @@ namespace PMS.Infrastructure.Shopify
       }
     }";
 
-  var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
-  var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-  response.EnsureSuccessStatusCode();
+      var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
+      var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
+      response.EnsureSuccessStatusCode();
 
-  var result = await response.Content.ReadAsStringAsync();
-  var json = JsonNode.Parse(result);
-  var productData = json["data"]["productCreate"]["product"];
+      var result = await response.Content.ReadAsStringAsync();
+      var json = JsonNode.Parse(result);
+      var productData = json["data"]["productCreate"]["product"];
 
-  return new Product
-  {
-    Id = int.Parse(productData["id"].ToString()),
-    Name = productData["title"].ToString(),
-    Description = productData["descriptionHtml"].ToString(),
-    Sku = productData["sku"].ToString(),
-    Ean = productData["ean"].ToString(),
-    Color = productData["color"].ToString(),
-    Material = productData["material"].ToString(),
-    ProductType = productData["productType"].ToString(),
-    ProductGroup = productData["productGroup"].ToString(),
-    Supplier = productData["supplier"].ToString(),
-    SupplierSku = productData["supplierSku"].ToString(),
-    TemplateNo = int.Parse(productData["templateNo"].ToString()),
-    List = int.Parse(productData["list"].ToString()),
-    Weight = float.Parse(productData["weight"].ToString()),
-    Cost = float.Parse(productData["cost"].ToString()),
-    Currency = productData["currency"].ToString(),
-    Price = float.Parse(productData["price"].ToString()),
-    SpecialPrice = float.Parse(productData["specialPrice"].ToString())
-  };
-}
+      return new Product
+      {
+        Id = int.Parse(productData["id"].ToString()),
+        Name = productData["title"].ToString(),
+        Description = productData["descriptionHtml"].ToString(),
+        Sku = productData["sku"].ToString(),
+        Ean = productData["ean"].ToString(),
+        Color = productData["color"].ToString(),
+        Material = productData["material"].ToString(),
+        ProductType = productData["productType"].ToString(),
+        ProductGroup = productData["productGroup"].ToString(),
+        Supplier = productData["supplier"].ToString(),
+        SupplierSku = productData["supplierSku"].ToString(),
+        TemplateNo = int.Parse(productData["templateNo"].ToString()),
+        List = int.Parse(productData["list"].ToString()),
+        Weight = float.Parse(productData["weight"].ToString()),
+        Cost = float.Parse(productData["cost"].ToString()),
+        Currency = productData["currency"].ToString(),
+        Price = float.Parse(productData["price"].ToString()),
+        SpecialPrice = float.Parse(productData["specialPrice"].ToString())
+      };
+    }
 
-  // Create multiple products
-  public async Task AddManyProductsAsync(IEnumerable<Product> products)
+    // Create multiple products
+    public async Task AddManyProductsAsync(IEnumerable<Product> products)
   {
       foreach (var product in products)
       {
