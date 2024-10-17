@@ -1,4 +1,4 @@
-import { showMessage } from "../Components/MessageBox.js"
+import { showMessage } from "../../Components/MessageBox.js"
 
 export async function addProduct(productData) {
     try {

@@ -2,10 +2,10 @@ const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
 const singleProductNav = document.getElementById('add-product-nav');
 
-import { addProductFormHandler } from "./Javascript/AddProduct.js";
-import { getAllProducts } from "./Javascript/GetProducts.js"; 
-import { deleteProduct, showDeleteModal } from "./Javascript/DeleteProduct.js"; 
-import { updateProduct, showUpdateModal } from "./Javascript/UpdateProduct.js"; 
+import { addProductFormHandler } from "../Product/AddProduct.js";
+import { getAllProducts } from "../Product/GetProducts.js"; 
+import { deleteProduct, showDeleteModal } from "../Product/DeleteProduct.js"; 
+import { updateProduct, showUpdateModal } from "../Product/UpdateProduct.js"; 
 
 
 

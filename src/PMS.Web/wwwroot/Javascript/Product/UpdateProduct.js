@@ -1,6 +1,6 @@
-import { showMessage } from "../Components/MessageBox.js"
+import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
-import { renderAllProducts } from "../main.js";
+import { renderAllProducts } from "../Main/MainProduct.js";
 
 export async function updateProduct(productId, updatedData) {
     try {

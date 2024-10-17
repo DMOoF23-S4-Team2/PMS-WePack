@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAllProducts } from '../../../src/PMS.Web/wwwroot/Javascript/GetProducts.js';
-import { addProduct } from '../../../src/PMS.Web/wwwroot/Javascript/AddProduct.js';
+import { getAllProducts } from '../../../src/PMS.Web/wwwroot/Javascript/Product/GetProducts.js';
+import { addProduct } from '../../../src/PMS.Web/wwwroot/Javascript/Product/AddProduct.js';
 import { showMessage } from '../../../src/PMS.Web/wwwroot/Components/MessageBox.js';
 
 // Mock the global fetch function
