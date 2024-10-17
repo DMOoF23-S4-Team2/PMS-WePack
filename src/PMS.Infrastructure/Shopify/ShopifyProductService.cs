@@ -16,17 +16,15 @@ namespace PMS.Infrastructure.Shopify
   private readonly string _shopifyApiUrl;
   private readonly string _accessToken;
 
-  public ShopifyProductService(HttpClient httpClient, IConfiguration configuration)
+  public ShopifyProductService(HttpClient httpClient, IConfiguration configuration, SecretClient secretClient = null)
   {
     _httpClient = httpClient;
     _shopifyApiUrl = configuration["ShopifyApiUrl"];
 
     var keyVaultUrl = configuration["KeyVaultUri"];
-
-    var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
+    secretClient ??= new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
 
     _accessToken = GetSecretFromKeyVault(secretClient, "DevStrapAccessToken").Result;
-    var apiKey = GetSecretFromKeyVault(secretClient, "DevStrapAPIKey").Result;
   }
 
   // Method to retrieve a secret from Azure Key Vault
