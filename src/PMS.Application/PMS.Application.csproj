@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PMS.Core\PMS.Core.csproj" />
-    <ProjectReference Include="..\PMS.Infrastructure\PMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\PMS.Infrastructure\PMS.Infrastructure.csproj" />    
   </ItemGroup>
 
   <ItemGroup>
