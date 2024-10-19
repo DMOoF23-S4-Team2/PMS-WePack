@@ -92,6 +92,8 @@ productsNav.addEventListener('click', async () => {
     
     const products = await getAllProducts();  // Wait for the products to be fetched
     renderAllProducts(products);  // Call renderAllProducts after fetching products
+
+    document.querySelector(".add-category-btn").style.display = 'none';
 });
 
 
@@ -175,5 +177,7 @@ singleProductNav.addEventListener('click', () => {
     heroEl.style.padding = ''
 
     addProductFormHandler();  // Delegate the form handling to the handler function
+
+    document.querySelector(".add-category-btn").style.display = 'none';
 });
     

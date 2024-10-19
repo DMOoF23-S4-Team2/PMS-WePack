@@ -13,7 +13,7 @@ export async function getAllCategories() {
         const data = await res.json();
         categories = data;
 
-        return products;
+        return categories;
     } catch (error) {
         // Log the error to the console for debugging purposes
         console.error("Error fetching categories:", error);
