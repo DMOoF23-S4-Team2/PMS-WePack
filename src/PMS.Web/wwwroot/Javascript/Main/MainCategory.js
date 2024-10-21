@@ -1,5 +1,6 @@
 import { getAllCategories } from "../Category/GetCategories.js";
 import { renderAddCategoryModal } from "../Category/AddCategory.js";
+import { deleteCategory, showDeleteModal } from "../Category/DeleteCategory.js"; 
 
 const heroEl = document.getElementById('hero-container');
 const categoriesNav = document.getElementById("categories-nav")
@@ -39,6 +40,21 @@ export function renderAllCategories(categories) {
     `;
 
         productsContainer.innerHTML = tableHTML;
+
+        // Attach event listeners for delete buttons
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+        deleteButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const categoryId = e.target.dataset.id;  // Get the product ID from the button
+             // Find the product details (name and SKU) from the clicked row
+            const productRow = e.target.closest('tr');
+            const productName = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the name
+
+        // Show the delete modal and pass the product ID, name, and SKU
+            showDeleteModal(categoryId, productName, deleteCategory);
+            
+        });
+    });
 }
 
 
