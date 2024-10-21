@@ -35,7 +35,6 @@ export async function showUpdateModal(productId, updateProductCallback) {
 
     // Create the <dialog> element
     const updateDialog = document.createElement('dialog');
-    updateDialog.classList.add('update-dialog');
     updateDialog.innerHTML = `
         
          <form id="update-product-form">

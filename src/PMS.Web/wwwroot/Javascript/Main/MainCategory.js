@@ -1,9 +1,11 @@
 import { getAllCategories } from "../Category/GetCategories.js";
+import { renderAddCategoryModal } from "../Category/AddCategory.js";
 
 const heroEl = document.getElementById('hero-container');
 const categoriesNav = document.getElementById("categories-nav")
+const addCategoryBtn = document.querySelector(".add-category-btn");
 
-function renderAllCategories(categories) {
+export function renderAllCategories(categories) {
     const productsContainer = document.querySelector(".products-container");  // Target the products container
     productsContainer.innerHTML = "";  // Clear the container before rendering new products
 
@@ -58,13 +60,18 @@ categoriesNav.addEventListener('click', async () => {
     renderAllCategories(categories);  // Call renderAllCategories after fetching categories
 
 
-   // Show the "Add Category" button when the nav button is clicked
-   const addCategoryBtn = document.querySelector(".add-category-btn");
-   if (addCategoryBtn) {
-       addCategoryBtn.style.display = 'block';
-   }
+   // Show the "Add Category" button when the nav button is clicked   
+    addCategoryBtn.style.display = 'block';
+    renderAddCategory()
+   
 
-
-
-    
 });
+
+function renderAddCategory() {
+
+    addCategoryBtn.addEventListener('click', () => {
+        renderAddCategoryModal()
+    })
+   
+
+}

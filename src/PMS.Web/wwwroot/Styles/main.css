@@ -48,6 +48,8 @@ header h3 {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 1em;
 }
 
@@ -102,7 +104,6 @@ section {
     font-size: .8rem;
     font-weight: 700;
     margin-left: .5em;
-    cursor: pointer;
     border: none;
     background-color: transparent;
     color: white;
@@ -155,7 +156,6 @@ textarea {
 
 .add-product-btn {
     padding: .5em 1em;
-    cursor: pointer;
     font-weight: 700;
     background-color: #009432;
     color: white;
@@ -235,7 +235,6 @@ textarea {
     padding: 0.5em 3em;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
     margin-bottom: 1em;
 }
 .yes-delete-btn {
@@ -265,7 +264,6 @@ textarea {
     padding: 0.5em 3.5em;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
     margin-top: auto;
 }
 
@@ -276,7 +274,7 @@ textarea {
     margin-top: auto;
 }
 
-.update-dialog {
+dialog {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     border: 1px solid black;
     color: white;
@@ -302,12 +300,15 @@ th, td {
 
 /* ACTION BUTTONS */   
 
+button {
+    cursor: pointer;
+}
+
 .edit-btn, .delete-btn, 
 .yes-delete-btn, 
 .yes-update-btn {
     padding: .3em 1em;
     margin: 0 .3em;
-    cursor: pointer;
     color: white;
     border: none;
     border-radius: 3px;
@@ -337,7 +338,6 @@ th, td {
     margin-right: 14.5em;
     display: none;
     padding: .5em 1em;
-    cursor: pointer;
     font-weight: 700;
     background-color: #009432;
     color: white;
