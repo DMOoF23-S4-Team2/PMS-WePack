@@ -1,10 +1,13 @@
-import { getAllCategories } from "../Category/GetCategories.js";
-import { renderAddCategoryModal } from "../Category/AddCategory.js";
-import { deleteCategory, showDeleteModal } from "../Category/DeleteCategory.js"; 
 
 const heroEl = document.getElementById('hero-container');
 const categoriesNav = document.getElementById("categories-nav")
 const addCategoryBtn = document.querySelector(".add-category-btn");
+
+import { getAllCategories } from "../Category/GetCategories.js";
+import { renderAddCategoryModal } from "../Category/AddCategory.js";
+import { deleteCategory, showDeleteModal } from "../Category/DeleteCategory.js"; 
+import { updateCategory, showUpdateModal } from "../Category/UpdateCategory.js"; 
+
 
 export function renderAllCategories(categories) {
     const productsContainer = document.querySelector(".products-container");  // Target the products container
@@ -47,14 +50,23 @@ export function renderAllCategories(categories) {
         button.addEventListener('click', (e) => {
             const categoryId = e.target.dataset.id;  // Get the product ID from the button
              // Find the product details (name and SKU) from the clicked row
-            const productRow = e.target.closest('tr');
-            const productName = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the name
+            const categoryRow = e.target.closest('tr');
+            const categoryName = categoryRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the name
 
-        // Show the delete modal and pass the product ID, name, and SKU
-            showDeleteModal(categoryId, productName, deleteCategory);
+            // Show the delete modal and pass the product ID, name, and SKU
+            showDeleteModal(categoryId, categoryName, deleteCategory);
             
+            });
         });
-    });
+
+         // Attach event listeners for edit buttons
+        const editButtons = document.querySelectorAll(".edit-btn");
+        editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const categoryId = e.target.dataset.id;  // Get the category ID from the button
+            showUpdateModal(categoryId, updateCategory);  // Show the update modal and pass the category ID            
+            });
+        });
 }
 
 

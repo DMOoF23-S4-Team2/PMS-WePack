@@ -5,7 +5,7 @@ import { renderAllProducts } from "../Main/MainProduct.js";
 export async function updateProduct(productId, updatedData) {
     try {
         const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
-            method: 'PUT',  // Correct the method to 'PUT'
+            method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
             },

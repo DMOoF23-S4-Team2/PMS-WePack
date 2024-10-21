@@ -38,7 +38,7 @@ export function showDeleteModal(productId, productName, productSku, deleteProduc
     deleteDialog.classList.add('delete-dialog');
     deleteDialog.innerHTML = `
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <p>Are you sure you want to delete the product: ${productName} with SKU: ${productSku}?</p>
+        <p>Are you sure you want to delete ${productName} with SKU: ${productSku}?</p>
         <div class="dialog-actions">
             <button class="yes-delete-btn">Yes</button>
             <button class="no-delete-btn">No</button>

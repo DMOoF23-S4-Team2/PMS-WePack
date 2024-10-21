@@ -2,7 +2,6 @@ import { showMessage } from "../../Components/MessageBox.js"
 import { renderAllCategories } from "../Main/MainCategory.js";
 import { getAllCategories } from "./GetCategories.js";
 
-const addCategoryDialog = document.createElement('dialog');
 
 export async function deleteCategory(categoryId) {
     try {
@@ -38,7 +37,7 @@ export function showDeleteModal(categoryId, categoryName, deleteProductCallback)
     deleteDialog.classList.add('delete-dialog');
     deleteDialog.innerHTML = `
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <p>Are you sure you want to delete the category: ${categoryName}?</p>
+        <p>Are you sure you want to delete ${categoryName} from categories?</p>
         <div class="dialog-actions">
             <button class="yes-delete-btn">Yes</button>
             <button class="no-delete-btn">No</button>
