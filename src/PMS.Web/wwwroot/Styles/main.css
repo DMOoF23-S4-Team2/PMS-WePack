@@ -154,7 +154,7 @@ textarea {
     height: 93px;
 }
 
-.add-product-btn {
+.confirm-add-btn {
     padding: .5em 1em;
     font-weight: 700;
     background-color: #009432;
@@ -163,8 +163,8 @@ textarea {
     border: none;
     margin-top: auto;
 }   
-.add-product-btn:hover, 
-.add-product-btn:focus {
+.confirm-add-btn:hover, 
+.confirm-add-btn:focus {
     background-color: green;
 }
 
@@ -246,28 +246,28 @@ textarea {
 
 /* UPDATE MODAL */
 
-#update-product-form {
+.product-dialog {
     padding: 1em;
     font-size: .8rem;
 }
 
-#update-product-form .form-container {
+.product-dialog .form-container {
     gap: .3em;  
 }
 
-#update-product-form .units-container label {
+.product-dialog .units-container label {
     margin:0;
     padding: 0.3em 0;
 }
 
-#update-product-form button {
+.product-dialog button {
     padding: 0.5em 3.5em;
     border: none;
     border-radius: 4px;
     margin-top: auto;
 }
 
-#update-product-form .dialog-actions {
+.product-dialog .dialog-actions {
     display: flex;
     justify-content: space-between;
     gap: 1em;
@@ -333,7 +333,7 @@ button {
     background-color: #b71c1c;
 }
 
-.add-category-btn { 
+.add-category-btn, .add-product-btn { 
     align-self: self-end;
     margin-right: 14.5em;
     display: none;

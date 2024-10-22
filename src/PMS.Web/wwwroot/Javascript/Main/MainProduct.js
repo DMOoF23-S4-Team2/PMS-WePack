@@ -1,8 +1,9 @@
 const heroEl = document.getElementById('hero-container');
 const productsNav = document.getElementById('products-nav');
-const singleProductNav = document.getElementById('add-product-nav');
+const addProductBtn = document.querySelector(".add-product-btn");
+// const singleProductNav = document.getElementById('add-product-nav');
 
-import { addProductFormHandler } from "../Product/AddProduct.js";
+import { renderAddProductModal } from "../Product/AddProduct.js";
 import { getAllProducts } from "../Product/GetProducts.js"; 
 import { deleteProduct, showDeleteModal } from "../Product/DeleteProduct.js"; 
 import { updateProduct, showUpdateModal } from "../Product/UpdateProduct.js"; 
@@ -94,90 +95,100 @@ productsNav.addEventListener('click', async () => {
     renderAllProducts(products);  // Call renderAllProducts after fetching products
 
     document.querySelector(".add-category-btn").style.display = 'none';
+
+    addProductBtn.style.display = 'block';
+    renderAddProduct()
 });
 
+function renderAddProduct() {
 
-singleProductNav.addEventListener('click', () => {
-    heroEl.innerHTML = `
-        <form id="add-product-form">
-            <div class="form-container">
-                <label for="sku">SKU</label>
-                <input required id="sku" name="sku">
+    addProductBtn.addEventListener('click', () => {
+        renderAddProductModal()        
+    })
+}
 
-                <label for="ean">EAN</label>
-                <input id="ean" name="ean">
 
-                <label for="name">Name</label>
-                <input required id="name" name="name">
+// singleProductNav.addEventListener('click', () => {
+//     heroEl.innerHTML = `
+//         <form id="add-product-form">
+//             <div class="form-container">
+//                 <label for="sku">SKU</label>
+//                 <input required id="sku" name="sku">
 
-                <label for="description">Description</label>
-                <textarea id="description" name="description"></textarea>  
+//                 <label for="ean">EAN</label>
+//                 <input id="ean" name="ean">
+
+//                 <label for="name">Name</label>
+//                 <input required id="name" name="name">
+
+//                 <label for="description">Description</label>
+//                 <textarea id="description" name="description"></textarea>  
                 
-                <label for="category">Category</label>
-                <input id="category" name="category">
+//                 <label for="category">Category</label>
+//                 <input id="category" name="category">
                 
-            </div>
-            <div class="form-container">
-                <div class="units-container">
-                    <div>
-                        <label for="price">Price</label>
-                        <input required id="price" type="number" name="price">
-                    </div>
-                    <div>
-                        <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" type="number" name="specialPrice">
-                    </div>    
-                </div>                 
+//             </div>
+//             <div class="form-container">
+//                 <div class="units-container">
+//                     <div>
+//                         <label for="price">Price</label>
+//                         <input required id="price" type="number" name="price">
+//                     </div>
+//                     <div>
+//                         <label for="specialPrice">Special Price</label>
+//                         <input id="specialPrice" type="number" name="specialPrice">
+//                     </div>    
+//                 </div>                 
 
-                <label for="supplier">Supplier</label>
-                <input id="supplier" name="supplier">
+//                 <label for="supplier">Supplier</label>
+//                 <input id="supplier" name="supplier">
 
-                <label for="supplierSku">Supplier SKU</label>
-                <input id="supplierSku" name="supplierSku">
+//                 <label for="supplierSku">Supplier SKU</label>
+//                 <input id="supplierSku" name="supplierSku">
 
-                <label for="templateNo">Template No</label>
-                <input id="templateNo" type="number" name="templateNo">
+//                 <label for="templateNo">Template No</label>
+//                 <input id="templateNo" type="number" name="templateNo">
 
-                <label for="productType">Product type</label>
-                <input id="productType" name="productType">
+//                 <label for="productType">Product type</label>
+//                 <input id="productType" name="productType">
 
-                <label for="productGroup">Product group</label>
-                <input id="productGroup" name="productGroup">
-            </div>
-            <div class="form-container">                
+//                 <label for="productGroup">Product group</label>
+//                 <input id="productGroup" name="productGroup">
+//             </div>
+//             <div class="form-container">                
 
-                <label for="currency">Currency</label>
-                <input id="currency" name="currency">
+//                 <label for="currency">Currency</label>
+//                 <input id="currency" name="currency">
 
-                <label for="material">Material</label>
-                <input id="material" name="material">
+//                 <label for="material">Material</label>
+//                 <input id="material" name="material">
 
-                <label for="color">Color</label>
-                <input id="color" name="color">
+//                 <label for="color">Color</label>
+//                 <input id="color" name="color">
 
-                <label for="list">List</label>
-                <input id="list" type="number" name="list">
+//                 <label for="list">List</label>
+//                 <input id="list" type="number" name="list">
 
-                <div class="units-container">
-                    <div>
-                        <label for="weight">Weight</label>
-                        <input id="weight" type="number" name="weight">
-                    </div>
-                    <div>
-                        <label for="cost">Cost</label>
-                        <input id="cost" type="number" name="cost">
-                    </div>    
-                </div>    
+//                 <div class="units-container">
+//                     <div>
+//                         <label for="weight">Weight</label>
+//                         <input id="weight" type="number" name="weight">
+//                     </div>
+//                     <div>
+//                         <label for="cost">Cost</label>
+//                         <input id="cost" type="number" name="cost">
+//                     </div>    
+//                 </div>    
 
-                <button class="add-product-btn">Add Product</button>
-            </div>
-        </form>
-    `;
+//                 <button class="add-product-btn">Add Product</button>
+//             </div>
+//         </form>
+//     `;
 
-    heroEl.style.padding = ''
+//     heroEl.style.padding = ''
 
-    addProductFormHandler();  // Delegate the form handling to the handler function
+//     addProductFormHandler();  // Delegate the form handling to the handler function
 
-    document.querySelector(".add-category-btn").style.display = 'none';
-});
+//     document.querySelector(".add-category-btn").style.display = 'none';
+// });
     

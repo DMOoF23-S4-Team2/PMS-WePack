@@ -89,6 +89,8 @@ categoriesNav.addEventListener('click', async () => {
 
 
    // Show the "Add Category" button when the nav button is clicked   
+   document.querySelector(".add-product-btn").style.display = 'none';
+
     addCategoryBtn.style.display = 'block';
     renderAddCategory()
    
@@ -98,8 +100,6 @@ categoriesNav.addEventListener('click', async () => {
 function renderAddCategory() {
 
     addCategoryBtn.addEventListener('click', () => {
-        renderAddCategoryModal()
+        renderAddCategoryModal()        
     })
-   
-
 }

@@ -2,7 +2,6 @@ import { showMessage } from "../../Components/MessageBox.js"
 import { renderAllCategories } from "../Main/MainCategory.js";
 import { getAllCategories } from "./GetCategories.js";
 
-const addCategoryDialog = document.createElement('dialog');
 
 async function addCategory(categoryData) {
     try {
@@ -34,7 +33,7 @@ async function addCategory(categoryData) {
 }
 
 
-function addCategoryFormHandler() {
+function addCategoryFormHandler(dialog) {
     const form = document.getElementById("add-category-form");
 
     form.addEventListener('submit', async (e) => {
@@ -55,8 +54,8 @@ function addCategoryFormHandler() {
         try {
             await addCategory(Data.categoryDto);  // Wait for the product to be added
 
-            addCategoryDialog.close()
-            addCategoryDialog.remove()
+            dialog.close()
+            dialog.remove()
 
             const updatedCategories = await getAllCategories();  // Fetch updated categories
             renderAllCategories(updatedCategories);  // Rerender the table with new categories
@@ -70,6 +69,14 @@ function addCategoryFormHandler() {
 
 
 export function renderAddCategoryModal() {
+
+    const existingDialog = document.querySelector('dialog[open]');
+    if (existingDialog) {
+        existingDialog.close();
+        existingDialog.remove();
+    }
+
+    const addCategoryDialog = document.createElement('dialog');
     
     addCategoryDialog.innerHTML = `
         <form id="add-category-form">
@@ -83,7 +90,7 @@ export function renderAddCategoryModal() {
                 <label for="bottomDescription">Bottom Description</label>
                 <textarea id="bottomDescription" name="bottomDescription"></textarea> 
                 <div class="dialog-actions">
-                    <button type="submit" class="add-product-btn">Add Category</button>
+                    <button type="submit" class="confirm-add-btn">Add Category</button>
                     <button type="button" class="close-modal-btn">Cancel</button>
                 </div>
             </div>            
@@ -94,7 +101,7 @@ export function renderAddCategoryModal() {
     addCategoryDialog.showModal();  // Show the modal
 
     // Add form handler for submitting the form
-    addCategoryFormHandler();
+    addCategoryFormHandler(addCategoryDialog);
 
     // Close modal functionality
     const closeModalBtn = addCategoryDialog.querySelector('.close-modal-btn');
