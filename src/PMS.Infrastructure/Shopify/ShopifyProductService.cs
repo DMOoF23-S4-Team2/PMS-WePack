@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace PMS.Infrastructure.Shopify
 {
-  public class ShopifyProductService : IShopifyProductService
+    public class ShopifyProductService : IShopifyProductService
   {
     private readonly HttpClient _httpClient;
     private readonly string _shopifyApiUrl;
@@ -157,7 +157,7 @@ namespace PMS.Infrastructure.Shopify
 
     //!SECTION Helper Methods
     // Method to retrieve a secret from Azure Key Vault
-    private async Task<string> GetSecretFromKeyVault(SecretClient secretClient, string secretName)
+    private static async Task<string> GetSecretFromKeyVault(SecretClient secretClient, string secretName)
     {
       try
       {
@@ -306,3 +306,4 @@ namespace PMS.Infrastructure.Shopify
 
   }
 }
+ 
