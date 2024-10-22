@@ -2,7 +2,7 @@ using PMS.Core.Entities;
 
 namespace PMS.Core.Interfaces;
 
-public interface IShopifyProductService
+public interface IShopifyProductRepository
 {
     Task<IReadOnlyList<Product>> GetAllProductsAsync();
     Task<Product> GetProductByIdAsync(int id);

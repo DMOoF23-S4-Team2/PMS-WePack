@@ -38,11 +38,11 @@ namespace PMS.Infrastructure.Test
         public async Task Constructor_ShouldRetrieveAndSetSecrets()
         {
             // Act
-            var shopifyProductService = new ShopifyProductService(_httpClient, _mockConfiguration.Object, _mockSecretClient.Object);
+            var shopifyProductService = new ShopifyProductRepository(_httpClient, _mockConfiguration.Object, _mockSecretClient.Object);
 
             // Assert
             // Use reflection to access the private field _accessToken
-            var accessTokenField = typeof(ShopifyProductService).GetField("_accessToken", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var accessTokenField = typeof(ShopifyProductRepository).GetField("_accessToken", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var actualAccessToken = accessTokenField.GetValue(shopifyProductService) as string;
 
             Assert.Equal("fake-secret-value", actualAccessToken);
@@ -54,23 +54,23 @@ namespace PMS.Infrastructure.Test
             // Arrange
             var product = new Product
             {
-            Name = "Test Product",
-            Description = "Test Description",
-            Sku = "12345",
-            Ean = "67890",
-            Color = "Red",
-            Material = "Plastic",
-            ProductType = "Type1",
-            ProductGroup = "Group1",
-            Supplier = "Supplier1",
-            SupplierSku = "SupplierSku1",
-            TemplateNo = 1,
-            List = 2,
-            Weight = 1.1f,
-            Cost = 10.2f,
-            Currency = "DKK",
-            Price = 100.3f,
-            SpecialPrice = 90.4f
+                Name = "Test Product",
+                Description = "Test Description",
+                Sku = "12345",
+                Ean = "67890",
+                Color = "Red",
+                Material = "Plastic",
+                ProductType = "Type1",
+                ProductGroup = "Group1",
+                Supplier = "Supplier1",
+                SupplierSku = "SupplierSku1",
+                TemplateNo = 1,
+                List = 2,
+                Weight = 1.1f,
+                Cost = 10.2f,
+                Currency = "DKK",
+                Price = 100.3f,
+                SpecialPrice = 90.4f
             };
 
             var responseContent = @"
@@ -112,7 +112,7 @@ namespace PMS.Infrastructure.Test
                 Content = new StringContent(responseContent)
             });
 
-            var shopifyProductService = new ShopifyProductService(_httpClient, _mockConfiguration.Object, _mockSecretClient.Object);
+            var shopifyProductService = new ShopifyProductRepository(_httpClient, _mockConfiguration.Object, _mockSecretClient.Object);
 
             // Act
             var result = await shopifyProductService.AddProductAsync(product);

@@ -10,13 +10,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace PMS.Infrastructure.Shopify
 {
-    public class ShopifyProductService : IShopifyProductService
+  public class ShopifyProductRepository : IShopifyProductRepository
   {
     private readonly HttpClient _httpClient;
     private readonly string _shopifyApiUrl;
     private readonly string _accessToken;
 
-    public ShopifyProductService(HttpClient httpClient, IConfiguration configuration, SecretClient? secretClient = null)
+    public ShopifyProductRepository(HttpClient httpClient, IConfiguration configuration, SecretClient? secretClient = null)
     {
       _httpClient = httpClient;
       _shopifyApiUrl = configuration["ShopifyApiUrl"] ?? throw new ArgumentNullException("ShopifyApiUrl configuration is missing.");
@@ -306,4 +306,3 @@ namespace PMS.Infrastructure.Shopify
 
   }
 }
- 
