@@ -36,8 +36,8 @@ export function renderAllProducts(products) {
                     <td>${product.price}</td>
                     <td>${product.currency}</td>
                     <td class="actions-container">
-                        <button class="edit-btn" data-id="${product.id}">Edit</button>
-                        <button class="delete-btn" data-id="${product.id}">Delete</button>
+                        <button class="edit-btn" data-id="${product.id}"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="delete-btn" data-id="${product.id}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('')}
@@ -108,87 +108,17 @@ function renderAddProduct() {
 }
 
 
-// singleProductNav.addEventListener('click', () => {
-//     heroEl.innerHTML = `
-//         <form id="add-product-form">
-//             <div class="form-container">
-//                 <label for="sku">SKU</label>
-//                 <input required id="sku" name="sku">
-
-//                 <label for="ean">EAN</label>
-//                 <input id="ean" name="ean">
-
-//                 <label for="name">Name</label>
-//                 <input required id="name" name="name">
-
-//                 <label for="description">Description</label>
-//                 <textarea id="description" name="description"></textarea>  
-                
-//                 <label for="category">Category</label>
-//                 <input id="category" name="category">
-                
-//             </div>
-//             <div class="form-container">
-//                 <div class="units-container">
-//                     <div>
-//                         <label for="price">Price</label>
-//                         <input required id="price" type="number" name="price">
-//                     </div>
-//                     <div>
-//                         <label for="specialPrice">Special Price</label>
-//                         <input id="specialPrice" type="number" name="specialPrice">
-//                     </div>    
-//                 </div>                 
-
-//                 <label for="supplier">Supplier</label>
-//                 <input id="supplier" name="supplier">
-
-//                 <label for="supplierSku">Supplier SKU</label>
-//                 <input id="supplierSku" name="supplierSku">
-
-//                 <label for="templateNo">Template No</label>
-//                 <input id="templateNo" type="number" name="templateNo">
-
-//                 <label for="productType">Product type</label>
-//                 <input id="productType" name="productType">
-
-//                 <label for="productGroup">Product group</label>
-//                 <input id="productGroup" name="productGroup">
-//             </div>
-//             <div class="form-container">                
-
-//                 <label for="currency">Currency</label>
-//                 <input id="currency" name="currency">
-
-//                 <label for="material">Material</label>
-//                 <input id="material" name="material">
-
-//                 <label for="color">Color</label>
-//                 <input id="color" name="color">
-
-//                 <label for="list">List</label>
-//                 <input id="list" type="number" name="list">
-
-//                 <div class="units-container">
-//                     <div>
-//                         <label for="weight">Weight</label>
-//                         <input id="weight" type="number" name="weight">
-//                     </div>
-//                     <div>
-//                         <label for="cost">Cost</label>
-//                         <input id="cost" type="number" name="cost">
-//                     </div>    
-//                 </div>    
-
-//                 <button class="add-product-btn">Add Product</button>
-//             </div>
-//         </form>
-//     `;
-
-//     heroEl.style.padding = ''
-
-//     addProductFormHandler();  // Delegate the form handling to the handler function
-
-//     document.querySelector(".add-category-btn").style.display = 'none';
-// });
+// Select all nav-container elements
+const navItems = document.querySelectorAll('.nav-container');
     
+
+// Add click event listener to each navbar item
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        // Remove 'active' class from all nav items
+        navItems.forEach(nav => nav.classList.remove('active'));
+        
+        // Add 'active' class to the clicked nav item
+        item.classList.add('active');
+    });
+});

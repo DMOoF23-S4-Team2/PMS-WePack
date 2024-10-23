@@ -48,17 +48,15 @@ header h3 {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 1em;
 }
 
-#hero-container{    
+#hero-container{  
     background: linear-gradient(to top, #232526 30%, #414345 100%);
     display: flex;
     align-items: center;
     border: 1px solid gray;
-    width: 900px;
+    width: 800px;
     height: 70vh;
     padding: 2em 5em;
     border-radius: 10px;
@@ -68,7 +66,7 @@ header h3 {
 nav {
     background: linear-gradient(to top, #232526 1%, #414345 30%);
     grid-area: nav;
-    padding: 1em;
+    padding: 3em 1.5em;
     gap: 3em;
     display: flex;
     flex-direction: column;
@@ -111,13 +109,20 @@ section {
 .nav-container {
     display: flex;
     width: 100%;
-    background-color: transparent;
     padding: 1em;
     cursor: pointer;
+    border-radius: 5px;
 }
 .nav-container:hover, 
 .nav-container:focus {
     background-color: gray;
+}
+
+/* Active navbar item styling */
+.nav-container.active {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    color: white;
+    border-left: 3px solid white; 
 }
 
 /* ADD PRODUCT FORM */
@@ -155,8 +160,7 @@ textarea {
 }
 
 .confirm-add-btn {
-    padding: .5em 1em;
-    font-weight: 700;
+    padding: .5em 1.5em;
     background-color: #009432;
     color: white;
     border-radius: 5px;
@@ -315,13 +319,13 @@ button {
 }
 
 .edit-btn, .yes-update-btn {
-    background-color: #009432;
+    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
 }
 .edit-btn:hover,
 .edit-btn:focus, 
 .yes-update-btn:hover,
 .yes-update-btn:focus {
-    background-color: green;
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
 }
 
 .delete-btn {
@@ -335,7 +339,7 @@ button {
 
 .add-category-btn, .add-product-btn { 
     align-self: self-end;
-    margin-right: 14.5em;
+    margin-right: 18.5em;
     display: none;
     padding: .5em 1em;
     font-weight: 700;

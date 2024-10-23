@@ -164,7 +164,7 @@ export function renderAddProductModal() {
                 </div>    
 
                 <div class="dialog-actions">
-                    <button type="submit" class="confirm-add-btn">Add Product</button>
+                    <button type="submit" class="confirm-add-btn">Add</button>
                     <button type="button" class="close-modal-btn">Cancel</button>
                 </div>
             </div>     

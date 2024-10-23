@@ -33,8 +33,8 @@ export function renderAllCategories(categories) {
                         <td>${category.description}</td>
                         <td>${category.bottomDescription}</td>
                         <td class="actions-container">
-                            <button class="edit-btn" data-id="${category.id}">Edit</button>
-                            <button class="delete-btn" data-id="${category.id}">Delete</button>
+                            <button class="edit-btn" data-id="${category.id}"><i class="fa-solid fa-pencil"></i></button>
+                            <button class="delete-btn" data-id="${category.id}"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `).join('')}
