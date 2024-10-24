@@ -82,7 +82,6 @@ categoriesNav.addEventListener('click', async () => {
             </div>
         </div>
     `;
-    heroEl.style.padding = '0'
     
     const categories = await getAllCategories();  // Wait for the categories to be fetched
     renderAllCategories(categories);  // Call renderAllCategories after fetching categories

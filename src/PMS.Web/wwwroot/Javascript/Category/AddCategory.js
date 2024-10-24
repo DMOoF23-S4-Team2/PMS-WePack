@@ -3,7 +3,7 @@ import { renderAllCategories } from "../Main/MainCategory.js";
 import { getAllCategories } from "./GetCategories.js";
 
 
-async function addCategory(categoryData) {
+export async function addCategory(categoryData) {
     try {
         const response = await fetch("https://localhost:7225/api/Category", {
             method: "POST",
@@ -33,7 +33,7 @@ async function addCategory(categoryData) {
 }
 
 
-function addCategoryFormHandler(dialog) {
+export function addCategoryFormHandler(dialog) {
     const form = document.getElementById("add-category-form");
 
     form.addEventListener('submit', async (e) => {

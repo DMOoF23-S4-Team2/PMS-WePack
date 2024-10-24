@@ -89,7 +89,6 @@ productsNav.addEventListener('click', async () => {
             </div>
         </div>
     `;
-    heroEl.style.padding = '0'
     
     const products = await getAllProducts();  // Wait for the products to be fetched
     renderAllProducts(products);  // Call renderAllProducts after fetching products
@@ -108,17 +107,3 @@ function renderAddProduct() {
 }
 
 
-// Select all nav-container elements
-const navItems = document.querySelectorAll('.nav-container');
-    
-
-// Add click event listener to each navbar item
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        // Remove 'active' class from all nav items
-        navItems.forEach(nav => nav.classList.remove('active'));
-        
-        // Add 'active' class to the clicked nav item
-        item.classList.add('active');
-    });
-});

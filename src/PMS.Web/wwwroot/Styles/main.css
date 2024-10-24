@@ -6,7 +6,6 @@
 body {
     color: white;
     font-family: Roboto, 'sans-serif';
-    height: 100vh;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -29,6 +28,7 @@ body {
 
 header {
     grid-area: head;
+    height: 10vh;
     padding: 0 1em;
     display: flex;
     justify-content: space-between;
@@ -48,7 +48,9 @@ header h3 {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    padding: 0;
+    gap: 1em; 
+    min-height: 90vh;
 }
 
 #hero-container{  
@@ -58,7 +60,6 @@ header h3 {
     border: 1px solid gray;
     width: 800px;
     height: 70vh;
-    padding: 2em 5em;
     border-radius: 10px;
     overflow: auto;
 }
@@ -66,7 +67,7 @@ header h3 {
 nav {
     background: linear-gradient(to top, #232526 1%, #414345 30%);
     grid-area: nav;
-    padding: 3em 1.5em;
+    padding: 3em 0em;
     gap: 3em;
     display: flex;
     flex-direction: column;
@@ -109,7 +110,7 @@ section {
 .nav-container {
     display: flex;
     width: 100%;
-    padding: 1em;
+    padding: 1em 2.5em;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -118,7 +119,6 @@ section {
     background-color: gray;
 }
 
-/* Active navbar item styling */
 .nav-container.active {
     background: linear-gradient(to top, #232526 30%, #414345 100%);
     color: white;
@@ -210,6 +210,100 @@ textarea {
     width: 100%;
     padding: 1em 0 1em 3em;
     border-radius: 10px 10px 0 0;
+}
+
+/* CSV PAGE */
+
+.file-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5em auto;
+    height: 40%;
+    width: 60%;
+    border: 3px dashed gray;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.file-container:hover {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+}
+.csv-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+.csv-actions-container {
+    padding: 1em;
+    width: 100%;
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    margin-bottom: auto;
+    display: flex;
+    justify-content: space-between;
+}
+.csv-btn-container {
+    display: flex;
+    gap: 2em;
+}
+
+.fa-cloud-arrow-up {
+    font-size: 3em;
+    color: gray;
+}
+.fa-brands {
+    margin-left: .5em;
+}
+
+.update-btn {
+    padding: .7em 1em;
+    font-weight: 600;
+    background-color: grey;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+.update-btn:hover {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+}
+
+.succes-btn{
+    padding: .5em 1.5em;
+    background-color: #009432;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+.succes-btn:hover {
+    background-color: green;
+}
+
+.progress-bar-container {
+    height: 50px;
+    width: 200px;
+    margin-top: 10px;
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #f3f3f3;
+    overflow: hidden;
+}
+#file-progress {
+    width: 100%;
+}
+#upload-complete {
+    display: none;
+}
+#upload-complete button {
+    margin-left: 1em;
 }
 
 
@@ -322,9 +416,7 @@ button {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
 }
 .edit-btn:hover,
-.edit-btn:focus, 
-.yes-update-btn:hover,
-.yes-update-btn:focus {
+.yes-update-btn:hover {
     background: linear-gradient(to top, #232526 30%, #414345 100%);
 }
 
@@ -339,7 +431,7 @@ button {
 
 .add-category-btn, .add-product-btn { 
     align-self: self-end;
-    margin-right: 18.5em;
+    margin: 0 18.5em 0 0;
     display: none;
     padding: .5em 1em;
     font-weight: 700;
