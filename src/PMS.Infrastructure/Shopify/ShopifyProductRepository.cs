@@ -15,6 +15,8 @@ namespace PMS.Infrastructure.Shopify
     private readonly HttpClient _httpClient;
     private readonly string _shopifyApiUrl;
     private readonly string _accessToken;
+    private readonly string _apiKey;
+
 
     public ShopifyProductRepository(HttpClient httpClient, IConfiguration configuration, SecretClient? secretClient = null)
     {
@@ -23,6 +25,8 @@ namespace PMS.Infrastructure.Shopify
 
       var keyVaultUrl = configuration["KeyVaultUri"] ?? throw new ArgumentNullException("KeyVaultUri configuration is missing.");
       secretClient ??= new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
+      
+      _apiKey = GetSecretFromKeyVault(secretClient, "DevStrapApiKey").Result;
 
       _accessToken = GetSecretFromKeyVault(secretClient, "DevStrapAccessToken").Result;
     }
@@ -77,6 +81,7 @@ namespace PMS.Infrastructure.Shopify
       var query = ConstructProductQuery();
 
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
+      
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       response.EnsureSuccessStatusCode();
 

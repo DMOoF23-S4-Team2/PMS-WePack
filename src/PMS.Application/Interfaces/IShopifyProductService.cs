@@ -8,14 +8,14 @@ namespace PMS.Application.Interfaces
 {
     public interface IShopifyProductService
     {
-        Task<IReadOnlyList<Product>> GetAllProductsAsync();
-        Task<Product> GetProductByIdAsync(int id);
-        Task<Product> AddProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
-        Task PatchProductAsync(Product product);
-        Task DeleteProductAsync(Product product);
-        Task AddManyProductsAsync(IEnumerable<Product> product);
-        Task UpdateManyProductsAsync(IEnumerable<Product> product);
-        Task DeleteManyProductsAsync(IEnumerable<Product> product);
+        Task<IReadOnlyList<Product>> GetAllShopifyProducts();
+        Task<Product> GetShopifyProductById(int id);
+        Task<Product> AddShopifyProduct(Product product);
+        Task UpdateShopifyProduct(Product product);
+        Task PatchShopifyProduct(Product product);
+        Task DeleteShopifyProduct(Product product);
+        Task AddManyShopifyProducts(IEnumerable<Product> products);
+        Task UpdateManyShopifyProducts(IEnumerable<Product> products);
+        Task DeleteManyShopifyProducts(IEnumerable<Product> products);
     }
 }

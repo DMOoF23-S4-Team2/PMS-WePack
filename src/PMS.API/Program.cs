@@ -23,6 +23,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
 // Register Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -32,7 +35,7 @@ builder.Services.AddScoped<IShopifyProductRepository, ShopifyProductRepository>(
 // Register Services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-//builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
+builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
 
 //! Register DbContext with local DB (WePackTest)
 //NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB
