@@ -48,9 +48,9 @@ export function renderAllCategories(categories) {
         const deleteButtons = document.querySelectorAll(".delete-btn");
         deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const categoryId = e.target.dataset.id;  // Get the product ID from the button
+            const categoryId = e.currentTarget.dataset.id;  // Get the product ID from the button
              // Find the product details (name and SKU) from the clicked row
-            const categoryRow = e.target.closest('tr');
+            const categoryRow = e.currentTarget.closest('tr');
             const categoryName = categoryRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the name
 
             // Show the delete modal and pass the product ID, name, and SKU
@@ -63,7 +63,7 @@ export function renderAllCategories(categories) {
         const editButtons = document.querySelectorAll(".edit-btn");
         editButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const categoryId = e.target.dataset.id;  // Get the category ID from the button
+            const categoryId = e.currentTarget.dataset.id;  // Get the category ID from the button
             showUpdateModal(categoryId, updateCategory);  // Show the update modal and pass the category ID            
             });
         });

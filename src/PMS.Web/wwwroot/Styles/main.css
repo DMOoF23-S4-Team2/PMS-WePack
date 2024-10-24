@@ -48,7 +48,7 @@ header h3 {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     display: flex;
     flex-direction: column;
-    padding: 0;
+    padding: 0 0 2.5em 0;
     gap: 1em; 
     min-height: 90vh;
 }
@@ -59,7 +59,7 @@ header h3 {
     align-items: center;
     border: 1px solid gray;
     width: 800px;
-    height: 70vh;
+    height: 65vh;
     border-radius: 10px;
     overflow: auto;
 }
@@ -221,7 +221,7 @@ textarea {
     justify-content: center;
     margin: 0 auto 5em auto;
     height: 40%;
-    width: 60%;
+    width: 50%;
     border: 3px dashed gray;
     border-radius: 10px;
     cursor: pointer;
@@ -262,13 +262,13 @@ textarea {
 .update-btn {
     padding: .7em 1em;
     font-weight: 600;
-    background-color: grey;
+    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     color: white;
     border-radius: 5px;
     border: none;
 }
 .update-btn:hover {
-    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    background: linear-gradient(to top, #272f34 5%, #1e1f20 100%);
 }
 
 .succes-btn{
@@ -295,6 +295,10 @@ progress {
     border-radius: 10px;
     background-color: #f3f3f3;
     overflow: hidden;
+}
+#progress-text {
+    margin-top: .3em;
+    text-align: center;
 }
 #file-progress {
     width: 100%;
@@ -379,7 +383,7 @@ dialog {
     font-weight: 700;
     border-radius: 8px;
     padding: .5em 1.5em;
-    top: 7%;
+    top: 15%;
     left: 15%;
 }
 

@@ -53,9 +53,9 @@ export function renderAllProducts(products) {
     const deleteButtons = document.querySelectorAll(".delete-btn");
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const productId = e.target.dataset.id;  // Get the product ID from the button
+            const productId = e.currentTarget.dataset.id;  // Get the product ID from the button
              // Find the product details (name and SKU) from the clicked row
-            const productRow = e.target.closest('tr');
+            const productRow = e.currentTarget.closest('tr');
             const productName = productRow.querySelector('td:nth-child(3)').textContent;  // Assuming the 3rd <td> is the name
             const productSku = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the SKU
 
@@ -69,7 +69,7 @@ export function renderAllProducts(products) {
     const editButtons = document.querySelectorAll(".edit-btn");
     editButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const productId = e.target.dataset.id;  // Get the product ID from the button
+            const productId = e.currentTarget.dataset.id;  // Get the product ID from the button
             showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product ID
             
         });

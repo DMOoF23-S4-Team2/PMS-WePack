@@ -10,8 +10,8 @@ csvNav.addEventListener('click', () => {
     <div class="csv-section">
         <div class="csv-actions-container">
             <div class="csv-btn-container">
-                <button class="update-btn">Update Shopify <i class="fa-brands fa-shopify"></i></button>
-                <button class="update-btn">Update Magento <i class="fa-brands fa-magento"></i></button>
+                <button class="update-btn">Update Shopify<i class="fa-brands fa-shopify"></i></button>
+                <button class="update-btn">Update Magento<i class="fa-brands fa-magento"></i></button>
             </div>
             <div class="csv-btn-container">
                 <button class="succes-btn">Add</button>
@@ -24,7 +24,7 @@ csvNav.addEventListener('click', () => {
             <input type="file" id="csv-upload" accept=".png" style="display: none;" />
             <div class="progress-bar-container">
                 <progress id="file-progress" value="0" max="100"></progress>
-                <span id="progress-text">0%</span>
+                <p id="progress-text">0%</p>
             </div>
             <div id="upload-complete">
                 <p>File uploaded successfully!   <span><i class="fa-solid fa-circle-check"></i></span></p>             
