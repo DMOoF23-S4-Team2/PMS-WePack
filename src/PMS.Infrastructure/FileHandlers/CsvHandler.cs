@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using PMS.Infrastructure.Interfaces;
 
 namespace PMS.Infrastructure.FileHandlers
-{
-    public class CsvHandler
+{    
+    public class CsvHandler : ICsvHandler
     {
-        public List<string> GetCsv(string filepath){
-                        
+        public List<string> GetCsv(string filepath){                        
             var lines = new List<string>();            
             try
             {
