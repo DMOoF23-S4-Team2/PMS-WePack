@@ -5,7 +5,7 @@ namespace PMS.Application.Interfaces
 {
     public interface ICsvService
     {
-        List<ProductDto> GetProductCsv(string filepath);
+        Task AddManyProductsFromCsv(string filepath);
     }
 }
 
