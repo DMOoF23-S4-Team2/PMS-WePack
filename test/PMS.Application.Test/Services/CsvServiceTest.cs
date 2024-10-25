@@ -42,13 +42,13 @@ public class CsvServiceTest
         var mockedProductService = new Mock<IProductService>();          
         // Mocked CSV handler to return mock data
         mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
-                        .Returns(MockedValidCsvFileWithID());          
+                        .Returns(MockedValidCsvFileWithOutID());          
         // Create an instance of CsvService with the mocked dependencies
         var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);         
         // Act    
         await csvService.CreateProduct("test-filepath.csv");        
         // Assert
-        mockedProductService.Verify(service => service.CreateProduct(It.IsAny<ProductDto>()), Times.Once);       
+        mockedProductService.Verify(service => service.CreateProduct(It.IsAny<ProductWithoutIdDto>()), Times.Once);       
     }
  
 

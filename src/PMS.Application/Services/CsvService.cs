@@ -55,7 +55,10 @@ namespace PMS.Application.Services
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             await _productService.DeleteManyProducts(products);             
         }
-        // public async Task UpdateManyProducts(string filepath){ return; }
+        public async Task UpdateManyProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.UpdateManyProducts(products);      
+        }
 
         // public async Task UpdateProduct(string filepath){ 
         //     List<ProductDto> products = getProductWithIDFromCsv(filepath);            
