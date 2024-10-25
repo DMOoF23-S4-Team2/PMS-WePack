@@ -13,10 +13,10 @@ public class CsvServiceTest
         // Notice the csv file is with semicolon has delimiter/seperator
         var csvContent = new List<string>
         {
-            "sku;ean;name;description;color;material;product_type;product_group;supplier;supplier_sku;template_no;list;weight;currency;cost;price;special_price",
-            "LC01-76-1038-1;EAN090909;iPhone 12 / 12 Pro cover - Black;A black iPhone 12 / 12 Pro cover;Black;Silicone / TPU;Cover;Smartphone;TVC;101123911A;12;457;0.1;DKK;5;99;79",
-            "LC01-76-1038-2;EAN090909;iPhone 12 / 12 Pro cover – White;A black iPhone 12 / 12 Pro cover;White;PU Leather;Case;Smartphone;TVC;101123911B;11;457;0.1;SEK;5;60;49",
-            "LC01-76-1038-3;EAN090909;iPhone 12 / 12 Pro cover – Blue;A black iPhone 12 / 12 Pro cover;Blue;Plastic;Cover;Smartphone;TVC;101123911C;132;328;0.9;NOK;5;60;49"
+            "sku;ean;name;description;color;material;product_type;product_group;supplier;supplier_sku;template_no;list;weight;currency;cost;price;special_price;platform",
+            "LC01-76-1038-1;EAN090909;iPhone 12 / 12 Pro cover - Black;A black iPhone 12 / 12 Pro cover;Black;Silicone / TPU;Cover;Smartphone;TVC;101123911A;12;457;0.1;DKK;5;99;79;shopify",
+            "LC01-76-1038-2;EAN090909;iPhone 12 / 12 Pro cover – White;A black iPhone 12 / 12 Pro cover;White;PU Leather;Case;Smartphone;TVC;101123911B;11;457;0.1;SEK;5;60;49;shopify",
+            "LC01-76-1038-3;EAN090909;iPhone 12 / 12 Pro cover – Blue;A black iPhone 12 / 12 Pro cover;Blue;Plastic;Cover;Smartphone;TVC;101123911C;132;328;0.9;NOK;5;60;49;shopify"
         };
         return csvContent;
     }     
