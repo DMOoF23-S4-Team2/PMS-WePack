@@ -25,4 +25,10 @@
     <ProjectReference Include="..\..\src\PMS.Infrastructure\PMS.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestResources\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>  
+
 </Project>
