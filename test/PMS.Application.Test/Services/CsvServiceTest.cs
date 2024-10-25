@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using Moq;
 using PMS.Application.Services;
@@ -9,7 +10,7 @@ using PMS.Infrastructure.Interfaces;
 namespace PMS.Application.Test.Services;
 public class CsvServiceTest
 {     
-    private List<string> MockedValidCsvFile(){
+    private List<string> MockedValidCsvFileWithOutID(){
         // Notice the csv file is with semicolon has delimiter/seperator
         var csvContent = new List<string>
         {
@@ -19,25 +20,50 @@ public class CsvServiceTest
             "LC01-76-1038-3;EAN090909;iPhone 12 / 12 Pro cover - Blue;A black iPhone 12 / 12 Pro cover;Blue;Plastic;Cover;Smartphone;TVC;101123911C;132;328;0.9;NOK;5;60;49;shopify"
         };
         return csvContent;
-    }     
+    }   
+
+    private List<string> MockedValidCsvFileWithID(){
+        // Notice the csv file is with semicolon has delimiter/seperator
+        var csvContent = new List<string>
+        {
+            "id;sku;ean;name;description;color;material;product_type;product_group;supplier;supplier_sku;template_no;list;weight;currency;cost;price;special_price;platform",
+            "1;LC01-76-1038-1;EAN090909;iPhone 12 / 12 Pro cover - Black;A black iPhone 12 / 12 Pro cover;Black;Silicone / TPU;Cover;Smartphone;TVC;101123911A;12;457;0.1;DKK;5;99;79;shopify",
+            "2;LC01-76-1038-2;EAN090909;iPhone 12 / 12 Pro cover - White;A black iPhone 12 / 12 Pro cover;White;PU Leather;Case;Smartphone;TVC;101123911B;11;457;0.1;SEK;5;60;49;shopify",
+            "3;LC01-76-1038-3;EAN090909;iPhone 12 / 12 Pro cover - Blue;A black iPhone 12 / 12 Pro cover;Blue;Plastic;Cover;Smartphone;TVC;101123911C;132;328;0.9;NOK;5;60;49;shopify"
+        };
+        return csvContent;
+    } 
     
 
-
+    [Fact]
+    public async void TestCreateProduct(){
+        // Arrange        
+        var mockedCsvHandler = new Mock<ICsvHandler>();
+        var mockedProductService = new Mock<IProductService>();          
+        // Mocked CSV handler to return mock data
+        mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
+                        .Returns(MockedValidCsvFileWithID());          
+        // Create an instance of CsvService with the mocked dependencies
+        var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);         
+        // Act    
+        await csvService.CreateProduct("test-filepath.csv");        
+        // Assert
+        mockedProductService.Verify(service => service.CreateProduct(It.IsAny<ProductDto>()), Times.Once);       
+    }
  
 
-
     [Fact]
-    public async void AddManyProductsFromCsvFile(){
+    public async void TestAddManyProductsFromCsvFile(){
         // Arrange
         var mockedCsvHandler = new Mock<ICsvHandler>();
         var mockedProductService = new Mock<IProductService>();
         // Setup the mocked CSV handler to return mock data
         mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
-                    .Returns(MockedValidCsvFile());
+                    .Returns(MockedValidCsvFileWithOutID());
         // Create an instance of CsvService with the mocked dependencies
         var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);
         // Act
-        await csvService.AddManyProductsFromCsv("test-filepath.csv");
+        await csvService.AddManyProductsFromCsv("test-withoutid_filepath.csv");
         // Assert
         mockedProductService.Verify(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()), Times.Once);        
     }
@@ -53,7 +79,7 @@ public class CsvServiceTest
     //     // Create an instance of CsvService with the mocked dependencies
     //     var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object); 
     //     // Act        
-    //     var result = csvService.GetProductWithoutIdFromCsv("test-filepath.csv");                                     
+    //     var result = METHOD
     // }
 
     // Comment out because method is now private.. It's nice to have in development for now

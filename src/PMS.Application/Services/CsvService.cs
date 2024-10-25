@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using PMS.Application.DTOs.Product;
 using PMS.Application.Interfaces;
 using PMS.Infrastructure.Interfaces;
@@ -20,37 +21,54 @@ namespace PMS.Application.Services
                 
         public async Task CreateProduct(string filepath){ 
             // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-            List<ProductWithoutIdDto> products = getProductFromCsv<ProductWithoutIdDto>(filepath);
-            // Getting the first product
-            ProductWithoutIdDto product = products[0];
-            // Add the products with AddManyProducts from ProductService
-            await _productService.CreateProduct(product);            
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
+            // Take the first product
+            await _productService.CreateProduct(products[0]);            
         }
 
-        // public async Task DeleteProduct(string filepath){ 
-        //     // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-        //     List<ProductDto> products = getProductFromCsv<ProductDto>(filepath);
-        //     // Getting the first product
-        //     ProductDto productId = intproducts[0].Id;
-        //     await _productService.DeleteProduct(productId);   
-        // }
+        public async Task DeleteProduct(string filepath){ 
+            // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            // Getting the first product
+            int productId = products[0].Id;
+            await _productService.DeleteProduct(productId);   
+        }
 
-        // public async Task GetProduct(string filepath){ return; }
-        // public async Task GetProducts(string filepath){ return; }
-        // public async Task UpdateProduct(string filepath){ return; }        
-        public async Task AddManyProductsFromCsv(string filepath){            
-            List<ProductWithoutIdDto> products = getProductFromCsv<ProductWithoutIdDto>(filepath);            
+        public async Task GetProduct(string filepath){             
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            // Getting the first product
+            int productId = products[0].Id;
+            await _productService.GetProduct(productId); 
+        }
+
+        public async Task GetProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.GetProducts(); 
+        }
+
+        public async Task AddManyProductsFromCsv(string filepath){                        
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);            
             await _productService.AddManyProducts(products);            
         }
 
+        public async Task DeleteManyProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.DeleteManyProducts(products);             
+        }
         // public async Task UpdateManyProducts(string filepath){ return; }
-        // public async Task DeleteManyProducts(string filepath){ return; }
+
+        // public async Task UpdateProduct(string filepath){ 
+        //     List<ProductDto> products = getProductWithIDFromCsv(filepath);            
+        //     int productId = products[0].Id;
+        //     ProductDto product = products[0];
+        //     await _productService.UpdateProduct(productId, product); 
+        // }        
 
         // Methods to get .csv        
-        private List<T> getProductFromCsv<T>(string filepath) where T : IProduct, new()
+        private List<ProductDto> getProductWithIDFromCsv(string filepath)
         {
             var csvData = _csvHandler.GetCsv(filepath);
-            var products = new List<T>();
+            var products = new List<ProductDto>();
 
             // Parse header row to get column mappings
             var headers = csvData[0].Split(';');
@@ -59,47 +77,81 @@ namespace PMS.Application.Services
             {
                 headerIndexMap[headers[i].ToLower()] = i;
             }
-            // Check if ID is in column
-            bool hasIdColumn = headerIndexMap.ContainsKey("id");
 
             for (int i = 1; i < csvData.Count; i++)
             {
                 var line = csvData[i];
                 var fields = line.Split(';');
-
-                // Create a new product object using the generic type, so we can decide type
-                var product = new T();
-
-                // Populate common properties
-                product.Sku = fields[headerIndexMap["sku"]];
-                product.Ean = fields[headerIndexMap["ean"]];
-                product.Name = fields[headerIndexMap["name"]];
-                product.Description = fields[headerIndexMap["description"]];
-                product.Color = fields[headerIndexMap["color"]];
-                product.Material = fields[headerIndexMap["material"]];
-                product.ProductType = fields[headerIndexMap["product_type"]];
-                product.ProductGroup = fields[headerIndexMap["product_group"]];
-                product.Supplier = fields[headerIndexMap["supplier"]];
-                product.SupplierSku = fields[headerIndexMap["supplier_sku"]];
-                product.TemplateNo = int.Parse(fields[headerIndexMap["template_no"]]);
-                product.List = int.Parse(fields[headerIndexMap["list"]]);
-                product.Weight = float.Parse(fields[headerIndexMap["weight"]]);
-                product.Currency = fields[headerIndexMap["currency"]];
-                product.Cost = float.Parse(fields[headerIndexMap["cost"]]);
-                product.Price = float.Parse(fields[headerIndexMap["price"]]);
-                product.SpecialPrice = float.Parse(fields[headerIndexMap["special_price"]]);
-
-                // Only set id if the column exists
-                if (hasIdColumn && typeof(T) == typeof(ProductDto))
-                {
-                    var productWithId = product as ProductDto;
-                    productWithId.Id = int.Parse(fields[headerIndexMap["id"]]);
-                }
-
+                
+                var product = new ProductDto(){                            
+                    Id = int.Parse(fields[headerIndexMap["id"]]),
+                    Sku = fields[headerIndexMap["sku"]],
+                    Ean = fields[headerIndexMap["ean"]],
+                    Name = fields[headerIndexMap["name"]],
+                    Description = fields[headerIndexMap["description"]],
+                    Color = fields[headerIndexMap["color"]],
+                    Material = fields[headerIndexMap["material"]],
+                    ProductType = fields[headerIndexMap["product_type"]],
+                    ProductGroup = fields[headerIndexMap["product_group"]],
+                    Supplier = fields[headerIndexMap["supplier"]],
+                    SupplierSku = fields[headerIndexMap["supplier_sku"]],
+                    TemplateNo = int.Parse(fields[headerIndexMap["template_no"]]),
+                    List = int.Parse(fields[headerIndexMap["list"]]),
+                    Weight = float.Parse(fields[headerIndexMap["weight"]]),
+                    Currency = fields[headerIndexMap["currency"]],
+                    Cost = float.Parse(fields[headerIndexMap["cost"]]),
+                    Price = float.Parse(fields[headerIndexMap["price"]]),
+                    SpecialPrice = float.Parse(fields[headerIndexMap["special_price"]])
+                };   
+                // Add to list
                 products.Add(product);
             }
             return products;
         }        
        
+        private List<ProductWithoutIdDto> getProductWithoutIDFromCsv(string filepath)
+        {
+            var csvData = _csvHandler.GetCsv(filepath);
+            var products = new List<ProductWithoutIdDto>();
+
+            // Parse header row to get column mappings
+            var headers = csvData[0].Split(';');
+            var headerIndexMap = new Dictionary<string, int>();
+            for (int i = 0; i < headers.Length; i++)
+            {
+                headerIndexMap[headers[i].ToLower()] = i;
+            }
+
+            for (int i = 1; i < csvData.Count; i++)
+            {
+                var line = csvData[i];
+                var fields = line.Split(';');
+                
+                var product = new ProductWithoutIdDto(){                                                
+                    Sku = fields[headerIndexMap["sku"]],
+                    Ean = fields[headerIndexMap["ean"]],
+                    Name = fields[headerIndexMap["name"]],
+                    Description = fields[headerIndexMap["description"]],
+                    Color = fields[headerIndexMap["color"]],
+                    Material = fields[headerIndexMap["material"]],
+                    ProductType = fields[headerIndexMap["product_type"]],
+                    ProductGroup = fields[headerIndexMap["product_group"]],
+                    Supplier = fields[headerIndexMap["supplier"]],
+                    SupplierSku = fields[headerIndexMap["supplier_sku"]],
+                    TemplateNo = int.Parse(fields[headerIndexMap["template_no"]]),
+                    List = int.Parse(fields[headerIndexMap["list"]]),
+                    Weight = float.Parse(fields[headerIndexMap["weight"]]),
+                    Currency = fields[headerIndexMap["currency"]],
+                    Cost = float.Parse(fields[headerIndexMap["cost"]]),
+                    Price = float.Parse(fields[headerIndexMap["price"]]),
+                    SpecialPrice = float.Parse(fields[headerIndexMap["special_price"]])
+                };   
+                // Add to list
+                products.Add(product);
+            }
+            return products;
+        }  
+    
+    
     }
 }

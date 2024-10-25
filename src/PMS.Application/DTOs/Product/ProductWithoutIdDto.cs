@@ -1,6 +1,6 @@
 namespace PMS.Application.DTOs.Product;
 
-public class ProductWithoutIdDto : IProduct
+public class ProductWithoutIdDto
 {
     public string Sku { get; set; } = string.Empty;
     public string Ean { get; set; } = string.Empty;
