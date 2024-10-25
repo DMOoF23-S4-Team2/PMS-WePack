@@ -21,20 +21,42 @@ public class CsvServiceTest
         return csvContent;
     }     
     
+
+
+ 
+
+
     [Fact]
-    public void TestingATest(){
-        // Arrange        
+    public async void AddManyProductsFromCsvFile(){
+        // Arrange
         var mockedCsvHandler = new Mock<ICsvHandler>();
-        var mockedProductService = new Mock<IProductService>();  
-        // Mocked CSV handler to return mock data
+        var mockedProductService = new Mock<IProductService>();
+        // Setup the mocked CSV handler to return mock data
         mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
-                        .Returns(MockedValidCsvFile());  
+                    .Returns(MockedValidCsvFile());
         // Create an instance of CsvService with the mocked dependencies
-        var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object); 
-        // Act        
-        var result = csvService.GetProductWithoutIdFromCsv("test-filepath.csv");                                     
+        var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);
+        // Act
+        await csvService.AddManyProductsFromCsv("test-filepath.csv");
+        // Assert
+        mockedProductService.Verify(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()), Times.Once);        
     }
 
+    // [Fact]
+    // public void TestingATest(){
+    //     // Arrange        
+    //     var mockedCsvHandler = new Mock<ICsvHandler>();
+    //     var mockedProductService = new Mock<IProductService>();  
+    //     // Mocked CSV handler to return mock data
+    //     mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
+    //                     .Returns(MockedValidCsvFile());  
+    //     // Create an instance of CsvService with the mocked dependencies
+    //     var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object); 
+    //     // Act        
+    //     var result = csvService.GetProductWithoutIdFromCsv("test-filepath.csv");                                     
+    // }
+
+    // Comment out because method is now private.. It's nice to have in development for now
     // [Fact]
     // public void GetProductWithoutIdFromCsv_ValidCsvFile_ReturnsListOfProductWithoutIdDtos()
     // {
@@ -77,27 +99,6 @@ public class CsvServiceTest
     //     Assert.Equal(5.0, firstProduct.Cost);            
     //     Assert.Equal(99.0f, firstProduct.Price);
     //     Assert.Equal(79.0f, firstProduct.SpecialPrice);          
-    // }
-
-
-    // [Fact]
-    // public async void AddManyProductsFromCsvFile(){
-    //     // Arrange
-    //     var mockedCsvHandler = new Mock<ICsvHandler>();
-    //     var mockedProductService = new Mock<IProductService>();
-
-    //     // Setup the mocked CSV handler to return mock data
-    //     mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
-    //                 .Returns(MockedValidCsvFile());
-
-    //     // Create an instance of CsvService with the mocked dependencies
-    //     var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);
-
-    //     // Act
-    //     await csvService.AddManyProductsFromCsv("test-filepath.csv");
-
-    //     // Assert
-    //     mockedProductService.Verify(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()), Times.Once);        
     // }
 
 }

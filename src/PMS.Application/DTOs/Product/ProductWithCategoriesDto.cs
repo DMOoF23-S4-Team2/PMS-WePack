@@ -3,7 +3,7 @@ using PMS.Application.DTOs.Category;
 namespace PMS.Application.DTOs.Product;
 
 //REVIEW - remove if ProductWithCategoriesDto is not needed
-public class ProductWithCategoriesDto
+public class ProductWithCategoriesDto : IProduct
 {
     public int Id { get; set; }
     public string Sku { get; set; } = string.Empty;

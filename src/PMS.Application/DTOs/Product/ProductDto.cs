@@ -1,7 +1,7 @@
 using PMS.Application.DTOs.Category;
 
 namespace PMS.Application.DTOs.Product;
-public class ProductDto
+public class ProductDto : IProduct
 {
         public int Id { get; set; }        
         public string Sku { get; set; } = string.Empty;
