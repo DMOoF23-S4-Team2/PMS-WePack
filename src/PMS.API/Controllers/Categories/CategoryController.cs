@@ -30,7 +30,7 @@ namespace PMS.API.Controllers
             }                           
         }
 
-        //GET: Single Category from ID
+        // GET: Single Category from ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id){            
             var category = await categoryService.GetCategory(id);            

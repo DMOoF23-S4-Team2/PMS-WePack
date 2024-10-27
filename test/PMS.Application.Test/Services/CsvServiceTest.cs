@@ -63,7 +63,7 @@ public class CsvServiceTest
         // Create an instance of CsvService with the mocked dependencies
         var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);
         // Act
-        await csvService.AddManyProductsFromCsv("test-withoutid_filepath.csv");
+        await csvService.AddManyProducts("test-withoutid_filepath.csv");
         // Assert
         mockedProductService.Verify(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()), Times.Once);        
     }

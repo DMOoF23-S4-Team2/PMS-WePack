@@ -9,10 +9,10 @@ namespace PMS.Application.Interfaces
         Task DeleteProduct(string filepath);
         Task GetProduct(string filepath);
         Task GetProducts(string filepath);
-        Task AddManyProductsFromCsv(string filepath);
+        Task AddManyProducts(string filepath);
         Task DeleteManyProducts(string filepath);
+        Task UpdateManyProducts(string filepath);
         // Task UpdateProduct(string filepath);
-        // Task UpdateManyProducts(string filepath);
     }
 }
 

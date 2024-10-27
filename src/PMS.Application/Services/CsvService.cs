@@ -46,7 +46,7 @@ namespace PMS.Application.Services
             await _productService.GetProducts(); 
         }
 
-        public async Task AddManyProductsFromCsv(string filepath){                        
+        public async Task AddManyProducts(string filepath){                        
             List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);            
             await _productService.AddManyProducts(products);            
         }
