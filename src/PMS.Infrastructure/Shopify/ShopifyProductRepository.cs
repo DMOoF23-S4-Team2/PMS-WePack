@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using PMS.Core.Entities;
 using PMS.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
+using System.Globalization;
 
 
 namespace PMS.Infrastructure.Shopify
@@ -25,7 +26,7 @@ namespace PMS.Infrastructure.Shopify
 
       var keyVaultUrl = configuration["KeyVaultUri"] ?? throw new ArgumentNullException("KeyVaultUri configuration is missing.");
       secretClient ??= new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-      
+
       _apiKey = GetSecretFromKeyVault(secretClient, "DevStrapApiKey").Result;
 
       _accessToken = GetSecretFromKeyVault(secretClient, "DevStrapAccessToken").Result;
@@ -37,7 +38,11 @@ namespace PMS.Infrastructure.Shopify
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-      response.EnsureSuccessStatusCode();
+      if (!response.IsSuccessStatusCode)
+      {
+        var errorContent = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
+      }
 
       var result = await response.Content.ReadAsStringAsync();
       var json = JsonNode.Parse(result);
@@ -64,7 +69,11 @@ namespace PMS.Infrastructure.Shopify
 
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-      response.EnsureSuccessStatusCode();
+      if (!response.IsSuccessStatusCode)
+      {
+        var errorContent = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
+      }
 
       var result = await response.Content.ReadAsStringAsync();
       var json = JsonNode.Parse(result);
@@ -76,37 +85,181 @@ namespace PMS.Infrastructure.Shopify
     }
 
     // Get all products
+    //!SECTION
     public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
     {
-      var query = ConstructProductQuery();
+      var query = @"
+    {
+      products(first: 100) {
+        edges {
+          node {
+            title
+            descriptionHtml
+            vendor
+            productType
+            tags
 
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                  sku
+                  weight
+                  barcode
+                  compareAtPrice
+                  contextualPricing(context: {country: DK}) {
+                    price {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  selectedOptions {
+                    name 
+                    value
+                  }
+                }
+              }
+            }
+
+            metafields(first: 10, namespace: ""custom""){
+              edges {
+                node {
+                  key
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    }";
+
+      using var httpClient = new HttpClient();
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
-      
-      var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
-      response.EnsureSuccessStatusCode();
+      httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+      var response = await httpClient.PostAsync(_shopifyApiUrl, content);
 
-      var result = await response.Content.ReadAsStringAsync();
-      var jsonDocument = JsonDocument.Parse(result);
-
-      var productList = new List<Product>();
-
-      // Navigate through the JSON structure to retrieve products
-      var productsNode = jsonDocument.RootElement
-        .GetProperty("data")
-        .GetProperty("products")
-        .GetProperty("edges");
-
-      foreach (var productEdge in productsNode.EnumerateArray())
+      if (!response.IsSuccessStatusCode)
       {
-        var productNode = productEdge.GetProperty("node");
-        var productData = JsonNode.Parse(productNode.GetRawText()) ?? throw new Exception("Error parsing product data");
-
-        var product = MapProduct(productData);
-        productList.Add(product);
+        var errorContent = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
       }
 
-      return productList.AsReadOnly();
+      try
+      {
+        var result = await response.Content.ReadAsStringAsync();
+        var json = JsonNode.Parse(result);
+        var productsNode = json?["data"]?["products"]?["edges"];
+
+        if (productsNode == null)
+        {
+          throw new Exception($"Products data not found. Full response: {result}");
+        }
+
+        var products = new List<Product>();
+        foreach (var edge in productsNode.AsArray())
+        {
+          var node = edge["node"];
+
+          var product = new Product
+          {
+            Name = node["title"].ToString(),
+            Description = node["descriptionHtml"].ToString(),
+            Supplier = node["vendor"].ToString(),
+            ProductType = node["productType"].ToString(),
+            ProductGroup = node["tags"].ToString(),
+
+            // Variants
+
+            //Id = int.Parse(node["variants"]["edges"][0]["node"]["id"].ToString()),
+            Sku = node["variants"]["edges"][0]["node"]["sku"].ToString(),
+            Weight = float.Parse(node["variants"]["edges"][0]["node"]["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+            Ean = node["variants"]["edges"][0]["node"]["barcode"].ToString(),
+
+            SpecialPrice = node["variants"]["edges"][0]["node"]["compareAtPrice"] != null
+        ? float.Parse(node["variants"]["edges"][0]["node"]["compareAtPrice"].ToString() ?? "0", CultureInfo.InvariantCulture)
+        : 0,
+
+            Price = float.Parse(node["variants"]["edges"][0]["node"]["contextualPricing"]["price"]["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+            Currency = node["variants"]["edges"][0]["node"]["contextualPricing"]["price"]["currencyCode"].ToString(),
+
+            Color = node["variants"]["edges"][0]["node"]["selectedOptions"]
+              .AsArray()
+              .FirstOrDefault(option => option["name"]?.ToString() == "Farve")?["value"]?.ToString() ?? string.Empty,
+
+            // Custom fields
+            Material = node["metafields"]["edges"]
+                .AsArray()
+                .FirstOrDefault(edge => edge["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
+            TemplateNo = int.TryParse(node["metafields"]["edges"]
+                .AsArray()
+                .FirstOrDefault(edge => edge["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
+            List = int.TryParse(node["metafields"]["edges"]
+                .AsArray()
+                .FirstOrDefault(edge => edge["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
+
+            //! Not working
+            Cost = float.Parse(node["variants"]["edges"][0]["node"]["selectedOptions"]
+            .AsArray()
+            .FirstOrDefault(option => option["name"]?.ToString() == "cost")?["value"]?.ToString() ?? "0"),
+
+            SupplierSku = node["metafields"]["edges"]
+                .AsArray()
+                .FirstOrDefault(edge => edge["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
+
+          };
+
+          products.Add(product);
+        }
+
+        return products.AsReadOnly();
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Error parsing products data: {ex.Message}");
+        throw;
+      }
     }
+    //!SECTION
+
+
+    //FIXME - Commented out Only for testing purposes
+    // public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
+    // {
+    //   var query = ConstructProductQuery();
+
+    //   var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
+
+    //   var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
+
+    //   if (!response.IsSuccessStatusCode)
+    //   {
+    //     var errorContent = await response.Content.ReadAsStringAsync();
+    //     throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
+    //   }
+
+    //   var result = await response.Content.ReadAsStringAsync();
+    //   var jsonDocument = JsonDocument.Parse(result);
+
+    //   var productList = new List<Product>();
+
+    //   // Navigate through the JSON structure to retrieve products
+    //   var productsNode = jsonDocument.RootElement
+    //     .GetProperty("data")
+    //     .GetProperty("products")
+    //     .GetProperty("edges");
+
+    //   foreach (var productEdge in productsNode.EnumerateArray())
+    //   {
+    //     var productNode = productEdge.GetProperty("node");
+    //     var productData = JsonNode.Parse(productNode.GetRawText()) ?? throw new Exception("Error parsing product data");
+
+    //     var product = MapProduct(productData);
+    //     productList.Add(product);
+    //   }
+
+    //   return productList.AsReadOnly();
+    // }
 
     // Update a single product
     public async Task UpdateProductAsync(Product product)
@@ -229,83 +382,145 @@ namespace PMS.Infrastructure.Shopify
       if (id.HasValue)
       {
         return $@"
-        {{
-          product(id: ""gid://shopify/Product/{id.Value}"") {{
+      {{
+        product(id: ""gid://shopify/Product/{id.Value}"") {{
+        id
+        title
+        descriptionHtml
+        vendor
+        productType
+        tags
+
+        variants(first: 1) {{
+          edges {{
+          node {{
             id
-            title
-            descriptionHtml
             sku
-            ean
-            color
-            material
-            productType
-            productGroup
-            supplier
-            supplierSku
-            templateNo
-            list
             weight
+            priceV2 {{
+            amount
+            currencyCode
+            }}
+            compareAtPriceV2 {{
+            amount
+            currencyCode
+            }}
             cost
-            currency
-            price
-            specialPrice
+            barcode
           }}
-        }}";
+          }}
+        }}
+
+        metafields(first: 10) {{
+          edges {{
+          node {{
+            namespace
+            key
+            value
+          }}
+          }}
+        }}
+        }}
+      }}";
       }
       else
       {
         return @"
-        {
-          products(first: 100) {
+      {
+        products(first: 100) {
+        edges {
+          node {
+          id
+          title
+          descriptionHtml
+          vendor
+          productType
+          tags
+          variants(first: 1) {
             edges {
-              node {
-                id
-                title
-                descriptionHtml
-                sku
-                ean
-                color
-                material
-                productType
-                productGroup
-                supplier
-                supplierSku
-                templateNo
-                list
-                weight
-                cost
-                currency
-                price
-                specialPrice
+            node {
+              id
+              sku
+              weight
+              priceV2 {
+              amount
+              currencyCode
               }
+              compareAtPriceV2 {
+              amount
+              currencyCode
+              }
+              cost
+              barcode
+            }
             }
           }
-        }";
+          metafields(first: 10) {
+            edges {
+            node {
+              namespace
+              key
+              value
+            }
+            }
+          }
+          }
+        }
+        }
+      }";
       }
     }
 
     private Product MapProduct(JsonNode productData)
     {
+      // Extract the first variant if available
+      var variantNode = productData["variants"]?["edges"]?[0]?["node"];
+
+      // Extract metafields
+      var metafieldsArray = productData["metafields"]?["edges"]?.AsArray();
+
+      // Initialize an empty dictionary to store metafields for easier access
+      var metafieldsDictionary = new Dictionary<string, string>();
+
+      if (metafieldsArray != null)
+      {
+        foreach (var metafieldNode in metafieldsArray)
+        {
+          var key = metafieldNode?["node"]?["key"]?.ToString();
+          var value = metafieldNode?["node"]?["value"]?.ToString();
+          if (key != null && value != null)
+          {
+            metafieldsDictionary[key] = value;
+          }
+        }
+      }
+
       return new Product
       {
         Id = int.Parse(productData["id"]?.ToString() ?? "0"),
         Name = productData["title"]?.ToString() ?? string.Empty,
         Description = productData["descriptionHtml"]?.ToString() ?? string.Empty,
-        Sku = productData["sku"]?.ToString() ?? string.Empty,
-        Ean = productData["ean"]?.ToString() ?? string.Empty,
-        Color = productData["color"]?.ToString() ?? string.Empty,
-        Material = productData["material"]?.ToString() ?? string.Empty,
         ProductType = productData["productType"]?.ToString() ?? string.Empty,
-        ProductGroup = productData["productGroup"]?.ToString() ?? string.Empty,
-        Supplier = productData["supplier"]?.ToString() ?? string.Empty,
-        SupplierSku = productData["supplierSku"]?.ToString() ?? string.Empty,
-        TemplateNo = int.Parse(productData["templateNo"]?.ToString() ?? "0"),
-        List = int.Parse(productData["list"]?.ToString() ?? "0"),
-        Weight = float.Parse(productData["weight"]?.ToString() ?? "0"),
-        Cost = float.Parse(productData["cost"]?.ToString() ?? "0"),
-        Currency = productData["currency"]?.ToString() ?? string.Empty,
-        Price = float.Parse(productData["price"]?.ToString() ?? "0"),
-        SpecialPrice = float.Parse(productData["specialPrice"]?.ToString() ?? "0")
+        ProductGroup = productData["tags"] != null ? string.Join(",", productData["tags"].AsArray()) : string.Empty, // Assuming productGroup is in tags
+        Supplier = productData["vendor"]?.ToString() ?? string.Empty,
+
+        // Variant-specific data
+        Sku = variantNode?["sku"]?.ToString() ?? string.Empty,
+        Weight = float.Parse(variantNode?["weight"]?.ToString() ?? "0"),
+        Cost = float.Parse(variantNode?["cost"]?.ToString() ?? "0"),
+        Ean = variantNode?["barcode"]?.ToString() ?? string.Empty, // Assuming barcode is used for EAN
+
+        // Price and currency data
+        Price = float.Parse(variantNode?["priceV2"]?["amount"]?.ToString() ?? "0"),
+        SpecialPrice = float.Parse(variantNode?["compareAtPriceV2"]?["amount"]?.ToString() ?? "0"),
+        Currency = variantNode?["priceV2"]?["currencyCode"]?.ToString() ?? string.Empty,
+
+        // Custom fields via metafields
+        Color = metafieldsDictionary.ContainsKey("color") ? metafieldsDictionary["color"] : string.Empty,
+        Material = metafieldsDictionary.ContainsKey("material") ? metafieldsDictionary["material"] : string.Empty,
+        SupplierSku = metafieldsDictionary.ContainsKey("supplierSku") ? metafieldsDictionary["supplierSku"] : string.Empty,
+        TemplateNo = metafieldsDictionary.ContainsKey("templateNo") ? int.Parse(metafieldsDictionary["templateNo"]) : 0,
+        List = metafieldsDictionary.ContainsKey("list") ? int.Parse(metafieldsDictionary["list"]) : 0
       };
     }
 
