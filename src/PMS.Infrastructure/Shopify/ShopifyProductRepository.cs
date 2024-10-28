@@ -174,53 +174,50 @@ namespace PMS.Infrastructure.Shopify
       }
     }
 
-    private string ConstructProductMutation(Product product, string mutationType)
+private string ConstructProductMutation(Product product, string mutationType)
     {
       return $@"
     mutation {{
       {mutationType}(input: {{
-        id: ""{product.Id}"",
-        title: ""{product.Name}"",
-        descriptionHtml: ""{product.Description}"",
-        sku: ""{product.Sku}"",
-        ean: ""{product.Ean}"",
-        color: ""{product.Color}"",
-        material: ""{product.Material}"",
-        productType: ""{product.ProductType}"",
-        productGroup: ""{product.ProductGroup}"",
-        supplier: ""{product.Supplier}"",
-        supplierSku: ""{product.SupplierSku}"",
-        templateNo: {product.TemplateNo},
-        list: {product.List},
-        weight: {product.Weight},
-        cost: {product.Cost},
-        currency: ""{product.Currency}"",
-        price: {product.Price},
-        specialPrice: {product.SpecialPrice}
-      }}) {{
-        product {{
-          id
-          title
-          descriptionHtml
-          sku
-          ean
-          color
-          material
-          productType
-          productGroup
-          supplier
-          supplierSku
-          templateNo
-          list
-          weight
-          cost
-          currency
-          price
-          specialPrice
+            title: ""{product.Name}""
+            bodyHtml: ""{product.Description}""
+            vendor: ""{product.Supplier}""
+            productType: ""{product.ProductType}""
+            tags: ""{product.ProductGroup}""
+            variants: [{{
+                sku: ""{product.Sku}""
+                weight: {product.Weight.ToString(CultureInfo.InvariantCulture)}
+                barcode: ""{product.Ean}""
+                price: {product.Price.ToString(CultureInfo.InvariantCulture)}
+                compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")}
+                selectedOptions: [{{
+                    name: ""Farve""
+                    value: ""{product.Color}""
+                }}]
+            }}]
+            metafields: [{{
+                namespace: ""custom""
+                key: ""multiple_material""
+                value: ""{product.Material}""
+                valueType: ""STRING""
+            }}, {{
+                namespace: ""custom""
+                key: ""supplier_sku""
+                value: ""{product.SupplierSku}""
+                valueType: ""STRING""
+            }}]
+        }}) {{
+            product {{
+                id
+                title
+            }}
+            userErrors {{
+                field
+                message
+            }}
         }}
-      }}
     }}";
-    }
+}
 
     private string ConstructProductQuery(int? id = null)
     {
@@ -330,6 +327,7 @@ namespace PMS.Infrastructure.Shopify
       ProductGroup = productData["tags"]?.ToString() ?? string.Empty,
 
       // Variants
+      //FIXME - Id is for Our database and this ID needs to be a string for Shopify
       //? Id = int.Parse(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? "0"),
       Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
       Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
@@ -357,10 +355,10 @@ namespace PMS.Infrastructure.Shopify
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
 
+      //FIXME - Cost is not being retrieved correctly and is always 0. SupplierSku is also not being retrieved correctly.
       Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
         ?.AsArray()
         ?.FirstOrDefault(option => option?["name"]?.ToString() == "cost")?["value"]?.ToString() ?? "0"),
-
       SupplierSku = productData["metafields"]?["edges"]
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
