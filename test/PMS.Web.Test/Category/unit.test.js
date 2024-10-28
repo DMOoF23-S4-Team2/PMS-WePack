@@ -28,7 +28,13 @@ afterAll(() => {
 
 describe("renderAddCategoryModal", () => {
     beforeEach(() => {
-        document.body.innerHTML = ""; // Clear DOM before each test
+        document.body.innerHTML = ""; // Clear the DOM before each test
+
+        // Create a hero section container
+        const heroSection = document.createElement('div');
+        heroSection.id = 'hero-section'; // This ID should match what showMessage expects
+        document.body.appendChild(heroSection); // Append it to the body
+        
     });
 
     afterEach(() => {

@@ -1,66 +1,88 @@
-//CODE TO TEST DOM INTERACTIONS
 /**
  * @jest-environment jsdom
  */
 
+import { describe, it, expect, vi, beforeEach} from "vitest";
+import { deleteCategory } from "../../../src/PMS.Web/wwwroot/Javascript/Category/DeleteCategory.js";
+import { renderAllCategories } from "../../../src/PMS.Web/wwwroot/Javascript/Main/MainCategory.js";
+import { getAllCategories } from "../../../src/PMS.Web/wwwroot/Javascript/Category/GetCategories.js";
+import { showMessage } from "../../../src/PMS.Web/wwwroot/Components/MessageBox.js";
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+// Mock functions
+vi.mock("../../../src/PMS.Web/wwwroot/Components/MessageBox.js", () => ({
+    showMessage: vi.fn(),
+}));
 
-import { addCategory } from '../../../src/PMS.Web/wwwroot/Javascript/Category/AddCategory.js';
-import { showMessage } from '../../../src/PMS.Web/wwwroot/Components/MessageBox.js';
+vi.mock("../../../src/PMS.Web/wwwroot/Javascript/Main/MainCategory.js", () => ({
+    renderAllCategories: vi.fn(),
+}));
 
-// Mocking the fetch function before running tests
-beforeEach(() => {
-    // Reset fetch mock before each test
-    global.fetch = vi.fn();
-});
+vi.mock("../../../src/PMS.Web/wwwroot/Javascript/Category/GetCategories.js", () => ({
+    getAllCategories: vi.fn(),
+}));
 
-describe('addCategory', () => {
-    // Add DOM setup
+global.fetch = vi.fn();
+
+describe("deleteCategory", () => {
+    const categoryId = "123";
+
     beforeEach(() => {
-        // Set up the DOM structure that your function relies on
-        document.body.innerHTML = `
-            <div id="hero-section"></div>
-            <nav id="categories-nav"></nav> <!-- Add categoriesNav here -->
-            <button class="add-category-btn" style="display: none;"></button> <!-- Ensure this exists if used -->
-        `;
+        vi.clearAllMocks();
     });
 
-    it('should add a category successfully and show a success message', async () => {
-        // Arrange: Set up mock fetch response
-        const mockCategoryData = { name: 'Category 1', description: 'A sample category', bottomDescription: 'Some additional info' };
-        const mockResponseData = { id: 1, ...mockCategoryData };
+    it("should delete category successfully and update the list", async () => {
+        // Arrange: Mock a successful fetch and updated categories
+        fetch.mockResolvedValueOnce({ ok: true });
+        const mockUpdatedCategories = [{ id: "1", name: "Category 1" }];
+        getAllCategories.mockResolvedValueOnce(mockUpdatedCategories);
 
-        // Mock the fetch response
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => mockResponseData,
-        });
+        // Act: Call deleteCategory
+        await deleteCategory(categoryId);
 
-        // Act: Call the addCategory function
-        const response = await addCategory(mockCategoryData);
+        // Assert: Check if fetch was called with correct URL and method
+        expect(fetch).toHaveBeenCalledWith(`https://localhost:7225/api/Category/${categoryId}`, { method: "DELETE" });
 
-        // Assert: Check if category was added and success message shown
-        expect(response).toEqual(mockResponseData);
-        expect(fetch).toHaveBeenCalledWith("https://localhost:7225/api/Category", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(mockCategoryData),
-        });
-        expect(showMessage).toHaveBeenCalledWith("Category added successfully!", true);
+        // Check if showMessage was called with success message
+        expect(showMessage).toHaveBeenCalledWith("Category deleted successfully!", true);
+
+        // Check if getAllCategories and renderAllCategories were called
+        expect(getAllCategories).toHaveBeenCalled();
+        expect(renderAllCategories).toHaveBeenCalledWith(mockUpdatedCategories);
     });
 
-    it('should handle errors and show an error message when category addition fails', async () => {
-        // Arrange: Set up mock fetch to simulate failure
-        const mockCategoryData = { name: 'Category 1', description: 'A sample category', bottomDescription: 'Some additional info' };
-        fetch.mockResolvedValueOnce({ ok: false, status: 500 });
+    it("should show error message if deletion fails", async () => {
+        // Arrange: Mock a failed fetch response
+        fetch.mockResolvedValueOnce({ ok: false });
 
-        // Act: Call the addCategory function
-        await addCategory(mockCategoryData);
+        // Act: Call deleteCategory
+        await deleteCategory(categoryId);
 
-        // Assert: Check if error message was shown
-        expect(showMessage).toHaveBeenCalledWith("Failed to add Category", false);
+        // Assert: Verify fetch was called with correct URL and method
+        expect(fetch).toHaveBeenCalledWith(`https://localhost:7225/api/Category/${categoryId}`, { method: "DELETE" });
+
+        // Check if showMessage was called with failure message
+        expect(showMessage).toHaveBeenCalledWith("Failed to delete Category", false);
+
+        // Ensure getAllCategories and renderAllCategories were not called
+        expect(getAllCategories).not.toHaveBeenCalled();
+        expect(renderAllCategories).not.toHaveBeenCalled();
+    });
+
+    it("should handle fetch errors and show error message", async () => {
+        // Arrange: Mock fetch to throw an error
+        fetch.mockRejectedValueOnce(new Error("Network error"));
+
+        // Act: Call deleteCategory
+        await deleteCategory(categoryId);
+
+        // Assert: Verify that fetch was called
+        expect(fetch).toHaveBeenCalledWith(`https://localhost:7225/api/Category/${categoryId}`, { method: "DELETE" });
+
+        // Check if showMessage was called with failure message
+        expect(showMessage).toHaveBeenCalledWith("Failed to delete Category", false);
+
+        // Ensure getAllCategories and renderAllCategories were not called
+        expect(getAllCategories).not.toHaveBeenCalled();
+        expect(renderAllCategories).not.toHaveBeenCalled();
     });
 });
