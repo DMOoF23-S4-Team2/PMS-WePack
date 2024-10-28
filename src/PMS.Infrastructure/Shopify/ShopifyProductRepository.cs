@@ -125,13 +125,6 @@ namespace PMS.Infrastructure.Shopify
       }
     }
 
-    // Patch product (partial update)
-    public async Task PatchProductAsync(Product product)
-    {
-      // Similar to update, Shopify only supports updating fields, so we use the same mutation approach
-      await UpdateProductAsync(product);
-    }
-
     // Delete a single product
     public async Task DeleteProductAsync(Product product)
     {
