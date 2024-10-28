@@ -21,24 +21,26 @@
         <div class="nav-container" id="products-nav">
             <i class="fa-solid fa-tags"></i>
             <button class="nav-btn">Products</button>                          
-        </div>
-        <div class="nav-container" id="add-product-nav">
-            <i class="fa-solid fa-plus"></i>
-            <button class="nav-btn">Add product</button>             
-        </div>
-        <div class="nav-container">
-            <i class="fa-solid fa-file-csv"></i>
-            <button class="nav-btn">Add multiple products</button>
-        </div>
-        <div class="nav-container">
-            <i class="fa-solid fa-file-csv"></i>
-            <button class="nav-btn">Update multiple products</button>  
+        </div>      
+        <div class="nav-container" id="categories-nav">
+            <i class="fa-solid fa-list"></i>
+            <button class="nav-btn">Categories</button>  
         </div> 
+        <div class="nav-container" id="csv-nav">
+            <i class="fa-solid fa-file-csv"></i>
+            <button class="nav-btn">Upload CSV</button>
+        </div>
     </nav>
     <section id="hero-section">
+        <button class="add-category-btn">Add Category</button>
+        <button class="add-product-btn">Add Product</button>
         <div id="hero-container"></div>
+        
 
     </section>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="./Javascript/Main/MainProduct.js"></script>
+    <script type="module" src="./Javascript/Main/MainCategory.js"></script>
+    <script type="module" src="./Javascript/Main/MainCsv.js"></script>
+    <script type="module" src="./Components/Assets.js"></script>
 </body>
 </html>
