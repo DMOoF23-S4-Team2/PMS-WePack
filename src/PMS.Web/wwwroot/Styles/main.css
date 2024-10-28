@@ -273,6 +273,7 @@ textarea {
 
 .succes-btn{
     padding: .5em 1.5em;
+    font-weight: 600;
     background-color: #009432;
     color: white;
     border-radius: 5px;
@@ -340,6 +341,7 @@ progress {
     margin-bottom: 1em;
 }
 .yes-delete-btn {
+    font-weight: 600;
     background-color: #f44336;
 }
 .yes-delete-btn:hover {
@@ -383,7 +385,7 @@ dialog {
     font-weight: 700;
     border-radius: 8px;
     padding: .5em 1.5em;
-    top: 15%;
+    top: 10%;
     left: 15%;
 }
 
