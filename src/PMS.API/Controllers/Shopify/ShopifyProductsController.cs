@@ -60,18 +60,6 @@ namespace PMS.API.Controllers.Shopify
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchProduct(int id, [FromBody] Product product)
-        {
-            if (id != product.Id)
-            {
-                return BadRequest("Product ID mismatch");
-            }
-
-            await _shopifyProductService.PatchShopifyProduct(product);
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

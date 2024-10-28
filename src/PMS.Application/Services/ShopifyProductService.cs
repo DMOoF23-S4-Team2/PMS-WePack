@@ -44,11 +44,6 @@ namespace PMS.Application.Services
             return await _shopifyProductRepository.GetProductByIdAsync(id);
         }
 
-        public async Task PatchShopifyProduct(Product product)
-        {
-            await _shopifyProductRepository.PatchProductAsync(product);
-        }
-
         public async Task UpdateManyShopifyProducts(IEnumerable<Product> products)
         {
             await _shopifyProductRepository.UpdateManyProductsAsync(products);

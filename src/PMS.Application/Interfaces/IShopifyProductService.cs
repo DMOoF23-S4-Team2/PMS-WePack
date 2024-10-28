@@ -12,7 +12,6 @@ namespace PMS.Application.Interfaces
         Task<Product> GetShopifyProductById(int id);
         Task<Product> AddShopifyProduct(Product product);
         Task UpdateShopifyProduct(Product product);
-        Task PatchShopifyProduct(Product product);
         Task DeleteShopifyProduct(Product product);
         Task AddManyShopifyProducts(IEnumerable<Product> products);
         Task UpdateManyShopifyProducts(IEnumerable<Product> products);
