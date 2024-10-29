@@ -94,8 +94,8 @@ namespace PMS.Infrastructure.Shopify
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       if (!response.IsSuccessStatusCode)
       {
-      var errorContent = await response.Content.ReadAsStringAsync();
-      throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
+        var errorContent = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
       }
 
       var result = await response.Content.ReadAsStringAsync();
@@ -167,7 +167,7 @@ namespace PMS.Infrastructure.Shopify
       }
     }
 
-private string ConstructProductMutation(Product product, string mutationType)
+    private string ConstructProductMutation(Product product, string mutationType)
     {
       return $@"
     mutation {{
@@ -210,57 +210,17 @@ private string ConstructProductMutation(Product product, string mutationType)
             }}
         }}
     }}";
-}
+    }
 
     private string ConstructProductQuery(int? id = null)
     {
       if (id.HasValue)
       {
-      return $@"
-      {{
-      product(id: ""gid://shopify/Product/{id.Value}"") {{
-      id
-      title
-      descriptionHtml
-      vendor
-      productType
-      tags
-
-      variants(first: 1) {{
-        edges {{
-        node {{
-        id
-        sku
-        weight
-        priceV2 {{
-        amount
-        currencyCode
-        }}
-        compareAtPriceV2 {{
-        amount
-        currencyCode
-        }}
-        cost
-        barcode
-        }}
-        }}
-      }}
-
-      metafields(first: 10) {{
-        edges {{
-        node {{
-        namespace
-        key
-        value
-        }}
-        }}
-      }}
-      }}
-      }}";
+        throw new NotImplementedException();
       }
       else
       {
-      return @"
+        return @"
     {
       products(first: 100) {
       edges {
@@ -273,23 +233,31 @@ private string ConstructProductMutation(Product product, string mutationType)
 
         variants(first: 1) {
           edges {
-          node {
-            id
-            sku
-            weight
-            barcode
-            compareAtPrice
-            contextualPricing(context: {country: DK}) {
-            price {
-              amount
-              currencyCode
+            node {
+              id
+              sku
+              weight
+              barcode
+              compareAtPrice
+              contextualPricing(context: {country: DK}) {
+              price {
+                amount
+                currencyCode
+              }
+              }
+              selectedOptions {
+              name 
+              value
+              }
+              metafields(first: 10, namespace: ""custom"") {
+                edges {
+                  node {
+                    key
+                    value
+                  }
+                }
+              }
             }
-            }
-            selectedOptions {
-            name 
-            value
-            }
-          }
           }
         }
         
@@ -313,48 +281,50 @@ private string ConstructProductMutation(Product product, string mutationType)
 
       var product = new Product
       {
-      Name = productData["title"]?.ToString() ?? string.Empty,
-      Description = productData["descriptionHtml"]?.ToString() ?? string.Empty,
-      Supplier = productData["vendor"]?.ToString() ?? string.Empty,
-      ProductType = productData["productType"]?.ToString() ?? string.Empty,
-      ProductGroup = productData["tags"]?.ToString() ?? string.Empty,
+        Name = productData["title"]?.ToString() ?? string.Empty,
+        Description = productData["descriptionHtml"]?.ToString() ?? string.Empty,
+        Supplier = productData["vendor"]?.ToString() ?? string.Empty,
+        ProductType = productData["productType"]?.ToString() ?? string.Empty,
+        ProductGroup = productData["tags"]?.ToString() ?? string.Empty,
 
-      // Variants
-      //FIXME - Id is for Our database and this ID needs to be a string for Shopify
-      //? Id = int.Parse(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? "0"),
-      Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
-      Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
-      Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
+        // Variants
+        //FIXME - Id is for Our database and this ID needs to be a string for Shopify
+        //? Id = int.Parse(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? "0"),
+        Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
+        Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+        Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
 
-      SpecialPrice = productData["variants"]?["edges"]?[0]?["node"]?["compareAtPrice"] != null
+        SpecialPrice = productData["variants"]?["edges"]?[0]?["node"]?["compareAtPrice"] != null
         ? float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["compareAtPrice"]?.ToString() ?? "0", CultureInfo.InvariantCulture)
         : 0,
 
-      Price = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
-      Currency = productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["currencyCode"]?.ToString() ?? string.Empty,
+        Price = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+        Currency = productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["currencyCode"]?.ToString() ?? string.Empty,
 
-      Color = productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
+        Color = productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
         ?.AsArray()
         ?.FirstOrDefault(option => option?["name"]?.ToString() == "Farve")?["value"]?.ToString() ?? string.Empty,
+        
+        SupplierSku = productData["variants"]?["edges"]?[0]?["node"]?["metafields"]?["edges"]?
+          .AsArray()
+          .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
-      // Custom fields
-      Material = productData["metafields"]?["edges"]
+        // Custom fields
+        Material = productData["metafields"]?["edges"]
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
-      TemplateNo = int.TryParse(productData["metafields"]?["edges"]
+        TemplateNo = int.TryParse(productData["metafields"]?["edges"]
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
-      List = int.TryParse(productData["metafields"]?["edges"]
+        List = int.TryParse(productData["metafields"]?["edges"]
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
 
-      //FIXME - Cost is not being retrieved correctly and is always 0. SupplierSku is also not being retrieved correctly.
-      Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
+        //FIXME - Cost is not being retrieved correctly and is always 0. SupplierSku is also not being retrieved correctly.
+        Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
         ?.AsArray()
         ?.FirstOrDefault(option => option?["name"]?.ToString() == "cost")?["value"]?.ToString() ?? "0"),
-      SupplierSku = productData["metafields"]?["edges"]
-        ?.AsArray()
-        ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
+
       };
 
       return product;
