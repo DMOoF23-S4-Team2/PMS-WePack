@@ -214,9 +214,6 @@ namespace PMS.Infrastructure.Shopify
 
     private string ConstructProductQuery(int? id = null)
     {
-      //FIXME - Put under the variants node when access has been granted
-
-
       if (id.HasValue)
       {
         throw new NotImplementedException();
