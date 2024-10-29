@@ -297,9 +297,7 @@ namespace PMS.Infrastructure.Shopify
         ProductGroup = productData["tags"]?.ToString() ?? string.Empty,
 
         // Variants
-        //FIXME - Id is for Our database and this ID needs to be a string for Shopify
-        //? Id = int.Parse(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? "0"),
-        
+        ShopifyId = productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? string.Empty,
         Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
         Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
         Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
