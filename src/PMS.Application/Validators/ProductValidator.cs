@@ -7,6 +7,9 @@ namespace PMS.Application.Validators
     {
         public ProductValidator()
         {
+            RuleFor(product => product.ShopifyId)
+                .MaximumLength(255);
+                
             RuleFor(product => product.Sku)
                 .NotEmpty()
                 .MaximumLength(255);
