@@ -6,6 +6,7 @@ namespace PMS.Application.DTOs.Product;
 public class ProductWithCategoriesDto
 {
     public int Id { get; set; }
+    public string ShopifyId { get; set; } = string.Empty;
     public string Sku { get; set; } = string.Empty;
     public string Ean { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

@@ -18,10 +18,7 @@ namespace PMS.Infrastructure.Data
             SeedData(modelBuilder);
         }
 
-            //REVIEW - Vi burde tage en snak om hvilke properties der skal være IsRequired og hvilke der ikke skal.
-            // De er rettet til her, og under Entities
-
-            private void ConfigureProduct(EntityTypeBuilder<Product> builder)
+        private void ConfigureProduct(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("Products");
             builder.HasMany(p => p.Category).WithMany(c => c.Products)
@@ -31,6 +28,7 @@ namespace PMS.Infrastructure.Data
                     j => j.HasOne<Product>().WithMany().HasForeignKey("ProductId")
                 );
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
+            builder.Property(p => p.ShopifyId).HasMaxLength(255);
             builder.Property(p => p.Sku).IsRequired().HasMaxLength(255);
             builder.Property(p => p.Ean).HasMaxLength(255);
             builder.Property(p => p.Name).IsRequired().HasMaxLength(255);
@@ -47,7 +45,7 @@ namespace PMS.Infrastructure.Data
             builder.Property(p => p.Cost);
             builder.Property(p => p.Price).IsRequired();
             builder.Property(p => p.SpecialPrice);
-            builder.Property(p => p.Currency).HasMaxLength(10);    
+            builder.Property(p => p.Currency).HasMaxLength(10);
         }
 
         private void ConfigureCategory(EntityTypeBuilder<Category> builder)
@@ -77,7 +75,8 @@ namespace PMS.Infrastructure.Data
                 new Product { Id = 1, Name = "Laptop", Description = "A high-performance laptop" },
                 new Product { Id = 2, Name = "Smartphone", Description = "A latest model smartphone" },
                 new Product { Id = 3, Name = "Novel", Description = "A best-selling novel" },
-                new Product { 
+                new Product
+                {
                     Id = 4,
                     Sku = "LC01-76-1038-1",
                     Ean = "EAN090909",
@@ -92,16 +91,19 @@ namespace PMS.Infrastructure.Data
                     TemplateNo = 11,
                     List = 447,
                     Weight = (float)0.026m,
-                    Cost  = (float)5.00m,
-                    Price = (float)17.00m, SpecialPrice = (float)12.95m, Currency = "EUR"}
+                    Cost = (float)5.00m,
+                    Price = (float)17.00m,
+                    SpecialPrice = (float)12.95m,
+                    Currency = "EUR"
+                }
             );
 
-                modelBuilder.Entity("CategoryProduct").HasData(
-                new { CategoryId = 1, ProductId = 1 },
-                new { CategoryId = 1, ProductId = 2 },
-                new { CategoryId = 2, ProductId = 3 },
-                new { CategoryId = 3, ProductId = 4 }
-            );
+            modelBuilder.Entity("CategoryProduct").HasData(
+            new { CategoryId = 1, ProductId = 1 },
+            new { CategoryId = 1, ProductId = 2 },
+            new { CategoryId = 2, ProductId = 3 },
+            new { CategoryId = 3, ProductId = 4 }
+        );
         }
     }
 }

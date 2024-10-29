@@ -6,6 +6,7 @@ namespace PMS.Core.Entities
     {        
         public int Id { get; set; }    
 
+        [MaxLength(255)]
         public string ShopifyId { get; set; } = string.Empty;
         
         [Required]
