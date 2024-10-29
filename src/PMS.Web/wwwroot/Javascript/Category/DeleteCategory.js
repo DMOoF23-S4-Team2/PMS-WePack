@@ -1,44 +1,43 @@
-import { showMessage } from "../Components/MessageBox.js"
-import { getAllProducts } from "./GetProducts.js";
-import { renderAllProducts } from "../main.js";
+import { showMessage } from "../../Components/MessageBox.js"
+import { renderAllCategories } from "../Main/MainCategory.js";
+import { getAllCategories } from "./GetCategories.js";
 
 
-// Function to delete a product using its ID
-export async function deleteProduct(productId) {
+export async function deleteCategory(categoryId) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
+        const response = await fetch(`https://localhost:7225/api/Category/${categoryId}`, {
             method: 'DELETE'
         });
 
         if (!response.ok) {
-            console.error(`Failed to delete product with ID ${productId}.`);
-            showMessage(`Failed to delete product`, false);
+            console.error(`Failed to delete Category with ID ${categoryId}.`);
+            showMessage(`Failed to delete Category`, false);
             return;
         }
 
-        console.log(`Product with ID ${productId} deleted successfully.`);
+        console.log(`Category with ID ${categoryId} deleted successfully.`);
         // Show success message
-        showMessage("Product deleted successfully!", true);
+        showMessage("Category deleted successfully!", true);
 
-        // Fetch updated product list and re-render it
-        const updatedProducts = await getAllProducts();
-        renderAllProducts(updatedProducts);
+        // Fetch updated Category list and re-render it
+        const updatedCategories = await getAllCategories();
+        renderAllCategories(updatedCategories);
 
     } catch (error) {
-        console.error('Error deleting product:', error);
+        console.error('Error deleting Category:', error);
         // Show error message
-        showMessage(`Failed to delete product`, false);
+        showMessage(`Failed to delete Category`, false);
     }
 }
 
 // Function to create and show the delete confirmation dialog
-export function showDeleteModal(productId, productName, productSku, deleteProductCallback){
+export function showDeleteModal(categoryId, categoryName, deleteProductCallback){
     // Create the <dialog> element
     const deleteDialog = document.createElement('dialog');
     deleteDialog.classList.add('delete-dialog');
     deleteDialog.innerHTML = `
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <p>Are you sure you want to delete the product: ${productName} with SKU: ${productSku}?</p>
+        <p>Are you sure you want to delete ${categoryName} from categories?</p>
         <div class="dialog-actions">
             <button class="yes-delete-btn">Yes</button>
             <button class="no-delete-btn">No</button>
@@ -57,7 +56,7 @@ export function showDeleteModal(productId, productName, productSku, deleteProduc
 
     // Handle the Yes button click
     yesBtn.addEventListener('click', async () => {
-        await deleteProductCallback(productId);  // Call the deleteProduct function
+        await deleteProductCallback(categoryId);  // Call the deleteProduct function
         deleteDialog.close(); // Close the dialog
         deleteDialog.remove(); // Remove the dialog from the DOM
     });

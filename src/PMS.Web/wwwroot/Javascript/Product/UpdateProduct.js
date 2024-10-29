@@ -1,11 +1,11 @@
-import { showMessage } from "../Components/MessageBox.js"
+import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
-import { renderAllProducts } from "../main.js";
+import { renderAllProducts } from "../Main/MainProduct.js";
 
 export async function updateProduct(productId, updatedData) {
     try {
         const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
-            method: 'PUT',  // Correct the method to 'PUT'
+            method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -35,10 +35,9 @@ export async function showUpdateModal(productId, updateProductCallback) {
 
     // Create the <dialog> element
     const updateDialog = document.createElement('dialog');
-    updateDialog.classList.add('update-dialog');
     updateDialog.innerHTML = `
         
-         <form id="update-product-form">
+         <form id="update-product-form" class="product-dialog">
             <div class="form-container">                
                 <label for="sku">SKU</label>
                 <input required id="sku" name="sku" value="${product.sku}">

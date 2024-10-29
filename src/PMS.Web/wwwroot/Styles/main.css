@@ -6,7 +6,6 @@
 body {
     color: white;
     font-family: Roboto, 'sans-serif';
-    height: 100vh;
     margin: 0;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -29,6 +28,7 @@ body {
 
 header {
     grid-area: head;
+    height: 10vh;
     padding: 0 1em;
     display: flex;
     justify-content: space-between;
@@ -46,16 +46,20 @@ header h3 {
 
 #hero-section {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 2.5em 0;
+    gap: 1em; 
+    min-height: 90vh;
 }
 
-#hero-container{    
+#hero-container{  
     background: linear-gradient(to top, #232526 30%, #414345 100%);
     display: flex;
     align-items: center;
     border: 1px solid gray;
-    width: 900px;
-    height: 70vh;
-    padding: 2em 5em;
+    width: 800px;
+    height: 65vh;
     border-radius: 10px;
     overflow: auto;
 }
@@ -63,7 +67,7 @@ header h3 {
 nav {
     background: linear-gradient(to top, #232526 1%, #414345 30%);
     grid-area: nav;
-    padding: 1em;
+    padding: 3em 0em;
     gap: 3em;
     display: flex;
     flex-direction: column;
@@ -89,7 +93,7 @@ section {
     padding: 1em;
     font-weight: 700;
     height: 50px;
-    width: 280px;
+    width: 290px;
     border: 1 solid black;
 }
 
@@ -99,7 +103,6 @@ section {
     font-size: .8rem;
     font-weight: 700;
     margin-left: .5em;
-    cursor: pointer;
     border: none;
     background-color: transparent;
     color: white;
@@ -107,13 +110,19 @@ section {
 .nav-container {
     display: flex;
     width: 100%;
-    background-color: transparent;
-    padding: 1em;
+    padding: 1em 2.5em;
     cursor: pointer;
+    border-radius: 5px;
 }
 .nav-container:hover, 
 .nav-container:focus {
     background-color: gray;
+}
+
+.nav-container.active {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    color: white;
+    border-left: 3px solid white; 
 }
 
 /* ADD PRODUCT FORM */
@@ -150,18 +159,16 @@ textarea {
     height: 93px;
 }
 
-.add-product-btn {
-    padding: .5em 1em;
-    cursor: pointer;
-    font-weight: 700;
+.confirm-add-btn {
+    padding: .5em 1.5em;
     background-color: #009432;
     color: white;
     border-radius: 5px;
     border: none;
     margin-top: auto;
 }   
-.add-product-btn:hover, 
-.add-product-btn:focus {
+.confirm-add-btn:hover, 
+.confirm-add-btn:focus {
     background-color: green;
 }
 
@@ -205,6 +212,105 @@ textarea {
     border-radius: 10px 10px 0 0;
 }
 
+/* CSV PAGE */
+
+.file-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5em auto;
+    height: 40%;
+    width: 50%;
+    border: 3px dashed gray;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.file-container:hover {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+}
+.csv-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+.csv-actions-container {
+    padding: 1em;
+    width: 100%;
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
+    margin-bottom: auto;
+    display: flex;
+    justify-content: space-between;
+}
+.csv-btn-container {
+    display: flex;
+    gap: 2em;
+}
+
+.fa-cloud-arrow-up {
+    font-size: 3em;
+    color: gray;
+}
+.fa-brands {
+    margin-left: .5em;
+}
+
+.update-btn {
+    padding: .7em 1em;
+    font-weight: 600;
+    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+.update-btn:hover {
+    background: linear-gradient(to top, #272f34 5%, #1e1f20 100%);
+}
+
+.succes-btn{
+    padding: .5em 1.5em;
+    font-weight: 600;
+    background-color: #009432;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+.succes-btn:hover {
+    background-color: green;
+}
+
+.progress-bar-container {
+    height: 50px;
+    width: 200px;
+    margin-top: 10px;
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #f3f3f3;
+    overflow: hidden;
+}
+#progress-text {
+    margin-top: .3em;
+    text-align: center;
+}
+#file-progress {
+    width: 100%;
+}
+#upload-complete {
+    display: none;
+}
+#upload-complete button {
+    margin-left: 1em;
+}
+
 
 /* DELETE MODAL */
 
@@ -232,10 +338,10 @@ textarea {
     padding: 0.5em 3em;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
     margin-bottom: 1em;
 }
 .yes-delete-btn {
+    font-weight: 600;
     background-color: #f44336;
 }
 .yes-delete-btn:hover {
@@ -244,43 +350,42 @@ textarea {
 
 /* UPDATE MODAL */
 
-#update-product-form {
+.product-dialog {
     padding: 1em;
     font-size: .8rem;
 }
 
-#update-product-form .form-container {
+.product-dialog .form-container {
     gap: .3em;  
 }
 
-#update-product-form .units-container label {
+.product-dialog .units-container label {
     margin:0;
     padding: 0.3em 0;
 }
 
-#update-product-form button {
+.product-dialog button {
     padding: 0.5em 3.5em;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
     margin-top: auto;
 }
 
-#update-product-form .dialog-actions {
+.product-dialog .dialog-actions {
     display: flex;
     justify-content: space-between;
     gap: 1em;
     margin-top: auto;
 }
 
-.update-dialog {
+dialog {
     background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
     border: 1px solid black;
     color: white;
     font-weight: 700;
     border-radius: 8px;
     padding: .5em 1.5em;
-    top: 7%;
+    top: 10%;
     left: 15%;
 }
 
@@ -299,25 +404,26 @@ th, td {
 
 /* ACTION BUTTONS */   
 
+button {
+    cursor: pointer;
+}
+
 .edit-btn, .delete-btn, 
 .yes-delete-btn, 
 .yes-update-btn {
     padding: .3em 1em;
     margin: 0 .3em;
-    cursor: pointer;
     color: white;
     border: none;
     border-radius: 3px;
 }
 
 .edit-btn, .yes-update-btn {
-    background-color: #009432;
+    background-image: linear-gradient(to bottom, rgb(29, 96, 101), rgb(18, 18, 34));
 }
 .edit-btn:hover,
-.edit-btn:focus, 
-.yes-update-btn:hover,
-.yes-update-btn:focus {
-    background-color: green;
+.yes-update-btn:hover {
+    background: linear-gradient(to top, #232526 30%, #414345 100%);
 }
 
 .delete-btn {
@@ -327,4 +433,16 @@ th, td {
 .delete-btn:focus, 
 .yes-delete-btn:hover{
     background-color: #b71c1c;
+}
+
+.add-category-btn, .add-product-btn { 
+    align-self: self-end;
+    margin: 0 18.5em 0 0;
+    display: none;
+    padding: .5em 1em;
+    font-weight: 700;
+    background-color: #009432;
+    color: white;
+    border-radius: 5px;
+    border: none;
 }
