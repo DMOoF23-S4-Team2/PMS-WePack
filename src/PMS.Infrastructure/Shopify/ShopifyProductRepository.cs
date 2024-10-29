@@ -16,8 +16,6 @@ namespace PMS.Infrastructure.Shopify
     private readonly HttpClient _httpClient;
     private readonly string _shopifyApiUrl;
     private readonly string _accessToken;
-    private readonly string _apiKey;
-
 
     public ShopifyProductRepository(HttpClient httpClient, IConfiguration configuration, SecretClient? secretClient = null)
     {
@@ -26,8 +24,6 @@ namespace PMS.Infrastructure.Shopify
 
       var keyVaultUrl = configuration["KeyVaultUri"] ?? throw new ArgumentNullException("KeyVaultUri configuration is missing.");
       secretClient ??= new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-
-      _apiKey = GetSecretFromKeyVault(secretClient, "DevStrapApiKey").Result;
 
       _accessToken = GetSecretFromKeyVault(secretClient, "DevStrapAccessToken").Result;
     }
@@ -63,11 +59,13 @@ namespace PMS.Infrastructure.Shopify
     }
 
     // Get a product by ID
-    public async Task<Product> GetProductByIdAsync(int id)
+    public async Task<Product> GetProductByIdAsync(string id)
     {
       var query = ConstructProductQuery(id);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
+      _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       if (!response.IsSuccessStatusCode)
       {
@@ -77,8 +75,8 @@ namespace PMS.Infrastructure.Shopify
 
       var result = await response.Content.ReadAsStringAsync();
       var json = JsonNode.Parse(result);
-      var dataNode = json?["data"] ?? throw new Exception("Data not found");
-      var productNode = dataNode["product"] ?? throw new Exception("Product not found");
+      var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
+      var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
       var productData = productNode;
 
       return MapProduct(productData);
@@ -212,11 +210,65 @@ namespace PMS.Infrastructure.Shopify
     }}";
     }
 
-    private string ConstructProductQuery(int? id = null)
+    private string ConstructProductQuery(string? id = null)
     {
-      if (id.HasValue)
+      if (!string.IsNullOrEmpty(id))
       {
-        throw new NotImplementedException();
+        return $@"
+          {{
+            product(id: ""gid://shopify/Product/{id}"") {{
+        title
+        descriptionHtml
+        vendor
+        productType
+        tags
+
+        variants(first: 1) {{
+          edges {{
+            node {{
+              id
+              sku
+              weight
+              barcode
+              compareAtPrice
+              inventoryItem {{
+          unitCost {{
+            amount
+            currencyCode
+          }}
+              }}
+              contextualPricing(context: {{country: DK}}) {{
+          price {{
+            amount
+            currencyCode
+          }}
+              }}
+              selectedOptions {{
+          name 
+          value
+              }}
+              metafields(first: 10, namespace: ""custom"") {{
+          edges {{
+            node {{
+              key
+              value
+            }}
+          }}
+              }}
+            }}
+          }}
+        }}
+        
+        metafields(first: 10, namespace: ""custom""){{
+          edges {{
+            node {{
+              key
+              value
+            }}
+          }}
+        }}
+            }}
+          }}";
       }
       else
       {
@@ -294,7 +346,7 @@ namespace PMS.Infrastructure.Shopify
         ProductGroup = productData["tags"]?.ToString() ?? string.Empty,
 
         // Variants
-        ShopifyId = productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? string.Empty,
+        ShopifyId = GetShopifyId(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? string.Empty),
         Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
         Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
         Currency = productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["currencyCode"]?.ToString() ?? string.Empty,
@@ -326,6 +378,11 @@ namespace PMS.Infrastructure.Shopify
       };
 
       return product;
+    }
+
+    private string GetShopifyId(string id)
+    {
+      return id.Split('/').LastOrDefault() ?? string.Empty;
     }
   }
 }

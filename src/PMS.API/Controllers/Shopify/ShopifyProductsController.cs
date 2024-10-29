@@ -27,7 +27,7 @@ namespace PMS.API.Controllers.Shopify
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(int id)
+        public async Task<IActionResult> GetProductById(string id)
         {
             try
             {
