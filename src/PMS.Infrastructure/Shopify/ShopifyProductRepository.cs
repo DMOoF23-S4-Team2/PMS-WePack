@@ -85,7 +85,7 @@ namespace PMS.Infrastructure.Shopify
     }
 
     // Get all products
-    public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
+    public async Task<IReadOnlyList<Product>> GetAllProductsAsync() 
     {
       var query = ConstructProductQuery();
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
@@ -100,7 +100,7 @@ namespace PMS.Infrastructure.Shopify
 
       var result = await response.Content.ReadAsStringAsync();
       var json = JsonNode.Parse(result);
-      var productsNode = json?["data"]?["products"]?["edges"] ?? throw new Exception("Products data not found");
+      var productsNode = json?["data"]?["products"]?["edges"] ?? throw new Exception("Products data not found", new Exception(result));
 
       var products = productsNode.AsArray().Select(edge => MapProduct(edge["node"])).ToList();
       return products.AsReadOnly();
@@ -214,6 +214,14 @@ namespace PMS.Infrastructure.Shopify
 
     private string ConstructProductQuery(int? id = null)
     {
+      //FIXME - Put under the variants node when access has been granted
+      // inventoryItem {
+      //   unitCost {
+      //     amount
+      //     currencyCode
+      //           }
+      // }
+
       if (id.HasValue)
       {
         throw new NotImplementedException();
@@ -239,15 +247,16 @@ namespace PMS.Infrastructure.Shopify
               weight
               barcode
               compareAtPrice
+
               contextualPricing(context: {country: DK}) {
-              price {
-                amount
-                currencyCode
-              }
+                price {
+                  amount
+                  currencyCode
+                }
               }
               selectedOptions {
-              name 
-              value
+                name 
+                value
               }
               metafields(first: 10, namespace: ""custom"") {
                 edges {
@@ -290,6 +299,7 @@ namespace PMS.Infrastructure.Shopify
         // Variants
         //FIXME - Id is for Our database and this ID needs to be a string for Shopify
         //? Id = int.Parse(productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? "0"),
+        
         Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
         Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
         Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
@@ -320,10 +330,8 @@ namespace PMS.Infrastructure.Shopify
         ?.AsArray()
         ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
 
-        //FIXME - Cost is not being retrieved correctly and is always 0. SupplierSku is also not being retrieved correctly.
-        Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
-        ?.AsArray()
-        ?.FirstOrDefault(option => option?["name"]?.ToString() == "cost")?["value"]?.ToString() ?? "0"),
+        //FIXME - Cost is not being retrieved yet
+        //? Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["inventoryItem"]?["unitCost"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture)
 
       };
 
