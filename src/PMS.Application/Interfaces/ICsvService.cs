@@ -5,6 +5,7 @@ namespace PMS.Application.Interfaces
 {
     public interface ICsvService
     {
+        Task DetermineMethod(string filepath);
         Task CreateProduct(string filepath);
         Task DeleteProduct(string filepath);
         Task GetProduct(string filepath);

@@ -1,4 +1,11 @@
 # PMS-WePack
+## Csv and Filenames
+filenames should ends with "-command.csv"<br/>
+command tells the system how to handle the file<br/>
+Available commands:
+- create (creates product(s))
+- update (updates product(s))
+- delete (deletes product(s))
 
 ### Docker commands
 `docker build`<br/>
