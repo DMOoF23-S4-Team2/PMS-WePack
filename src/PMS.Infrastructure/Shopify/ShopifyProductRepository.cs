@@ -215,12 +215,7 @@ namespace PMS.Infrastructure.Shopify
     private string ConstructProductQuery(int? id = null)
     {
       //FIXME - Put under the variants node when access has been granted
-      // inventoryItem {
-      //   unitCost {
-      //     amount
-      //     currencyCode
-      //           }
-      // }
+
 
       if (id.HasValue)
       {
@@ -247,7 +242,12 @@ namespace PMS.Infrastructure.Shopify
               weight
               barcode
               compareAtPrice
-
+              inventoryItem {
+                unitCost {
+                  amount
+                  currencyCode
+                }
+              }
               contextualPricing(context: {country: DK}) {
                 price {
                   amount
@@ -299,38 +299,33 @@ namespace PMS.Infrastructure.Shopify
         // Variants
         ShopifyId = productData["variants"]?["edges"]?[0]?["node"]?["id"]?.ToString() ?? string.Empty,
         Sku = productData["variants"]?["edges"]?[0]?["node"]?["sku"]?.ToString() ?? string.Empty,
-        Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
         Ean = productData["variants"]?["edges"]?[0]?["node"]?["barcode"]?.ToString() ?? string.Empty,
+        Currency = productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["currencyCode"]?.ToString() ?? string.Empty,
 
+        Price = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+        Weight = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["weight"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
+        Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["inventoryItem"]?["unitCost"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
         SpecialPrice = productData["variants"]?["edges"]?[0]?["node"]?["compareAtPrice"] != null
         ? float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["compareAtPrice"]?.ToString() ?? "0", CultureInfo.InvariantCulture)
         : 0,
 
-        Price = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture),
-        Currency = productData["variants"]?["edges"]?[0]?["node"]?["contextualPricing"]?["price"]?["currencyCode"]?.ToString() ?? string.Empty,
-
         Color = productData["variants"]?["edges"]?[0]?["node"]?["selectedOptions"]
-        ?.AsArray()
-        ?.FirstOrDefault(option => option?["name"]?.ToString() == "Farve")?["value"]?.ToString() ?? string.Empty,
-        
+          ?.AsArray()
+          ?.FirstOrDefault(option => option?["name"]?.ToString() == "Farve")?["value"]?.ToString() ?? string.Empty,
         SupplierSku = productData["variants"]?["edges"]?[0]?["node"]?["metafields"]?["edges"]?
           .AsArray()
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
         // Custom fields
         Material = productData["metafields"]?["edges"]
-        ?.AsArray()
-        ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
+          ?.AsArray()
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
         TemplateNo = int.TryParse(productData["metafields"]?["edges"]
-        ?.AsArray()
-        ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
+          ?.AsArray()
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
         List = int.TryParse(productData["metafields"]?["edges"]
-        ?.AsArray()
-        ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
-
-        //FIXME - Cost is not being retrieved yet
-        //? Cost = float.Parse(productData["variants"]?["edges"]?[0]?["node"]?["inventoryItem"]?["unitCost"]?["amount"]?.ToString() ?? "0", CultureInfo.InvariantCulture)
-
+          ?.AsArray()
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "week_list")?["node"]?["value"]?.ToString(), out var listValue) ? listValue : 0,
       };
 
       return product;
