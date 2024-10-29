@@ -4,7 +4,10 @@ namespace PMS.Core.Entities
 {
     public class Product
     {        
-        public int Id { get; set; }        
+        public int Id { get; set; }    
+
+        [MaxLength(255)]
+        public string ShopifyId { get; set; } = string.Empty;
         
         [Required]
         [MaxLength(255)]
