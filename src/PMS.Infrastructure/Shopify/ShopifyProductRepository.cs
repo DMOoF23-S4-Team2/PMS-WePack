@@ -33,6 +33,8 @@ namespace PMS.Infrastructure.Shopify
       var mutation = ConstructProductMutation(product, "productCreate");
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
+      _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       if (!response.IsSuccessStatusCode)
       {
@@ -83,7 +85,7 @@ namespace PMS.Infrastructure.Shopify
     }
 
     // Get all products
-    public async Task<IReadOnlyList<Product>> GetAllProductsAsync() 
+    public async Task<IReadOnlyList<Product>> GetAllProductsAsync()
     {
       var query = ConstructProductQuery();
       var content = new StringContent(JsonSerializer.Serialize(new { query }), Encoding.UTF8, "application/json");
@@ -110,6 +112,8 @@ namespace PMS.Infrastructure.Shopify
       var mutation = ConstructProductMutation(product, "productUpdate");
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
+      _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       response.EnsureSuccessStatusCode();
     }
@@ -136,6 +140,8 @@ namespace PMS.Infrastructure.Shopify
           }";
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
+      _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
+
       var response = await _httpClient.PostAsync(_shopifyApiUrl, content);
       response.EnsureSuccessStatusCode();
     }
@@ -170,43 +176,54 @@ namespace PMS.Infrastructure.Shopify
       return $@"
     mutation {{
       {mutationType}(input: {{
-            title: ""{product.Name}""
-            bodyHtml: ""{product.Description}""
-            vendor: ""{product.Supplier}""
-            productType: ""{product.ProductType}""
-            tags: ""{product.ProductGroup}""
-            variants: [{{
-                sku: ""{product.Sku}""
-                weight: {product.Weight.ToString(CultureInfo.InvariantCulture)}
-                barcode: ""{product.Ean}""
-                price: {product.Price.ToString(CultureInfo.InvariantCulture)}
-                compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")}
-                selectedOptions: [{{
-                    name: ""Farve""
-                    value: ""{product.Color}""
-                }}]
-            }}]
-            metafields: [{{
-                namespace: ""custom""
-                key: ""multiple_material""
-                value: ""{product.Material}""
-                valueType: ""STRING""
-            }}, {{
-                namespace: ""custom""
-                key: ""supplier_sku""
-                value: ""{product.SupplierSku}""
-                valueType: ""STRING""
-            }}]
-        }}) {{
-            product {{
-                id
-                title
-            }}
-            userErrors {{
-                field
-                message
-            }}
+        title: ""{product.Name}""
+        bodyHtml: ""{product.Description}""
+        vendor: ""{product.Supplier}""
+        productType: ""{product.ProductType}""
+        tags: ""{product.ProductGroup}""
+        variants: [{{
+          sku: ""{product.Sku}""
+          weight: {product.Weight.ToString(CultureInfo.InvariantCulture)}
+          barcode: ""{product.Ean}""
+          price: {product.Price.ToString(CultureInfo.InvariantCulture)}
+          compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")}
+          selectedOptions: [{{
+            name: ""Farve""
+            value: ""{product.Color}""
+          }}]
+          metafields: [{{
+            namespace: ""custom""
+            key: ""supplier_sku""
+            value: ""{product.SupplierSku}""
+            valueType: ""STRING""
+          }}]
+        }}]
+        metafields: [{{
+          namespace: ""custom""
+          key: ""multiple_material""
+          value: ""{product.Material}""
+          valueType: ""STRING""
+        }}, {{
+          namespace: ""custom""
+          key: ""template_number""
+          value: ""{product.TemplateNo}""
+          valueType: ""INTEGER""
+        }}, {{
+          namespace: ""custom""
+          key: ""week_list""
+          value: ""{product.List}""
+          valueType: ""INTEGER""
+        }}]
+      }}) {{
+        product {{
+          id
+          title
         }}
+        userErrors {{
+          field
+          message
+        }}
+      }}
     }}";
     }
 
