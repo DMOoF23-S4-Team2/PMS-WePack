@@ -18,7 +18,7 @@ namespace PMS.Application.Services
             _csvHandler = csvHandler;
             _productService = productService;
         }
-                
+
         public async Task CreateProduct(string filepath){ 
             // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
             List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
@@ -55,6 +55,7 @@ namespace PMS.Application.Services
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             await _productService.DeleteManyProducts(products);             
         }
+        
         public async Task UpdateManyProducts(string filepath){ 
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             await _productService.UpdateManyProducts(products);      
@@ -67,7 +68,71 @@ namespace PMS.Application.Services
         //     await _productService.UpdateProduct(productId, product); 
         // }        
 
-        // Methods to get .csv        
+        // Determine which method to use, when csv is uploaded through API
+        public async Task DetermineMethod(string filepath)
+        {                        
+            var csvInfo = analyzeCsv(filepath);
+            string command = (string)csvInfo["command"];
+            int numberOfRows = (int)csvInfo["numberOfRows"];
+            switch (command)
+            {
+                case "create":
+                    if (numberOfRows == 2)
+                    {
+                        await CreateProduct(filepath);
+                    }
+                    else if (numberOfRows > 2)
+                    {
+                        await AddManyProducts(filepath);
+                    }
+                    break;
+
+                case "update":
+                    // if (numberOfRows == 2) {
+                    //     await UpdateProduct(filepath);
+                    // }
+                    if (numberOfRows > 2)
+                    {
+                        await UpdateManyProducts(filepath);
+                    }
+                    break;
+
+                case "delete":
+                    if (numberOfRows == 2)
+                    {
+                        await DeleteProduct(filepath);
+                    }
+                    else if (numberOfRows > 2)
+                    {
+                        await DeleteManyProducts(filepath);
+                    }
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"Unknown command: {command} Check the filepath");
+            }         
+        }
+
+        // Methods to get .csv       
+        private Dictionary<string, object> analyzeCsv(string filepath){
+            // Get the csv
+            var csvData = _csvHandler.GetCsv(filepath);            
+            // Check command from filepath
+            // Remove the .csv extension from the filepath
+            string fileName = Path.GetFileNameWithoutExtension(filepath);
+            var filepathCommand = fileName.Split('-');
+            string command = filepathCommand[filepathCommand.Length - 1].ToLower();                                    
+            // Get number of rows
+            int numberOfRows = csvData.Count;
+            // Create dict
+            var csvInfo = new Dictionary<string, object> 
+            {
+                {"command", command},
+                {"numberOfRows", numberOfRows}
+            };            
+            return csvInfo;
+        } 
+
         private List<ProductDto> getProductWithIDFromCsv(string filepath)
         {
             var csvData = _csvHandler.GetCsv(filepath);
@@ -154,7 +219,5 @@ namespace PMS.Application.Services
             }
             return products;
         }  
-    
-    
     }
 }

@@ -15,6 +15,23 @@ namespace PMS.API.Controllers
             _csvService = csvService;
         }         
 
+        [HttpPost("upload-csv")]        
+        public async Task<IActionResult> UploadCsv(string filepath)
+        {            
+            if (string.IsNullOrWhiteSpace(filepath)) {                
+                return BadRequest("File path is required.");
+            }
+            
+            try {                                                     
+                await _csvService.DetermineMethod(filepath);
+                return Ok();
+            }
+            catch (Exception ex) {                
+                return StatusCode(500, $"Error: {ex.Message}");
+            }                           
+        }
+
+        // For development purposes. Will be deleted when Adam is saying "GO!"
         [HttpPost("create-product")]
         public async Task<IActionResult> CreateProduct([FromBody] string filepath)
         {            
