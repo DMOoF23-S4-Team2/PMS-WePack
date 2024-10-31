@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using PMS.Application.Interfaces;
 using PMS.Application.Services;
+using PMS.Core.Interfaces;
 using PMS.Core.Repositories;
 using PMS.Core.Repositories.Base;
 using PMS.Infrastructure.Data;
 using PMS.Infrastructure.Repository;
 using PMS.Infrastructure.Repository.Base;
+using PMS.Infrastructure.Shopify;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +23,19 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Register HttpClient
+builder.Services.AddHttpClient();
+
 // Register Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IShopifyProductRepository, ShopifyProductRepository>();
 
 // Register Services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
 
 //! Register DbContext with local DB (WePackTest)
 //NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB

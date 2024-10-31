@@ -12,7 +12,7 @@ namespace PMS.Infrastructure.Migrations
 {
     [DbContext(typeof(PMSContext))]
     [Migration("20240829050052_seeding")]
-    partial class seeding
+    partial class Seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
