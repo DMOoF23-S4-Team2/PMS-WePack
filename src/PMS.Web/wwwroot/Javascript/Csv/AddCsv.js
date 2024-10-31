@@ -1,13 +1,11 @@
 import { showMessage } from "../../Components/MessageBox.js";
 
-export async function addCsv(file) {  // Accept file as a parameter
+export async function addCsv(filePath) {  // Accept filePath as a parameter
     try {
-        const formData = new FormData();
-        formData.append("file", file); // Append the CSV file with a key
 
-        const response = await fetch("https://localhost:7225/api/Csv/add-many-products", {
+        const response = await fetch("https://localhost:7225/api/Csv/upload-csv", {
             method: "POST",
-            body: formData  // Use FormData directly as the body
+            body: JSON.stringify({filePath})
         });
 
         if (!response.ok) {

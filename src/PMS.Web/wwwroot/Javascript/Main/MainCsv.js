@@ -25,6 +25,10 @@ csvNav.addEventListener("click", () => {
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <p>Browse file to upload</p>
                 <input type="file" id="csv-upload" accept=".csv" style="display: none;" />
+                <div class="path-input-container">
+                    <label for="file-path">Enter file path:</label>
+                    <input type="text" id="file-path" placeholder="e.g., C:\\Users\\YourName\\Documents\\file.csv" />
+                </div>
                 <div class="progress-bar-container" style="display: none;">
                     <progress id="file-progress" value="0" max="100"></progress>
                     <p id="progress-text">0%</p>
@@ -41,71 +45,24 @@ csvNav.addEventListener("click", () => {
     // Reference new elements
     const fileInput = document.getElementById("csv-upload");
     const addButton = document.getElementById("add-btn");
-    const progressBar = document.getElementById("file-progress");
-    const progressBarContainer = document.querySelector(".progress-bar-container");
-    const progressText = document.getElementById("progress-text");
-    const uploadCompleteDiv = document.getElementById("upload-complete");
-    const fileNameSpan = document.getElementById("file-name");
-    const clearButton = document.getElementById("clear-btn");
 
-    // Make the file-container clickable to open the file input
-    document.querySelector(".file-container").addEventListener("click", () => {
-        fileInput.click();
-    });
+    // // Make the file-container clickable to open the file input
+    // document.querySelector(".file-container").addEventListener("click", () => {
+    //     fileInput.click();
+    // });
 
-    // Show the selected file name
-    fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (file) {
-            fileNameSpan.textContent = `Selected file: ${file.name}`;
-            uploadCompleteDiv.style.display = "none"; // Reset upload complete message
-        }
-    });
+        addButton.addEventListener("click", async () => {
 
-    // Handle file upload on "Add" button click
-    addButton.addEventListener("click", async () => {
-        const file = fileInput.files[0];
-        if (file) {
+        const filePath = document.getElementById("file-path").value;
+        if (filePath) {
             try {
-                // Show progress bar and reset progress
-                progressBarContainer.style.display = "block";
-                progressBar.value = 0;
-                progressText.textContent = "0%";
-
-                // Simulate upload progress
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += 20; // Increment progress by 20%
-                    progressBar.value = progress;
-                    progressText.textContent = `${progress}%`;
-
-                    if (progress >= 100) {
-                        clearInterval(progressInterval);
-                    }
-                }, 200); // Adjust as needed
-
-                // Perform the actual file upload
-                await addCsv(file);
-
-                // Hide progress bar and show success message
-                progressBarContainer.style.display = "none";
-                uploadCompleteDiv.style.display = "block";
-                fileNameSpan.textContent = `File: ${file.name}`;
+                // Perform the API call with the manually entered file path
+                await addCsv(filePath);
             } catch (error) {
                 console.error("Failed to upload file:", error);
             }
         } else {
-            alert("Please select a file before clicking Add.");
+            alert("Please enter a file path.");
         }
-    });
-
-    // Clear button to reset the view
-    clearButton.addEventListener("click", () => {
-        // Reset everything
-        uploadCompleteDiv.style.display = "none";
-        fileInput.value = ""; // Reset the file input
-        progressBar.value = 0; // Reset progress bar
-        progressText.textContent = "0%"; // Reset progress text
-        fileNameSpan.textContent = ""; // Clear the file name
     });
 });

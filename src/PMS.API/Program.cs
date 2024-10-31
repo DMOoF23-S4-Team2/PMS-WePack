@@ -4,6 +4,8 @@ using PMS.Application.Services;
 using PMS.Core.Repositories;
 using PMS.Core.Repositories.Base;
 using PMS.Infrastructure.Data;
+using PMS.Infrastructure.FileHandlers;
+using PMS.Infrastructure.Interfaces;
 using PMS.Infrastructure.Repository;
 using PMS.Infrastructure.Repository.Base;
 
@@ -29,6 +31,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Register Services
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICsvService, CsvService>();
+builder.Services.AddScoped<ICsvHandler, CsvHandler>();
 
 //! Register DbContext with local DB (WePackTest)
 //NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB
