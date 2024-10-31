@@ -1,7 +1,7 @@
 const csvNav = document.getElementById("csv-nav");
 const heroEl = document.getElementById("hero-container");
 
-import { addCsv } from "../Csv/AddCsv.js";
+import { uploadCsv } from "../Csv/UploadCsv.js";
 
 csvNav.addEventListener("click", () => {
     // Hide other buttons in the interface
@@ -57,7 +57,7 @@ csvNav.addEventListener("click", () => {
         if (filePath) {
             try {
                 // Perform the API call with the manually entered file path
-                await addCsv(filePath);
+                await uploadCsv(filePath);
             } catch (error) {
                 console.error("Failed to upload file:", error);
             }
