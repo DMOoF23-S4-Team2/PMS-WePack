@@ -31,6 +31,7 @@ public class CsvServiceTest
         };
         return csvContent;
     }   
+
     private List<string> MockedValidCsvFileWithID(){
         // Notice the csv file is with semicolon has delimiter/seperator
         var csvContent = new List<string>
@@ -45,7 +46,7 @@ public class CsvServiceTest
     
     // Tests for DetermineMethod
     [Fact]
-    public async Task TestCsvFileOneProductCreate()
+    public async Task TestCsvFile_CreateOneProduct()
     {
         // Arrange        
         var mockedCsvHandler = new Mock<ICsvHandler>();
@@ -63,7 +64,7 @@ public class CsvServiceTest
     }
 
     [Fact]
-    public async Task TestCsvFileManyProductCreate()
+    public async Task TestCsvFile_CreateManyProducts()
     {
         // Arrange        
         var mockedCsvHandler = new Mock<ICsvHandler>();
@@ -81,7 +82,25 @@ public class CsvServiceTest
     }
 
     [Fact]
-    public async Task TestCsvFileManyProductsUpdate()
+    public async Task TestCsvFile_UpdateOneProduct()
+    {
+        // Arrange        
+        var mockedCsvHandler = new Mock<ICsvHandler>();
+        var mockedProductService = new Mock<IProductService>();
+        // Mocked CSV handler to return mock data
+        mockedCsvHandler.Setup(handler => handler.GetCsv(It.IsAny<string>()))
+                        .Returns(MockedValidCsvFileWithOneProduct());
+        // Create an instance of CsvService with the mocked dependencies
+        var csvService = new CsvService(mockedCsvHandler.Object, mockedProductService.Object);         
+        // Act
+        await csvService.DetermineMethod("test-filepath-update.csv");        
+        
+        // Assert        
+        mockedProductService.Verify(service => service.UpdateProduct(It.IsAny<int>(), It.IsAny<ProductDto>()), Times.Once);
+    }        
+
+    [Fact]
+    public async Task TestCsvFile_UpdateManyProducts()
     {
         // Arrange        
         var mockedCsvHandler = new Mock<ICsvHandler>();
@@ -99,7 +118,7 @@ public class CsvServiceTest
     }    
 
     [Fact]
-    public async Task TestCsvFileOneProductDelete()
+    public async Task TestCsvFile_DeleteOneProduct()
     {
         // Arrange        
         var mockedCsvHandler = new Mock<ICsvHandler>();
@@ -116,7 +135,7 @@ public class CsvServiceTest
     }
 
     [Fact]
-    public async Task TestCsvFileManyProductsDelete()
+    public async Task TestCsvFile_DeleteManyProducts()
     {
         // Arrange        
         var mockedCsvHandler = new Mock<ICsvHandler>();

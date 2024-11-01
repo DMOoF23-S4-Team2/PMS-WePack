@@ -124,7 +124,7 @@ public class ProductControllerTest
     public async Task UpdateProduct_ReturnsNoContent_WhenUpdateSuccessful()
     {
         // Arrange
-        var productDto = new ProductWithoutIdDto {Name = "Updated Product" };
+        var productDto = new ProductDto {Name = "Updated Product" };
         _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
                             .Returns(Task.CompletedTask);
 
@@ -139,7 +139,7 @@ public class ProductControllerTest
     public async Task UpdateProduct_ReturnsNotFound_WhenProductNotFound()
     {
         // Arrange
-        var productDto = new ProductWithoutIdDto {Name = "Updated Product" };
+        var productDto = new ProductDto {Name = "Updated Product" };
         _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
                             .Throws(new ArgumentNullException());
 

@@ -105,7 +105,7 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        ProductWithoutIdDto productDto = null;
+        ProductDto productDto = null;
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => _productService.UpdateProduct(productId, productDto));
@@ -116,7 +116,7 @@ public class ProductServiceTest
     {
         // Arrange
         var productId = 1;
-        var productDto = new ProductWithoutIdDto {Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5};
+        var productDto = new ProductDto {Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5};
         var oldProduct = new Product { Id = productId, Name = "Old Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
         var newProduct = new Product { Id = productId, Name = "Updated Product", Sku = "SKU123", Price = 10, SpecialPrice = 5 };
 
