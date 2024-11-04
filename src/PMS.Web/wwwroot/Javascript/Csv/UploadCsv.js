@@ -17,17 +17,41 @@ export async function uploadCsv(filePath) {  // Accept filePath as a parameter
             throw new Error(`Error: ${response.status}`);
         }
 
-        const textResponse = await response.text(); // Get the response as plain text
-        console.log("Csv added successfully:", textResponse);
+        const textResponse = await response.text(); 
 
-        // Show success message
-        showMessage("Csv added successfully!", true);
+        showSuccessMessage(filePath)
 
         return textResponse;
     } catch (error) {
-        console.error("Failed to add Csv:", error.message);
+        console.error("Failed to upload Csv:", error.message);
 
-        // Show error message
-        showMessage(`Failed to add Csv`, false);
+        showErrorMessage(filePath)
     }
+}
+
+
+function showSuccessMessage(filepath) {
+    if(filepath.includes("create")) {
+        showMessage("Csv added successfully!", true);
+    }
+    else if(filepath.includes("delete")) {
+        showMessage("Csv deleted successfully!", true);
+    }
+    else if(filepath.includes("update")) {
+        showMessage("Csv updated successfully!", true);
+    }
+
+}
+
+function showErrorMessage(filepath) {
+    if(filepath.includes("create")) {
+        showMessage("Failed to add Csv!", false);
+    }
+    else if(filepath.includes("delete")) {
+        showMessage("Failed to delete Csv!", false);
+    }
+    else if(filepath.includes("update")) {
+        showMessage("Failed to update Csv!", false);
+    }
+
 }
