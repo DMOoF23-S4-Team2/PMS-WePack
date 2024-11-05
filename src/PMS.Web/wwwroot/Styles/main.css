@@ -251,7 +251,7 @@ textarea {
     gap: 2em;
 }
 .path-input-container {
-    width: 70%;
+    width: 80%;
     margin-top: 1em;
     display: flex;
     flex-direction: column;
@@ -263,6 +263,7 @@ textarea {
     padding: .5em;
     border-radius: 5px;
     border: 1px solid gray;
+    text-align: center;
 }
 
 .fa-cloud-arrow-up {
@@ -277,7 +278,7 @@ textarea {
     background-color: #ccc;      
     color: #666;                 
     cursor: not-allowed;         
-    opacity: 0.6;                
+    opacity: 0.3;                
     pointer-events: none;        
   }
 

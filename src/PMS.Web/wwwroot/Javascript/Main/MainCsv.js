@@ -48,21 +48,6 @@ csvNav.addEventListener("click", () => {
     const updateButton = document.getElementById("update-shopify-btn");
     const deleteButton = document.getElementById("delete-btn");
 
-    // Helper function to handle the upload
-    async function handleUpload() {
-        const filePath = filePathInput.value;
-        if (!filePath) {
-            alert("Please enter a file path.");
-            return;
-        }
-
-        try {
-            // Call uploadCsv with the entered file path
-            await uploadCsv(filePath);
-        } catch (error) {
-            console.error("Failed to upload file:", error);
-        }
-    }
 
      // Enable/disable buttons based on keywords in the file path
      filePathInput.addEventListener("input", () => {
@@ -72,24 +57,80 @@ csvNav.addEventListener("click", () => {
         if (filePathValue.includes("create")) {
             enableButton(addButton)
             disableButton(updateButton, deleteButton)
-            
-            addButton.addEventListener("click", handleUpload);
 
         } else if (filePathValue.includes("update")) {
             enableButton(updateButton)
-            disableButton(addButton, deleteButton)
-
-            updateButton.addEventListener("click", handleUpload);
+            disableButton(addButton, deleteButton)           
 
         } else if (filePathValue.includes("delete")) {
             enableButton(deleteButton)
             disableButton(addButton, updateButton)
-            
-            deleteButton.addEventListener("click", handleUpload);
 
         } 
     });
+
+    addButton.addEventListener("click", () => handleUpload(filePathInput.value));
+
+    updateButton.addEventListener("click", () => {
+        showModal("Are you sure you want to update the CSV?", () => handleUpload(filePathInput.value));
+    });
+
+    deleteButton.addEventListener("click", () => {
+        showModal("Are you sure you want to delete the CSV?", () => handleUpload(filePathInput.value));
+    });
 });
+
+
+// Helper function to handle the upload
+async function handleUpload(filePath) {
+    if (!filePath) {
+        alert("Please enter a file path.");
+        return;
+    }
+
+    try {
+        // Call uploadCsv with the entered file path
+        if (filePath.includes(`"`)) {
+            filePath = filePath.replace(/"/g, "");  
+        }
+
+        await uploadCsv(filePath);
+        document.getElementById("file-path").value = ""; // clear input after upload
+    } catch (error) {
+        console.error("Failed to upload file:", error);
+    }
+}
+
+// Show a modal with a custom message and confirmation actions
+function showModal(message, onConfirm) {
+    const modal = document.createElement("dialog");
+    modal.classList.add("delete-dialog");
+    modal.innerHTML = `
+        <div class="modal-content">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>${message}</p>
+            <button class="yes-delete-btn" id="confirm-btn">Confirm</button>
+            <button class="no-delete-btn" id="cancel-btn">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.showModal();
+
+    // Handle confirm and cancel
+    document.getElementById("confirm-btn").addEventListener("click", () => {
+        modal.close();
+        document.body.removeChild(modal);
+        onConfirm(); 
+    });
+
+    document.getElementById("cancel-btn").addEventListener("click", () => {
+        modal.close();
+        document.body.removeChild(modal);
+    });
+}
+
+
 
 function disableButton(...buttons) {
     buttons.forEach(button => {
