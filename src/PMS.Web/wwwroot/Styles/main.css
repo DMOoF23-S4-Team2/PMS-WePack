@@ -5,7 +5,7 @@
 }
 body {
     color: white;
-    font-family: Roboto, 'sans-serif';
+    font-family: "Roboto", 'sans-serif';
     margin: 0;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -112,7 +112,7 @@ section {
     width: 100%;
     padding: 1em 2.5em;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 1px;
 }
 .nav-container:hover, 
 .nav-container:focus {
