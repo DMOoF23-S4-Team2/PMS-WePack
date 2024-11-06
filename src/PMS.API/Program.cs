@@ -39,10 +39,14 @@ builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
 
 //! Register DbContext with local DB (WePackTest)
 //NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB
-builder.Services.AddDbContext<PMSContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"));
-});
+// builder.Services.AddDbContext<PMSContext>(options =>
+// {
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"));
+// });
+
+//! Register DbContext with Shopify DB
+var sqlConnection = builder.Configuration[("ConnectionStrings:Wepack:SqlDb")];
+builder.Services.AddSqlServer<PMSContext>(sqlConnection, options => options.EnableRetryOnFailure()); 
 
 // Register controllers
 builder.Services.AddControllers();
