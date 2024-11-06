@@ -30,7 +30,7 @@ namespace PMS.Infrastructure.Shopify
 
     public async Task<Product> AddProductAsync(Product product)
     {
-      var mutation = ConstructProductMutation(product, "productCreate");
+      var mutation = ConstructProductMutation(product);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
@@ -44,9 +44,9 @@ namespace PMS.Infrastructure.Shopify
 
       var result = await response.Content.ReadAsStringAsync();
       var json = JsonNode.Parse(result);
-      var dataNode = json?["data"] ?? throw new Exception("Data not found");
-      var productCreateNode = dataNode["productCreate"] ?? throw new Exception("Product creation data not found");
-      var productData = productCreateNode["product"] ?? throw new Exception("Error creating product");
+      var dataNode = json?["data"]?["products"]?["edges"] ?? throw new Exception("Data not found", new Exception(result));
+      var productCreateNode = dataNode["productCreate"] ?? throw new Exception("Product creation data not found", new Exception(result));
+      var productData = productCreateNode["product"] ?? throw new Exception("Error creating product", new Exception(result));
 
       return MapProduct(productData);
     }
@@ -109,7 +109,7 @@ namespace PMS.Infrastructure.Shopify
     // Update a single product
     public async Task UpdateProductAsync(Product product)
     {
-      var mutation = ConstructProductMutation(product, "productUpdate");
+      var mutation = ConstructProductMutation(product);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
@@ -171,60 +171,68 @@ namespace PMS.Infrastructure.Shopify
       }
     }
 
-    private string ConstructProductMutation(Product product, string mutationType)
+    private string ConstructProductMutation(Product product)
     {
+      var productMetafields = new List<string>();
+      if (!string.IsNullOrEmpty(product.Material))
+      {
+        productMetafields.Add($@"
+            {{
+                namespace: ""custom"",
+                key: ""multiple_material"",
+                value: ""{EscapeJsonString(product.Material)}"",
+                type: ""list.single_line_text_field""
+            }}");
+      }
+
+      var variantMetafields = new List<string>();
+      if (!string.IsNullOrEmpty(product.SupplierSku))
+      {
+        variantMetafields.Add($@"
+            {{
+                namespace: ""custom"",
+                key: ""supplier_sku"",
+                value: {JsonSerializer.Serialize(product.SupplierSku)},
+                type: ""single_line_text_field""
+            }}");
+      }
+
+      var productMetafieldsString = string.Join(",", productMetafields);
+      var variantMetafieldsString = string.Join(",", variantMetafields);
+
       return $@"
     mutation {{
-      {mutationType}(input: {{
-        title: ""{product.Name}""
-        bodyHtml: ""{product.Description}""
-        vendor: ""{product.Supplier}""
-        productType: ""{product.ProductType}""
-        tags: ""{product.ProductGroup}""
-        variants: [{{
-          sku: ""{product.Sku}""
-          weight: {product.Weight.ToString(CultureInfo.InvariantCulture)}
-          barcode: ""{product.Ean}""
-          price: {product.Price.ToString(CultureInfo.InvariantCulture)}
-          compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")}
-          selectedOptions: [{{
-            name: ""Farve""
-            value: ""{product.Color}""
-          }}]
-          metafields: [{{
-            namespace: ""custom""
-            key: ""supplier_sku""
-            value: ""{product.SupplierSku}""
-            valueType: ""STRING""
-          }}]
-        }}]
-        metafields: [{{
-          namespace: ""custom""
-          key: ""multiple_material""
-          value: ""{product.Material}""
-          valueType: ""STRING""
-        }}, {{
-          namespace: ""custom""
-          key: ""template_number""
-          value: ""{product.TemplateNo}""
-          valueType: ""INTEGER""
-        }}, {{
-          namespace: ""custom""
-          key: ""week_list""
-          value: ""{product.List}""
-          valueType: ""INTEGER""
-        }}]
-      }}) {{
-        product {{
-          id
-          title
+        productCreate(input: {{
+            title: {JsonSerializer.Serialize(product.Name)},
+            bodyHtml: {JsonSerializer.Serialize(product.Description)},
+            vendor: {JsonSerializer.Serialize(product.Supplier)},
+            productType: {JsonSerializer.Serialize(product.ProductType)},
+            tags: {JsonSerializer.Serialize(product.ProductGroup)},
+            metafields: [{productMetafieldsString}],
+            variants: [{{
+                sku: {JsonSerializer.Serialize(product.Sku)},
+                weight: {product.Weight.ToString(CultureInfo.InvariantCulture)},
+                barcode: {JsonSerializer.Serialize(product.Ean)},
+                price: {product.Price.ToString(CultureInfo.InvariantCulture)},
+                compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")},
+                metafields: [{variantMetafieldsString}]
+            }}]
+        }}) {{
+            product {{
+                id
+                title
+            }}
+            userErrors {{
+                field
+                message
+            }}
         }}
-        userErrors {{
-          field
-          message
-        }}
-      }}
     }}";
+    }
+
+    private string EscapeJsonString(string value)
+    {
+      return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
     private string ConstructProductQuery(string? id = null)
