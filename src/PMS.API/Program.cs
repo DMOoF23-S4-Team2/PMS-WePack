@@ -5,6 +5,8 @@ using PMS.Core.Interfaces;
 using PMS.Core.Repositories;
 using PMS.Core.Repositories.Base;
 using PMS.Infrastructure.Data;
+using PMS.Infrastructure.FileHandlers;
+using PMS.Infrastructure.Interfaces;
 using PMS.Infrastructure.Repository;
 using PMS.Infrastructure.Repository.Base;
 using PMS.Infrastructure.Shopify;
@@ -36,6 +38,8 @@ builder.Services.AddScoped<IShopifyProductRepository, ShopifyProductRepository>(
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
+builder.Services.AddScoped<ICsvService, CsvService>();
+builder.Services.AddScoped<ICsvHandler, CsvHandler>();
 
 //! Register DbContext with local DB (WePackTest)
 //NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB

@@ -1,3 +1,4 @@
+import { showMessage } from "../../Components/MessageBox.js";
 
 let products = [];
 
@@ -17,5 +18,6 @@ export async function getAllProducts() {
     } catch (error) {
         // Log the error to the console for debugging purposes
         console.error("Error fetching products:", error);
+        showMessage("Error fetching Products", false)
     }
 }
