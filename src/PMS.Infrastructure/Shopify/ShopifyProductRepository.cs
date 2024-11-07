@@ -238,8 +238,7 @@ namespace PMS.Infrastructure.Shopify
       if (string.IsNullOrWhiteSpace(value))
       {
           // Returns an empty Json list
-          return "\"[]\"";
-          // return "[]";
+          return "\"[]\"";          
       }
 
       // Split by comma, trim any whitespace and remove empty value
@@ -250,7 +249,7 @@ namespace PMS.Infrastructure.Shopify
 
       // Serialize the list to a JSON array string
       var jsonList = JsonSerializer.Serialize(items);
-      // Return the JSON array as a string literal in quotes
+      // Return the JSON array as a string with qutation marks
       return $"\"{jsonList.Replace("\"", "\\\"")}\"";
     }
 
