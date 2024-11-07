@@ -1,12 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js";
 
-export async function uploadCsv(filePath) {  // Accept filePath as a parameter
+export async function uploadCsv(filePath) {  
     try {
 
         const response = await fetch(`https://localhost:7225/api/Csv/upload-csv?filepath=${filePath}`, {
             method: "POST",
             headers: {
-                "Content-Type": "text/plain"  // or "text/json" if you change the API to expect a JSON body
+                "Content-Type": "text/plain"  
             }, 
             body: filePath
         });
@@ -31,17 +31,24 @@ export async function uploadCsv(filePath) {  // Accept filePath as a parameter
 
 
 function showSuccessMessage(filepath) {
-    if(filepath.includes("create")) {
-        showMessage("Csv added successfully!", true);
-    }
-    else if(filepath.includes("delete")) {
-        showMessage("Csv deleted successfully!", true);
-    }
-    else if(filepath.includes("update")) {
-        showMessage("Csv updated successfully!", true);
-    }
+    // Define the regex pattern for a valid .csv file path
+    const filePathPattern = /^[a-zA-Z]:\\(?:[^\\/:*?"<>|]+\\)*[^\\/:*?"<>|]+\.csv$/;
 
+    
+    if (filePathPattern.test(filepath)) {
+        
+        if (filepath.toLowerCase().includes("create")) {
+            showMessage("CSV added successfully!", true);
+        } else if (filepath.toLowerCase().includes("delete")) {
+            showMessage("CSV deleted successfully!", true);
+        } else if (filepath.toLowerCase().includes("update")) {
+            showMessage("CSV updated successfully!", true);
+        }
+    } else {        
+        showMessage("Invalid file path", false);
+    }
 }
+
 
 function showErrorMessage(filepath) {
     if(filepath.includes("create")) {

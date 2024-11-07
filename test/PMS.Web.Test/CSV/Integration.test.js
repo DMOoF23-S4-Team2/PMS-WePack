@@ -43,7 +43,7 @@ describe('uploadCsv', () => {
                 body: filePath
             }
         );
-        expect(showMessage).toHaveBeenCalledWith("Csv added successfully!", true);
+        expect(showMessage).toHaveBeenCalledWith("CSV added successfully!", true);
     });
 
     it('should handle errors and show an error message on failed upload', async () => {
