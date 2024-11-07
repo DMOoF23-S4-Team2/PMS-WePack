@@ -8,7 +8,6 @@ using PMS.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
 
-
 namespace PMS.Infrastructure.Shopify
 {
   public class ShopifyProductRepository : IShopifyProductRepository
@@ -180,7 +179,7 @@ namespace PMS.Infrastructure.Shopify
             {{
                 namespace: ""custom"",
                 key: ""multiple_material"",
-                value: ""{EscapeJsonString(product.Material)}"",
+                value: {ConvertStringToJsonList(product.Material)},
                 type: ""list.single_line_text_field""
             }}");
       }
@@ -233,6 +232,26 @@ namespace PMS.Infrastructure.Shopify
     private string EscapeJsonString(string value)
     {
       return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+
+    private string ConvertStringToJsonList(string value){
+      if (string.IsNullOrWhiteSpace(value))
+      {
+          // Returns an empty Json list
+          return "\"[]\"";
+          // return "[]";
+      }
+
+      // Split by comma, trim any whitespace and remove empty value
+      var items = value.Split(',')
+                                .Select(item => item.Trim())
+                                .Where(item => !string.IsNullOrEmpty(item))
+                                .ToList();
+
+      // Serialize the list to a JSON array string
+      var jsonList = JsonSerializer.Serialize(items);
+      // Return the JSON array as a string literal in quotes
+      return $"\"{jsonList.Replace("\"", "\\\"")}\"";
     }
 
     private string ConstructProductQuery(string? id = null)
@@ -390,10 +409,11 @@ namespace PMS.Infrastructure.Shopify
           .AsArray()
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
-        // Custom fields
+        // Custom fields        
         Material = productData["metafields"]?["edges"]
           ?.AsArray()
-          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,        
+        
         TemplateNo = int.TryParse(productData["metafields"]?["edges"]
           ?.AsArray()
           ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
@@ -409,5 +429,6 @@ namespace PMS.Infrastructure.Shopify
     {
       return id.Split('/').LastOrDefault() ?? string.Empty;
     }
+  
   }
 }
