@@ -12,18 +12,30 @@ services:
     volumes:
       - sqlserverdata:/var/opt/mssql
 
-  webapi:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: webapi
+    container_name: api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__LocalDB=Server=sqlserver;Database=WePackTest;User Id=sa;Password=Team2Semester4;TrustServerCertificate=true
+    ports:
+      - "5001:8080"
     depends_on:
       - sqlserver
-    # volumes:
-    #   - ./apply-migrations.sh:/app/apply-migrations.sh
-    # command: /bin/bash /app/apply-migrations.sh && dotnet PMS.API.dll
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "3001:8080"
+    depends_on:
+      - api
 
 volumes:
   sqlserverdata:
