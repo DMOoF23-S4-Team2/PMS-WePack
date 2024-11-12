@@ -7,9 +7,7 @@ services:
       - "5184:80"  # Maps host port 5184 to container port 80 for the API
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__LocalDB=Server=localhost; Database=WePackTest; User Id=sa; Password=Team2Semester4; TrustServerCertificate=true
-    depends_on:
-      - db
+      - KeyVaultUri=https://wepackkeys.vault.azure.net/
     networks:
       - pms-network
 
@@ -26,22 +24,6 @@ services:
     networks:
       - pms-network
 
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Team2Semester4
-      - MSSQL_DATABASE=WePackTest
-    ports:
-      - "1433:1433"
-    networks:
-      - pms-network
-    volumes:
-      - dbdata:/var/opt/mssql
-
 networks:
   pms-network:
     driver: bridge
-
-volumes:
-  dbdata:
