@@ -1,41 +1,47 @@
-version: '3.8'
-
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
-    environment:
-      SA_PASSWORD: "Team2Semester4"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserverdata:/var/opt/mssql
-
   api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: api
+      dockerfile: Dockerfile.api
+    ports:
+      - "5184:80"  # Maps host port 5184 to container port 80 for the API
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__LocalDB=Server=sqlserver;Database=WePackTest;User Id=sa;Password=Team2Semester4;TrustServerCertificate=true
-    ports:
-      - "5001:8080"
+      - ConnectionStrings__LocalDB=Server=localhost; Database=WePackTest; User Id=sa; Password=Team2Semester4; TrustServerCertificate=true
     depends_on:
-      - sqlserver
+      - db
+    networks:
+      - pms-network
 
   web:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: web
+      dockerfile: Dockerfile.web
+    ports:
+      - "5002:80"  # Maps host port 5002 to container port 80 for the Web
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "3001:8080"
     depends_on:
       - api
+    networks:
+      - pms-network
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Team2Semester4
+      - MSSQL_DATABASE=WePackTest
+    ports:
+      - "1433:1433"
+    networks:
+      - pms-network
+    volumes:
+      - dbdata:/var/opt/mssql
+
+networks:
+  pms-network:
+    driver: bridge
 
 volumes:
-  sqlserverdata:
+  dbdata:

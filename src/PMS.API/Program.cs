@@ -13,13 +13,25 @@ using PMS.Infrastructure.Shopify;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure CORS to allow specific origins
+// // Configure CORS to make API requests from your host machine).
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowPmsWeb",
+//         policy =>
+//         {
+//             policy.WithOrigins("http://localhost:5002") // Add other origins as needed
+//                   .AllowAnyHeader()
+//                   .AllowAnyMethod();
+//         });
+// });
+
+// Configure CORS to make API requests from the web service in the Docker network. 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowPmsWeb",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5002") // Add other origins as needed
+            policy.WithOrigins("http://web:80") // Docker network URL for the web service
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -64,6 +76,9 @@ app.UseCors("AllowPmsWeb");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
+    // Comment out or remove this line if HTTPS redirection is enforced
+    // app.UseHttpsRedirection();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
