@@ -242,13 +242,14 @@ namespace PMS.Infrastructure.Shopify
       }
 
       // Split by comma, trim any whitespace and remove empty value
+    
       var items = value.Split(',')
                                 .Select(item => item.Trim())
                                 .Where(item => !string.IsNullOrEmpty(item))
                                 .ToList();
 
       // Serialize the list to a JSON array string
-      var jsonList = JsonSerializer.Serialize(items);
+      var jsonList = JsonSerializer.Serialize(items);      
       // Return the JSON array as a string with qutation marks
       return $"\"{jsonList.Replace("\"", "\\\"")}\"";
     }
