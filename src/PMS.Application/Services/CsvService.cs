@@ -19,55 +19,6 @@ namespace PMS.Application.Services
             _productService = productService;
         }
 
-        public async Task CreateProduct(string filepath){ 
-            // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
-            // Take the first product
-            await _productService.CreateProduct(products[0]);            
-        }
-
-        public async Task DeleteProduct(string filepath){ 
-            // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
-            // Getting the first product
-            int productId = products[0].Id;
-            await _productService.DeleteProduct(productId);   
-        }
-
-        public async Task GetProduct(string filepath){             
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
-            // Getting the first product
-            int productId = products[0].Id;
-            await _productService.GetProduct(productId); 
-        }
-
-        public async Task GetProducts(string filepath){ 
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
-            await _productService.GetProducts(); 
-        }
-
-        public async Task AddManyProducts(string filepath){                        
-            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);            
-            await _productService.AddManyProducts(products);            
-        }
-
-        public async Task DeleteManyProducts(string filepath){ 
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
-            await _productService.DeleteManyProducts(products);             
-        }
-        
-        public async Task UpdateManyProducts(string filepath){ 
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
-            await _productService.UpdateManyProducts(products);      
-        }
-
-        // public async Task UpdateProduct(string filepath){ 
-        //     List<ProductDto> products = getProductWithIDFromCsv(filepath);            
-        //     int productId = products[0].Id;
-        //     ProductDto product = products[0];
-        //     await _productService.UpdateProduct(productId, product); 
-        // }        
-
         // Determine which method to use, when csv is uploaded through API
         public async Task DetermineMethod(string filepath)
         {                        
@@ -88,9 +39,9 @@ namespace PMS.Application.Services
                     break;
 
                 case "update":
-                    // if (numberOfRows == 2) {
-                    //     await UpdateProduct(filepath);
-                    // }
+                    if (numberOfRows == 2) {
+                        await UpdateProduct(filepath);
+                    }
                     if (numberOfRows > 2)
                     {
                         await UpdateManyProducts(filepath);
@@ -113,13 +64,62 @@ namespace PMS.Application.Services
             }         
         }
 
+        public async Task GetProduct(string filepath){             
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            // Getting the first product
+            int productId = products[0].Id;
+            await _productService.GetProduct(productId); 
+        }
+
+        public async Task GetProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.GetProducts(); 
+        }
+
+        public async Task CreateProduct(string filepath){ 
+            // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
+            // Take the first product
+            await _productService.CreateProduct(products[0]);            
+        }
+
+        public async Task AddManyProducts(string filepath){                        
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);            
+            await _productService.AddManyProducts(products);            
+        }
+
+        public async Task UpdateProduct(string filepath){ 
+            List<ProductDto> product = getProductWithIDFromCsv(filepath);  
+            ProductDto firstProduct = product[0];                    
+            int productId = firstProduct.Id;
+            await _productService.UpdateProduct(productId, firstProduct); 
+        } 
+  
+        public async Task UpdateManyProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.UpdateManyProducts(products);      
+        }
+
+        public async Task DeleteProduct(string filepath){ 
+            // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            // Getting the first product
+            int productId = products[0].Id;
+            await _productService.DeleteProduct(productId);   
+        }
+
+        public async Task DeleteManyProducts(string filepath){ 
+            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            await _productService.DeleteManyProducts(products);             
+        }
+        
         // Methods to get .csv       
         private Dictionary<string, object> analyzeCsv(string filepath){
             // Get the csv
             var csvData = _csvHandler.GetCsv(filepath);            
             // Check command from filepath
             // Remove the .csv extension from the filepath
-            string fileName = Path.GetFileNameWithoutExtension(filepath);
+            string fileName = Path.GetFileNameWithoutExtension(filepath);            
             var filepathCommand = fileName.Split('-');
             string command = filepathCommand[filepathCommand.Length - 1].ToLower();                                    
             // Get number of rows

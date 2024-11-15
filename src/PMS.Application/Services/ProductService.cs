@@ -52,8 +52,8 @@ namespace PMS.Application.Services
             ThrowArgument.ExceptionIfNull(productsDto);
             return productsDto;
         }
-
-        public async Task UpdateProduct(int id, ProductWithoutIdDto productDto)
+        
+        public async Task UpdateProduct(int id, ProductDto productDto)
         {
             var oldProduct = await GetEntityFromRepositoryWith(id);
             var newProduct = MappedEntityOf(productDto);
@@ -84,7 +84,7 @@ namespace PMS.Application.Services
         //!SECTION Private Methods
         private static Product MappedEntityOf(object productDto)
         {
-            if (productDto is ProductWithoutIdDto or Product)
+            if (productDto is ProductWithoutIdDto or ProductDto or Product)
             {
                 var product = ObjectMapper.Mapper.Map<Product>(productDto);
                 ThrowArgument.ExceptionIfNull(product);
@@ -134,7 +134,7 @@ namespace PMS.Application.Services
             return products;
         }
 
-        private async Task UpdateEntityInRepository(ProductWithoutIdDto productDto, Product oldProduct)
+        private async Task UpdateEntityInRepository(ProductDto productDto, Product oldProduct)
         {
             var mappedProduct = ObjectMapper.Mapper.Map(productDto, oldProduct);
             await _productRepository.UpdateAsync(mappedProduct);

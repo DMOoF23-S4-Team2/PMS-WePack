@@ -1,3 +1,5 @@
+import { showMessage } from "../../Components/MessageBox.js";
+
 
 let categories = [];
 
@@ -17,5 +19,6 @@ export async function getAllCategories() {
     } catch (error) {
         // Log the error to the console for debugging purposes
         console.error("Error fetching categories:", error);
+        showMessage("Error fetching Categories", false)
     }
 }
