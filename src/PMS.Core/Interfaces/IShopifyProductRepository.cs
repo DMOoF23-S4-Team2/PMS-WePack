@@ -6,7 +6,7 @@ public interface IShopifyProductRepository
 {
     Task<IReadOnlyList<Product>> GetAllProductsAsync();
     Task<Product> GetProductByIdAsync(string id);
-    Task<Product> AddProductAsync(Product product);
+    Task<Product> AddProductAsync(Product product);    
     Task UpdateProductAsync(Product product);
     Task DeleteProductAsync(Product product);
     Task AddManyProductsAsync(IEnumerable<Product> product);

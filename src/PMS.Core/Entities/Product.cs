@@ -26,8 +26,8 @@ namespace PMS.Core.Entities
         [MaxLength(255)]
         public string Color {get; set;} = string.Empty;
         
-        [MaxLength(255)]
-        public string Material {get; set;} = string.Empty;
+        // [MaxLength(255)]
+        public List<string> Material {get; set;} = new List<string>();
         
         [MaxLength(255)]
         public string ProductType {get; set;} = string.Empty;
