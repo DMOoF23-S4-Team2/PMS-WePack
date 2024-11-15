@@ -158,7 +158,7 @@ namespace PMS.Application.Services
                     Name = fields[headerIndexMap["name"]],
                     Description = fields[headerIndexMap["description"]],
                     Color = fields[headerIndexMap["color"]],
-                    Material = fields[headerIndexMap["material"]],
+                    Material = fromStringToList(fields[headerIndexMap["material"]]),
                     ProductType = fields[headerIndexMap["product_type"]],
                     ProductGroup = fields[headerIndexMap["product_group"]],
                     Supplier = fields[headerIndexMap["supplier"]],
@@ -201,7 +201,7 @@ namespace PMS.Application.Services
                     Name = fields[headerIndexMap["name"]],
                     Description = fields[headerIndexMap["description"]],
                     Color = fields[headerIndexMap["color"]],
-                    Material = fields[headerIndexMap["material"]],
+                    Material = fromStringToList(fields[headerIndexMap["material"]]),
                     ProductType = fields[headerIndexMap["product_type"]],
                     ProductGroup = fields[headerIndexMap["product_group"]],
                     Supplier = fields[headerIndexMap["supplier"]],
@@ -219,5 +219,16 @@ namespace PMS.Application.Services
             }
             return products;
         }  
+
+        // Helpers
+        private List<string> fromStringToList(string items){
+            // Split the string by ',' trim each item, remove empty
+            List<string> stringList = items.Split(',')
+                                        .Select(item => item.Trim())
+                                        .Where(item => !string.IsNullOrEmpty(item))
+                                        .ToList();
+            return stringList;
+        }
+
     }
 }

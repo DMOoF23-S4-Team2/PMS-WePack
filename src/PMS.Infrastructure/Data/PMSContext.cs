@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PMS.Core.Entities;
 
 namespace PMS.Infrastructure.Data
@@ -27,6 +28,15 @@ namespace PMS.Infrastructure.Data
                     j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId"),
                     j => j.HasOne<Product>().WithMany().HasForeignKey("ProductId")
                 );
+            // Converting a list to a string
+            var stringListConverter = new ValueConverter<List<string>, string>(
+                v => string.Join(',', v), 
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+            );            
+
+            builder.Property(p => p.Material)
+                .HasConversion(stringListConverter);
+
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.ShopifyId).HasMaxLength(255);
             builder.Property(p => p.Sku).IsRequired().HasMaxLength(255);
@@ -34,7 +44,7 @@ namespace PMS.Infrastructure.Data
             builder.Property(p => p.Name).IsRequired().HasMaxLength(255);
             builder.Property(p => p.Description).HasMaxLength(5000);
             builder.Property(p => p.Color).HasMaxLength(255);
-            builder.Property(p => p.Material).HasMaxLength(255);
+            // builder.Property(p => p.Material).HasMaxLength(255);
             builder.Property(p => p.ProductType).HasMaxLength(255);
             builder.Property(p => p.ProductGroup).HasMaxLength(255);
             builder.Property(p => p.Supplier).HasMaxLength(255);
@@ -83,7 +93,8 @@ namespace PMS.Infrastructure.Data
                     Name = "iPhone 12 / 12 Pro cover - Black",
                     Description = "A black iPhone 12 / 12 Pro cover",
                     Color = "Black",
-                    Material = "Silicone / TPU",
+                    // Material = "Silicone / TPU",
+                    Material = new List<string> {"Silicone / TPU", "PU Leather"},
                     ProductType = "Cover",
                     ProductGroup = "Smartphone",
                     Supplier = "TVC",
