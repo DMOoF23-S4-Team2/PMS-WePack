@@ -426,9 +426,9 @@ namespace PMS.Infrastructure.Shopify
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
         // Custom fields        
-        Material = productData["metafields"]?["edges"]
-          ?.AsArray()
-          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,        
+        // Material = productData["metafields"]?["edges"]
+        //   ?.AsArray()
+        //   ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,        
         
         TemplateNo = int.TryParse(productData["metafields"]?["edges"]
           ?.AsArray()
