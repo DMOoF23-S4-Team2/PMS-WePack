@@ -43,14 +43,14 @@ public class ProductController : ControllerBase{
 
     // DELETE: Delete Product from ID
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct(int id) {
+    public async Task<IActionResult> DeleteProduct(string sku) {
         if (productService == null) 
         {
             return BadRequest("Service unavailable.");
         }
 
         try {
-            await productService.DeleteProduct(id);
+            await productService.DeleteProduct(sku);
         }
         catch (ArgumentNullException){
             return NotFound();
@@ -75,8 +75,8 @@ public class ProductController : ControllerBase{
 
     // GET: Single Product from ID
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetProduct(int id){
-        var product = await productService.GetProduct(id);
+    public async Task<IActionResult> GetProduct(string sku){
+        var product = await productService.GetProduct(sku);
         if (product == null){
             return NotFound();
         }
@@ -108,18 +108,18 @@ public class ProductController : ControllerBase{
 
     // PUT: Update Category from ID
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
+    public async Task<IActionResult> UpdateProduct(string sku, [FromBody] ProductDto productDto)
     {                        
         try {
             // Try to update the category
-            await productService.UpdateProduct(id, productDto);
+            await productService.UpdateProduct(sku, productDto);
             // Returns 204
             return NoContent();
         }
         catch (ArgumentNullException)
         {
             // Return a 404 if the category was not found
-            return NotFound($"Product with ID {id} not found.");
+            return NotFound($"Product with ID {sku} not found.");
         }
         catch (Exception ex)
         {

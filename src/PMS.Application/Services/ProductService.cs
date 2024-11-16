@@ -32,15 +32,15 @@ namespace PMS.Application.Services
             return newProductDto;
         }
 
-        public async Task DeleteProduct(int id)
+        public async Task DeleteProduct(string sku)
         {
-            var product = await GetEntityFromRepositoryWith(id);
+            var product = await GetEntityFromRepositoryWith(sku);
             await _productRepository.DeleteAsync(product);
         }
 
-        public async Task<ProductDto> GetProduct(int id)
+        public async Task<ProductDto> GetProduct(string sku)
         {
-            var product = await GetEntityFromRepositoryWith(id);
+            var product = await GetEntityFromRepositoryWith(sku);
             var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
             return productDto;
         }
@@ -53,9 +53,9 @@ namespace PMS.Application.Services
             return productsDto;
         }
         
-        public async Task UpdateProduct(int id, ProductDto productDto)
+        public async Task UpdateProduct(string sku, ProductDto productDto)
         {
-            var oldProduct = await GetEntityFromRepositoryWith(id);
+            var oldProduct = await GetEntityFromRepositoryWith(sku);
             var newProduct = MappedEntityOf(productDto);
             await ValidateEntity(newProduct);
             await UpdateEntityInRepository(productDto, oldProduct);
@@ -119,10 +119,10 @@ namespace PMS.Application.Services
             return await _productRepository.AddAsync(product);
         }
 
-        private async Task<Product> GetEntityFromRepositoryWith(int id)
+        private async Task<Product> GetEntityFromRepositoryWith(string sku)
         {
-            ThrowArgument.ExceptionIfZero(id);
-            var product = await _productRepository.GetByIdAsync(id);
+            // ThrowArgument.ExceptionIfZero(id);
+            var product = await _productRepository.GetBySkuAsync(sku);
             ThrowArgument.ExceptionIfNull(product);
             return product;
         }

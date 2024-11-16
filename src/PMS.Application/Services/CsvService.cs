@@ -67,8 +67,8 @@ namespace PMS.Application.Services
         public async Task GetProduct(string filepath){             
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             // Getting the first product
-            int productId = products[0].Id;
-            await _productService.GetProduct(productId); 
+            string productSku = products[0].Sku;
+            await _productService.GetProduct(productSku); 
         }
 
         public async Task GetProducts(string filepath){ 
@@ -91,8 +91,8 @@ namespace PMS.Application.Services
         public async Task UpdateProduct(string filepath){ 
             List<ProductDto> product = getProductWithIDFromCsv(filepath);  
             ProductDto firstProduct = product[0];                    
-            int productId = firstProduct.Id;
-            await _productService.UpdateProduct(productId, firstProduct); 
+            string productSku = firstProduct.Sku;
+            await _productService.UpdateProduct(productSku, firstProduct); 
         } 
   
         public async Task UpdateManyProducts(string filepath){ 
@@ -104,8 +104,8 @@ namespace PMS.Application.Services
             // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             // Getting the first product
-            int productId = products[0].Id;
-            await _productService.DeleteProduct(productId);   
+            string productSku = products[0].Sku;
+            await _productService.DeleteProduct(productSku);   
         }
 
         public async Task DeleteManyProducts(string filepath){ 
