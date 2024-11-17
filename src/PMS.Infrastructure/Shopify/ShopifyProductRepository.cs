@@ -43,7 +43,7 @@ namespace PMS.Infrastructure.Shopify
       }      
       // Cast response into string
       var result = await response.Content.ReadAsStringAsync();      
-      
+      // Try parse the response
       try {
         var json = JsonNode.Parse(result);                
         var productCreateNode = json?["data"]?["productCreate"] ?? throw new Exception("ProductCreate data not found", new Exception(result));        
@@ -79,10 +79,10 @@ namespace PMS.Infrastructure.Shopify
         var errorContent = await response.Content.ReadAsStringAsync();
         throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
       }
-
+      // Cast response into string
       var result = await response.Content.ReadAsStringAsync();
       try {
-        var json = JsonNode.Parse(result);
+        var json = JsonNode.Parse(result);        
         var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
         var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
         var productData = productNode;
@@ -192,7 +192,7 @@ namespace PMS.Infrastructure.Shopify
             {{
                 namespace: ""custom"",
                 key: ""multiple_material"",
-                value: ""{convertListToJsonString(product.Material)}"",
+                value: ""{ConvertListToJsonString(product.Material)}"",
                 type: ""list.single_line_text_field""
             }}");
       }
@@ -247,15 +247,6 @@ namespace PMS.Infrastructure.Shopify
       return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
     
-    private string convertListToJsonString(List<string> items)
-    {
-      // Serializer list to string: (["material"])
-      string jsonString = JsonSerializer.Serialize(items);      
-      // Escpare to json chars: ([\"material\"])
-      string escapeJsonString = EscapeJsonString(jsonString);
-      return escapeJsonString;
-    }
-
     private string ConstructProductQuery(string? id = null)
     {
       if (!string.IsNullOrEmpty(id))
@@ -411,10 +402,10 @@ namespace PMS.Infrastructure.Shopify
           .AsArray()
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
-        // Custom fields        
-        // Material = productData["metafields"]?["edges"]
-        //   ?.AsArray()
-        //   ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,        
+        // Custom fields               
+        Material = ConvertJsonStringToList(productData["metafields"]?["edges"]
+          ?.AsArray()
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty),            
         
         TemplateNo = int.TryParse(productData["metafields"]?["edges"]
           ?.AsArray()
@@ -425,6 +416,22 @@ namespace PMS.Infrastructure.Shopify
       };
 
       return product;
+    }
+
+    private string ConvertListToJsonString(List<string> items)
+    {
+      // Serializer list to string: (["material"])
+      string jsonString = JsonSerializer.Serialize(items);      
+      // Escpare to json chars: ([\"material\"])
+      string escapeJsonString = EscapeJsonString(jsonString);
+      return escapeJsonString;
+    }
+
+    private List<string> ConvertJsonStringToList(string items)
+    {
+      // Items eg. ["Ægte Læder","Rhinsten"]
+      List<string> listItems = JsonSerializer.Deserialize<List<string>>(items);      
+      return listItems;
     }
 
     private string GetShopifyId(string id)
