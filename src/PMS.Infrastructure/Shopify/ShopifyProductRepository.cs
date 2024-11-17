@@ -30,7 +30,7 @@ namespace PMS.Infrastructure.Shopify
     public async Task<Product> AddProductAsync(Product product)
     {      
       
-      var mutation = ConstructProductMutation(product);                  
+      var mutation = ConstructProductMutation(product);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
@@ -41,17 +41,18 @@ namespace PMS.Infrastructure.Shopify
         var errorContent = await response.Content.ReadAsStringAsync();
         throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
       }      
+      // Cast response into string
       var result = await response.Content.ReadAsStringAsync();      
       
-      var json = JsonNode.Parse(result);
-      var dataNode = json?["data"]?["products"]?["edges"] ?? throw new Exception("Data not found", new Exception(result));
-      var productCreateNode = dataNode["productCreate"] ?? throw new Exception("Product creation data not found", new Exception(result));            
-      var productData = productCreateNode["product"] ?? throw new Exception("Error creating product", new Exception(result));
-
-      
-
-      return MapProduct(productData);
-
+      try {
+        var json = JsonNode.Parse(result);                
+        var productCreateNode = json?["data"]?["productCreate"] ?? throw new Exception("ProductCreate data not found", new Exception(result));        
+        var productData = productCreateNode["product"] ?? throw new Exception("Error creating product", new Exception(result));
+        return MapProduct(productData);
+      } 
+      catch (Exception ex){
+        throw new Exception("An error occurred while adding product", ex);
+      }
 
     }
 
@@ -80,12 +81,18 @@ namespace PMS.Infrastructure.Shopify
       }
 
       var result = await response.Content.ReadAsStringAsync();
-      var json = JsonNode.Parse(result);
-      var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
-      var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
-      var productData = productNode;
+      try {
+        var json = JsonNode.Parse(result);
+        var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
+        var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
+        var productData = productNode;
 
-      return MapProduct(productData);
+        return MapProduct(productData);
+      } 
+      catch (Exception ex){
+        throw new Exception("An error occurred while getting product", ex);
+      }
+
     }
 
     // Get all products
@@ -180,14 +187,12 @@ namespace PMS.Infrastructure.Shopify
       var productMetafields = new List<string>();
       
       if (product.Material != null && product.Material.Count > 0)
-      {
-        string materialValue = JsonSerializer.Serialize(string.Join(", ", product.Material));
-            
+      {                    
         productMetafields.Add($@"
             {{
                 namespace: ""custom"",
                 key: ""multiple_material"",
-                value: {JsonSerializer.Serialize(materialValue)},
+                value: ""{convertListToJsonString(product.Material)}"",
                 type: ""list.single_line_text_field""
             }}");
       }
@@ -242,32 +247,13 @@ namespace PMS.Infrastructure.Shopify
       return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
     
-    private string fromListToString(List<string> items){
-      // Use string.Join to concatenate the list into a single string.
-      // string listString = string.Join(",", items);      
-      // return listString;
+    private string convertListToJsonString(List<string> items)
+    {
+      // Serializer list to string: (["material"])
       string jsonString = JsonSerializer.Serialize(items);      
-      return jsonString;
-    }
-
-    private string ConvertStringToJsonList(string value){            
-      if (string.IsNullOrWhiteSpace(value))
-      {
-          // Returns an empty Json list
-          return "\"[]\"";          
-      }
-
-      // Split by comma, trim any whitespace and remove empty value
-    
-      var items = value.Split(',')
-                                .Select(item => item.Trim())
-                                .Where(item => !string.IsNullOrEmpty(item))
-                                .ToList();
-
-      // Serialize the list to a JSON array string
-      var jsonList = JsonSerializer.Serialize(items);      
-      // Return the JSON array as a string with qutation marks
-      return $"\"{jsonList.Replace("\"", "\\\"")}\"";
+      // Escpare to json chars: ([\"material\"])
+      string escapeJsonString = EscapeJsonString(jsonString);
+      return escapeJsonString;
     }
 
     private string ConstructProductQuery(string? id = null)
