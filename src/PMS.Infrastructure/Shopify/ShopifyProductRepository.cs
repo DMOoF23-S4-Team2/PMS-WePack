@@ -241,11 +241,6 @@ namespace PMS.Infrastructure.Shopify
         }}
     }}";
     }
-
-    private string EscapeJsonString(string value)
-    {
-      return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
-    }
     
     private string ConstructProductQuery(string? id = null)
     {
@@ -432,6 +427,10 @@ namespace PMS.Infrastructure.Shopify
       // Items eg. ["Ægte Læder","Rhinsten"]
       List<string> listItems = JsonSerializer.Deserialize<List<string>>(items);      
       return listItems;
+    }
+    private string EscapeJsonString(string value)
+    {
+      return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 
     private string GetShopifyId(string id)
