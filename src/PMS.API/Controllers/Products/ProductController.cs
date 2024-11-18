@@ -42,7 +42,7 @@ public class ProductController : ControllerBase{
     }
 
     // DELETE: Delete Product from ID
-    [HttpDelete("{id}")]
+    [HttpDelete("{sku}")]
     public async Task<IActionResult> DeleteProduct(string sku) {
         if (productService == null) 
         {
@@ -74,7 +74,7 @@ public class ProductController : ControllerBase{
     }
 
     // GET: Single Product from ID
-    [HttpGet("{id}")]
+    [HttpGet("{sku}")]
     public async Task<IActionResult> GetProduct(string sku){
         var product = await productService.GetProduct(sku);
         if (product == null){
@@ -107,7 +107,7 @@ public class ProductController : ControllerBase{
     }
 
     // PUT: Update Category from ID
-    [HttpPut("{id}")]
+    [HttpPut("{sku}")]
     public async Task<IActionResult> UpdateProduct(string sku, [FromBody] ProductDto productDto)
     {                        
         try {

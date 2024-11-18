@@ -36,15 +36,15 @@ export function renderAllProducts(products) {
                     <td>${product.price}</td>
                     <td>${product.currency}</td>
                     <td class="actions-container">
-                        <button class="edit-btn" data-id="${product.id}"><i class="fa-solid fa-pencil"></i></button>
-                        <button class="delete-btn" data-id="${product.id}"><i class="fa-solid fa-trash"></i></button>
+                        <button class="edit-btn" data-id="${product.sku}"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="delete-btn" data-id="${product.sku}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('')}
         </tbody>
     </table>
 `;
-
+                
 
     // Insert the table into the container
     productsContainer.innerHTML = tableHTML;

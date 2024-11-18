@@ -27,18 +27,7 @@ namespace PMS.Infrastructure.Repository.Base
         }
 
         //NOTE - this method uses null forgiving operator (!) in the returned entity and should be handled in Application layer
-        public async Task<T> GetBySkuAsync(string sku)
-        {
-            try
-            {
-                 var entity = await _dbContext.Set<T>().FirstOrDefaultAsync(e => EF.Property<string>(e, "Sku") == sku);
-                return entity!;
-            }
-            catch (Exception)
-            {
-                throw new InfrastructureException("Error loading entity");
-            }
-        }
+       
 
         public async Task<T> AddAsync(T entity)
         {
