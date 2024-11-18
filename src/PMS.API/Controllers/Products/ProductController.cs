@@ -108,7 +108,7 @@ public class ProductController : ControllerBase{
 
     // PUT: Update Category from ID
     [HttpPut("{sku}")]
-    public async Task<IActionResult> UpdateProduct(string sku, [FromBody] ProductDto productDto)
+    public async Task<IActionResult> UpdateProduct(string sku, [FromBody] ProductWithoutIdDto productDto)
     {                        
         try {
             // Try to update the category

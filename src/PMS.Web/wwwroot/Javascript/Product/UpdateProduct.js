@@ -2,24 +2,24 @@ import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../Main/MainProduct.js";
 
-export async function updateProduct(productId, updatedData) {
+export async function updateProduct(productSku, updatedData) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
+        const response = await fetch(`https://localhost:7225/api/Product/${productSku}`, {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedData)  // Send the updated product data in the request body
+            body: JSON.stringify(updatedData) 
         });
 
         if (!response.ok) {
-            console.error(`Failed to update product with ID ${productId}.`);
-            showMessage(`Failed to update product`, false);  // Show error message
+            console.error(`Failed to update product with ID ${productSku}.`);
+            showMessage(`Failed to update product`, false);
             return;
         }
 
-        console.log(`Product with ID ${productId} updated successfully.`);
-        showMessage("Product updated successfully!", true);  // Show success message
+        console.log(`Product with Sku ${productSku} updated successfully.`);
+        showMessage("Product updated successfully!", true); 
 
     } catch (error) {
         console.error('Error updating product:', error);
@@ -27,11 +27,10 @@ export async function updateProduct(productId, updatedData) {
     }
 }
 
-export async function showUpdateModal(productId, updateProductCallback) {
+export async function showUpdateModal(productSku, updateProductCallback) {
 
-    // Fetch the product data based on the productId
-    const response = await fetch(`https://localhost:7225/api/Product/${productId}`);
-    const product = await response.json();  // Assuming the product data is in the response body
+    const response = await fetch(`https://localhost:7225/api/Product/${productSku}`);
+    const product = await response.json(); 
 
     // Create the <dialog> element
     const updateDialog = document.createElement('dialog');
@@ -113,10 +112,8 @@ export async function showUpdateModal(productId, updateProductCallback) {
         </form>
     `;
     
-    // Append the dialog to the document body
     document.body.appendChild(updateDialog);
 
-    // Show the dialog
     updateDialog.showModal();
 
     // // Get references to Yes and No buttons
@@ -125,11 +122,10 @@ export async function showUpdateModal(productId, updateProductCallback) {
     const updateForm = document.getElementById('update-product-form');
 
     updateForm.addEventListener('submit', async (e) => {
-        e.preventDefault();  // Prevent form from refreshing the page
+        e.preventDefault(); 
 
         let updatedData = new FormData(updateForm)
 
-        // Get the updated data from the form inputs
         const Data = {
             productDto: {
                 sku: updatedData.get('sku'),
@@ -153,20 +149,19 @@ export async function showUpdateModal(productId, updateProductCallback) {
         };
         
         // Call the updateProduct function with the product ID and updated data
-        await updateProductCallback(productId, Data.productDto);
+        await updateProductCallback(productSku, Data.productDto);
 
         // Fetch updated product list and re-render it
         const updatedProducts = await getAllProducts();
         renderAllProducts(updatedProducts);
 
-
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close();
+        updateDialog.remove();
     });
 
     // Handle the No button click
     noBtn.addEventListener('click', () => {
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close(); 
+        updateDialog.remove();
     });
 }

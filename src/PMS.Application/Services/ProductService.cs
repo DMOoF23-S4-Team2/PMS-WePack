@@ -53,7 +53,7 @@ namespace PMS.Application.Services
             return productsDto;
         }
         
-        public async Task UpdateProduct(string sku, ProductDto productDto)
+        public async Task UpdateProduct(string sku, ProductWithoutIdDto productDto)
         {
             var oldProduct = await GetEntityFromRepositoryWith(sku);
             var newProduct = MappedEntityOf(productDto);
@@ -134,7 +134,7 @@ namespace PMS.Application.Services
             return products;
         }
 
-        private async Task UpdateEntityInRepository(ProductDto productDto, Product oldProduct)
+        private async Task UpdateEntityInRepository(ProductWithoutIdDto productDto, Product oldProduct)
         {
             var mappedProduct = ObjectMapper.Mapper.Map(productDto, oldProduct);
             await _productRepository.UpdateAsync(mappedProduct);

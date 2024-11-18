@@ -14,12 +14,12 @@ export async function updateCategory(categoryId, updatedData) {
 
         if (!response.ok) {
             console.error(`Failed to update Category with ID ${categoryId}.`);
-            showMessage(`Failed to update Category`, false);  // Show error message
+            showMessage(`Failed to update Category`, false);
             return;
         }
 
         console.log(`Category with ID ${categoryId} updated successfully.`);
-        showMessage("Category updated successfully!", true);  // Show success message
+        showMessage("Category updated successfully!", true); 
 
     } catch (error) {
         console.error('Error updating Category:', error);
@@ -54,10 +54,8 @@ export async function showUpdateModal(categoryId, updateProductCallback) {
         </form>
     `;
     
-    // Append the dialog to the document body
     document.body.appendChild(updateDialog);
 
-    // Show the dialog
     updateDialog.showModal();
 
     // // Get references to Yes and No buttons
@@ -66,7 +64,7 @@ export async function showUpdateModal(categoryId, updateProductCallback) {
     const updateForm = document.getElementById('update-category-form');
 
     updateForm.addEventListener('submit', async (e) => {
-        e.preventDefault();  // Prevent form from refreshing the page
+        e.preventDefault(); 
 
         let updatedData = new FormData(updateForm)
 
@@ -87,13 +85,13 @@ export async function showUpdateModal(categoryId, updateProductCallback) {
         renderAllCategories(updatedCategories);
 
 
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close();
+        updateDialog.remove();
     });
 
     // Handle the No button click
     noBtn.addEventListener('click', () => {
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close(); 
+        updateDialog.remove();
     });
 }
