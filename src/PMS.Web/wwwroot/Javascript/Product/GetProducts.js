@@ -6,7 +6,7 @@ let products = [];
 export async function getAllProducts() {
     try {
         const res = await fetch(
-			`https://containerapp-wepack-api-1--obvyfue.internal.bluestone-4e633029.swedencentral.azurecontainerapps.io/Product/products`
+			`${API_URL}/api/Product/products`
 		);
 
         // Check if the response is OK (status code 200–299)
