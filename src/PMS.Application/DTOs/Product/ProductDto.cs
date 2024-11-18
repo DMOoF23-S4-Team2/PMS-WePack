@@ -10,7 +10,7 @@ public class ProductDto
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Color {get; set;} = string.Empty;
-        public string Material {get; set;} = string.Empty;
+        public List<string> Material {get; set;} = new List<string>();
         public string ProductType {get; set;} = string.Empty;
         public string ProductGroup {get; set;} = string.Empty;       
         public string Supplier { get; set; } = string.Empty;
