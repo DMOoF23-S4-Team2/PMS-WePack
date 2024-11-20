@@ -31,17 +31,17 @@ var builder = WebApplication.CreateBuilder(args);
 //     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), managedIdentityCredential);
 // }
 
-// // Configure CORS to make API requests from your host machine and the web service in the Docker network.
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowPmsWeb",
-//         policy =>
-//         {
-//             policy.WithOrigins("http://localhost:5002", "http://web:80", "https://containerapp-wepack-web-4.bluestone-4e633029.swedencentral.azurecontainerapps.io/")
-//                   .AllowAnyHeader()
-//                   .AllowAnyMethod();
-//         });
-// });
+// Configure CORS to make API requests from your host machine and the web service in the Docker network.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowPmsWeb",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5002", "http://pms-wepack-web:8080")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 // Register HttpClient
 builder.Services.AddHttpClient();
@@ -70,7 +70,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//app.UseCors("AllowPmsWeb");
+app.UseCors("AllowPmsWeb");
+
+// Add default route
+app.MapGet("/", () => Results.Ok("Welcome to the API!"));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -80,7 +83,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseRouting();
 app.MapControllers();
 

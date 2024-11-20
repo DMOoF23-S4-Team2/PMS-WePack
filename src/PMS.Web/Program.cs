@@ -10,6 +10,12 @@ app.UseDefaultFiles(options); // This will ensure "index.html" is served when ac
 app.UseStaticFiles();         // Allows serving of static files like CSS, JS, images, etc.
 app.UseRouting();
 
+// Add a route to expose configuration dynamically
+app.MapGet("/config", () => new
+{
+    ApiUrl = builder.Configuration["ApiUrl"]
+});
+
 app.MapFallbackToFile("index.html"); // Fallback for any unmatched routes
 
 app.Run();

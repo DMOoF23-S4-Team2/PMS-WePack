@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: pms-api-production
+    ports:
+      - "7225:8080"
+    networks:
+      - pms-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - AzureDBConnectionString=${AzureDBConnectionString}
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: pms-web-production
+    ports:
+      - "5002:8080"
+    networks:
+      - pms-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - API_BASE_URL=http://pms-api:8080
+
+networks:
+  pms-network:
+    driver: bridge
