@@ -38,6 +38,5 @@ function getConfig() {
 // Async function to get the API URL
 export async function getApiUrl() {
 	const config = await getConfig();
-	console.log("Config fetched:", config);
 	return config.apiUrl;
 }

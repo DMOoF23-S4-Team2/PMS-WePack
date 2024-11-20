@@ -6,7 +6,7 @@ import { getApiUrl } from "../config.js";
 export async function updateProduct(productId, updatedData) {
     try {
         const API_URL = await getApiUrl(); 
-        const response = await fetch(`${API_URL}api/Product/${productId}`, {
+        const response = await fetch(`${API_URL}/api/Product/${productId}`, {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
