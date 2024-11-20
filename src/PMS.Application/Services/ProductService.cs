@@ -24,6 +24,8 @@ namespace PMS.Application.Services
 
         public async Task<ProductWithoutIdDto> CreateProduct(ProductWithoutIdDto productDto)
         {
+            await ValidateIfExist(productDto);
+            
             var product = MappedEntityOf(productDto);
             await ValidateEntity(product);
             var newProduct = await CreateEntityInRepository(product);
@@ -63,6 +65,8 @@ namespace PMS.Application.Services
 
         public async Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
+            await ValidateIfExist(productDtos);
+
             var products = productDtos.Select(MappedEntityOf).ToList();
             await ValidateEntity(products);
             await _productRepository.AddManyAsync(products);
@@ -75,7 +79,7 @@ namespace PMS.Application.Services
             await _productRepository.UpdateManyAsync(products);
         }
 
-        public async Task DeleteManyProducts(IEnumerable<ProductDto> productDtos)
+        public async Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
             var products = ObjectMapper.Mapper.Map<IEnumerable<Product>>(productDtos);
             await _productRepository.DeleteManyAsync(products);
@@ -92,6 +96,20 @@ namespace PMS.Application.Services
             }
 
             throw new ArgumentException($"Invalid type");
+        }
+
+        private async Task ValidateIfExist(ProductWithoutIdDto productDto)
+        {
+            var existingSku = await _productRepository.GetBySkuAsync(productDto.Sku);
+            if (existingSku != null)
+                throw new ValidationException("Sku already exists");
+        }
+        private async Task ValidateIfExist(IEnumerable<ProductWithoutIdDto> productDtos)
+        {
+            foreach (var productDto in productDtos)
+            {
+                await ValidateIfExist(productDto);
+            }
         }
 
         private async Task ValidateEntity(Product product)

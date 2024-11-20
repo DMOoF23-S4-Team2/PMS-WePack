@@ -102,14 +102,14 @@ namespace PMS.Application.Services
 
         public async Task DeleteProduct(string filepath){ 
             // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
             // Getting the first product
             string productSku = products[0].Sku;
             await _productService.DeleteProduct(productSku);   
         }
 
         public async Task DeleteManyProducts(string filepath){ 
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
             await _productService.DeleteManyProducts(products);             
         }
         

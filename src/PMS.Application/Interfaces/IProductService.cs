@@ -15,6 +15,6 @@ namespace PMS.Application.Interfaces
         public Task DeleteProduct(string sku);
         public Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos);
         public Task UpdateManyProducts(IEnumerable<ProductDto> productDtos);
-        public Task DeleteManyProducts(IEnumerable<ProductDto> productDtos);
+        public Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos);
     }
 }

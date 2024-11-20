@@ -60,7 +60,7 @@ public class ProductController : ControllerBase{
 
     // DELETE: Delete multiple products by IDs
     [HttpDelete("deleteMany")]
-    public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductDto> dtoList)
+    public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> dtoList)
     {
         try
         {
