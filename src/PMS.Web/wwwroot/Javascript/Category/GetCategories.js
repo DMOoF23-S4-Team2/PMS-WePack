@@ -5,7 +5,7 @@ let categories = [];
 
 export async function getAllCategories() {
     try {
-		const API_URL = await getApiUrl(); // Fetch the API URL dynamically
+		const API_URL = await getApiUrl();
 		const res = await fetch(`${API_URL}/api/Category/categories`);
 
 		// Check if the response is OK (status code 200–299)
