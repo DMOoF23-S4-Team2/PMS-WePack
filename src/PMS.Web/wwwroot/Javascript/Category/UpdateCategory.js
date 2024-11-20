@@ -1,10 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { getAllCategories } from "./GetCategories.js";
 import { renderAllCategories } from "../Main/MainCategory.js";
+import { getApiUrl } from "../config.js";
 
 export async function updateCategory(categoryId, updatedData) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Category/${categoryId}`, {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Category/${categoryId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -29,8 +31,9 @@ export async function updateCategory(categoryId, updatedData) {
 
 export async function showUpdateModal(categoryId, updateProductCallback) {
 
+    const API_URL = await getApiUrl();
     // Fetch the product data based on the categoryId
-    const response = await fetch(`https://localhost:7225/api/Category/${categoryId}`);
+    const response = await fetch(`${API_URL}/api/Category/${categoryId}`);
     const category = await response.json();  // Assuming the product data is in the response body
 
     // Create the <dialog> element

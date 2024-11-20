@@ -1,9 +1,10 @@
 import { showMessage } from "../../Components/MessageBox.js";
+import { getApiUrl } from "../config.js";
 
 export async function uploadCsv(filePath) {  
     try {
-
-        const response = await fetch(`https://localhost:7225/api/Csv/upload-csv?filepath=${filePath}`, {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Csv/upload-csv?filepath=${filePath}`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"  

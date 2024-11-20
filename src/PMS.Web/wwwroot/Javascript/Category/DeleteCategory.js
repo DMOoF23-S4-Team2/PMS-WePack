@@ -1,11 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { renderAllCategories } from "../Main/MainCategory.js";
 import { getAllCategories } from "./GetCategories.js";
-
+import { getApiUrl } from "../config.js";
 
 export async function deleteCategory(categoryId) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Category/${categoryId}`, {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Category/${categoryId}`, {
             method: 'DELETE'
         });
 

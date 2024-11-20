@@ -1,36 +1,43 @@
-// let configPromise = null;
+let configPromise = null;
 
-// // Function to fetch the configuration
-// async function fetchConfig() {
-// 	try {
-// 		const response = await fetch("/config");
-// 		if (!response.ok) {
-// 			throw new Error(
-// 				`Failed to fetch configuration: ${response.statusText}`
-// 			);
-// 		}
-// 		const config = await response.json();
-// 		return config;
-// 	} catch (error) {
-// 		console.error("Error loading configuration:", error);
-// 		// Provide a fallback value for development
-// 		return {
-// 			ApiUrl: "http://localhost:7225",
-// 		};
-// 	}
-// }
+// Function to fetch the configuration
+async function fetchConfig() {
+	try {
+		const response = await fetch("/config");
+		if (!response.ok) {
+			throw new Error(
+				`Failed to fetch configuration: ${response.statusText}`
+			);
+		}
 
-// // Singleton to get the configuration (fetches only once)
-// function getConfig() {
-// 	if (!configPromise) {
-// 		configPromise = fetchConfig();
-// 	}
-// 	return configPromise;
-// }
+		const config = await response.json();
 
-// export async function getApiUrl() {
-// 	const config = await getConfig();
-// 	return config.ApiUrl;
-// }
+		// Ensure the key is correctly mapped
+		if (!config.apiUrl) {
+			throw new Error("Missing 'apiUrl' in configuration response.");
+		}
 
-export const API_URL = "http://localhost:7225"; // Hardcoded API URL for development
+		return config;
+	} catch (error) {
+		console.error("Error loading configuration:", error);
+		// Provide a fallback value for development
+		return {
+			apiUrl: "http://localhost:7225",
+		};
+	}
+}
+
+// Singleton to fetch the configuration only once
+function getConfig() {
+	if (!configPromise) {
+		configPromise = fetchConfig();
+	}
+	return configPromise;
+}
+
+// Async function to get the API URL
+export async function getApiUrl() {
+	const config = await getConfig();
+	console.log("Config fetched:", config);
+	return config.apiUrl;
+}

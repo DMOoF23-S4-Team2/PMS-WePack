@@ -1,11 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { renderAllCategories } from "../Main/MainCategory.js";
 import { getAllCategories } from "./GetCategories.js";
-
+import { getApiUrl } from "../config.js";
 
 export async function addCategory(categoryData) {
     try {
-        const response = await fetch("https://localhost:7225/api/Category", {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Category`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"  // Specify that we're sending JSON

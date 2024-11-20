@@ -13,7 +13,7 @@ app.UseRouting();
 // Add a route to expose configuration dynamically
 app.MapGet("/config", () => new
 {
-    ApiUrl = builder.Configuration["ApiUrl"]
+    ApiUrl = builder.Configuration["ApiUrl"] ?? "http://localhost:7225"
 });
 
 app.MapFallbackToFile("index.html"); // Fallback for any unmatched routes

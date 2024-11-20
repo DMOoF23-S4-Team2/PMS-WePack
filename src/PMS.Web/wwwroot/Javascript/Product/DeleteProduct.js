@@ -1,12 +1,13 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../Main/MainProduct.js";
-
+import { getApiUrl } from "../config.js";
 
 // Function to delete a product using its ID
 export async function deleteProduct(productId) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Product/${productId}`, {
             method: 'DELETE'
         });
 

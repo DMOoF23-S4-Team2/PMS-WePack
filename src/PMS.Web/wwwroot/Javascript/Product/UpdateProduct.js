@@ -1,10 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../Main/MainProduct.js";
+import { getApiUrl } from "../config.js";
 
 export async function updateProduct(productId, updatedData) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
+        const API_URL = await getApiUrl(); 
+        const response = await fetch(`${API_URL}api/Product/${productId}`, {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
@@ -29,8 +31,9 @@ export async function updateProduct(productId, updatedData) {
 
 export async function showUpdateModal(productId, updateProductCallback) {
 
+    const API_URL = await getApiUrl();
     // Fetch the product data based on the productId
-    const response = await fetch(`https://localhost:7225/api/Product/${productId}`);
+    const response = await fetch(`${API_URL}/api/Product/${productId}`);
     const product = await response.json();  // Assuming the product data is in the response body
 
     // Create the <dialog> element

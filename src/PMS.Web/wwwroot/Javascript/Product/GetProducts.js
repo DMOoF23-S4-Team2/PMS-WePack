@@ -1,10 +1,11 @@
 import { showMessage } from "../../Components/MessageBox.js";
-import { API_URL } from "../config.js";
+import { getApiUrl } from "../config.js";
 
 let products = [];
 
 export async function getAllProducts() {
     try {
+		const API_URL = await getApiUrl(); // Fetch the API URL dynamically
 		const res = await fetch(`${API_URL}/api/Product/products`);
 
 		// Check if the response is OK (status code 200–299)
