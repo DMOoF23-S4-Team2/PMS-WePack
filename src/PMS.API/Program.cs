@@ -18,30 +18,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Load the ssl certificate
 var certificate = new X509Certificate2("combined.pfx");
 
-builder.WebHost.ConfigureKestrel(options =>
+if (builder.Environment.IsProduction())
 {
-    options.ListenAnyIP(443, listenOptions =>
+    builder.WebHost.ConfigureKestrel(options =>
     {
-        listenOptions.UseHttps(certificate);
+        options.ListenAnyIP(443, listenOptions =>
+        {
+            listenOptions.UseHttps(certificate);
+        });
     });
-});
-
-// // Add Key Vault to configuration
-// if (builder.Environment.IsProduction())
-//     builder.Configuration.AddAzureKeyVault(
-//         new Uri("https://keyvault-wepack.vault.azure.net/"),
-//         new DefaultAzureCredential(new DefaultAzureCredentialOptions
-//         {
-//             ManagedIdentityClientId = builder.Configuration["f19bc187-b11d-4d19-94b0-f4063acee199"]
-//         }));
-
-// // Add Azure Key Vault
-// var keyVaultUri = builder.Configuration["KeyVaultUri"];
-// if (!string.IsNullOrEmpty(keyVaultUri))
-// {
-//     var managedIdentityCredential = new DefaultAzureCredential();
-//     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), managedIdentityCredential);
-// }
+}
 
 // Configure CORS to make API requests from your host machine and the web service in the Docker network.
 builder.Services.AddCors(options =>
@@ -49,7 +35,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowPmsWeb",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5002", "http://pms-wepack-web:8080", "https://ca-wepack-web.bluestone-4e633029.swedencentral.azurecontainerapps.io/")
+            policy.WithOrigins(
+                "http://localhost:5002", 
+                "https://localhost:7232",
+                "https://ca-wepack-web.bluestone-4e633029.swedencentral.azurecontainerapps.io")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
