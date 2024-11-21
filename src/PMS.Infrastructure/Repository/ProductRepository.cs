@@ -23,6 +23,21 @@ namespace PMS.Infrastructure.Repository
                 throw new InfrastructureException("Error loading entity");
             }
         }
+        public async Task<IEnumerable<Product>> GetBySkusAsync(IEnumerable<string> skus)
+        {
+            try
+            {
+                // Fetch products matching the provided SKUs
+                var entities = await _dbContext.Set<Product>()
+                                            .Where(e => skus.Contains(EF.Property<string>(e, "Sku")))
+                                            .ToListAsync();
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                throw new InfrastructureException("Error loading entities", ex);
+            }
+        }
         public async Task AddManyAsync(IEnumerable<Product> products)
         {
             try

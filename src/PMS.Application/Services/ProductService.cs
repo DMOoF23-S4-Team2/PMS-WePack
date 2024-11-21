@@ -25,7 +25,7 @@ namespace PMS.Application.Services
         public async Task<ProductWithoutIdDto> CreateProduct(ProductWithoutIdDto productDto)
         {
             await ValidateIfExist(productDto);
-            
+
             var product = MappedEntityOf(productDto);
             await ValidateEntity(product);
             var newProduct = await CreateEntityInRepository(product);
@@ -54,12 +54,13 @@ namespace PMS.Application.Services
             ThrowArgument.ExceptionIfNull(productsDto);
             return productsDto;
         }
-        
+
         public async Task UpdateProduct(string sku, ProductWithoutIdDto productDto)
         {
             var oldProduct = await GetEntityFromRepositoryWith(sku);
             var newProduct = MappedEntityOf(productDto);
             await ValidateEntity(newProduct);
+
             await UpdateEntityInRepository(productDto, oldProduct);
         }
 
@@ -72,11 +73,24 @@ namespace PMS.Application.Services
             await _productRepository.AddManyAsync(products);
         }
 
-        public async Task UpdateManyProducts(IEnumerable<ProductDto> productDtos)
+        public async Task UpdateManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)
         {
-            var products = ObjectMapper.Mapper.Map<IEnumerable<Product>>(productDtos);
-            await ValidateEntity(products);
-            await _productRepository.UpdateManyAsync(products);
+            // Extract SKUs from the incoming DTOs
+            var skus = productDtos.Select(dto => dto.Sku).ToList();
+            var existingProducts = await _productRepository.GetBySkusAsync(skus);
+
+            if (existingProducts == null || !existingProducts.Any())
+                throw new ArgumentException("No products found for the provided SKUs.");
+
+            // Map updates from DTOs to existing products
+            foreach (var existingProduct in existingProducts)
+            {
+                var productDto = productDtos.First(dto => dto.Sku == existingProduct.Sku);
+                ObjectMapper.Mapper.Map(productDto, existingProduct);
+            }
+
+            await ValidateEntity(existingProducts);
+            await _productRepository.UpdateManyAsync(existingProducts);
         }
 
         public async Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos)

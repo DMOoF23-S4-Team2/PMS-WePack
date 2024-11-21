@@ -130,7 +130,7 @@ public class ProductController : ControllerBase{
 
         // PUT: Update multiple products
         [HttpPut("updateMany")]
-        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductDto> productDtos)
+        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> productDtos)
         {
             try
             {

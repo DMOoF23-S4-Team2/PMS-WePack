@@ -9,6 +9,7 @@ public interface IProductRepository : IRepository<Product>
     //REVIEW - Skal vi implementere en specifik metode til at uploade fra csv-fil?
 
     Task<Product> GetBySkuAsync(string sku);
+    Task<IEnumerable<Product>> GetBySkusAsync(IEnumerable<string> skus);
     Task AddManyAsync(IEnumerable<Product> entities);
     Task UpdateManyAsync(IEnumerable<Product> entities);
     Task DeleteManyAsync(IEnumerable<Product> entities);
