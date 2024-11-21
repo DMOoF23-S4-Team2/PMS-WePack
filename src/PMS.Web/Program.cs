@@ -2,12 +2,11 @@ using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load the SSL certificate
-var certificate = new X509Certificate2("combined.pfx");
-
 // Configure Kestrel for HTTPS
 if (builder.Environment.IsProduction())
 {
+    // Load the SSL certificate
+    var certificate = new X509Certificate2("combined.pfx");
     builder.WebHost.ConfigureKestrel(options =>
     {
         options.ListenAnyIP(443, listenOptions =>

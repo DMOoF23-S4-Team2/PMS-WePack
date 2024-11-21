@@ -15,11 +15,10 @@ using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load the ssl certificate
-var certificate = new X509Certificate2("combined.pfx");
-
 if (builder.Environment.IsProduction())
 {
+    // Load the ssl certificate
+    var certificate = new X509Certificate2("combined.pfx");
     builder.WebHost.ConfigureKestrel(options =>
     {
         options.ListenAnyIP(443, listenOptions =>
@@ -29,6 +28,13 @@ if (builder.Environment.IsProduction())
     });
 }
 
+// if (builder.Environment.IsDevelopment())
+// {
+//     builder.WebHost.ConfigureKestrel(options =>
+//     {
+//         options.ListenAnyIP(7225);
+//     });
+// }
 // Configure CORS to make API requests from your host machine and the web service in the Docker network.
 builder.Services.AddCors(options =>
 {
