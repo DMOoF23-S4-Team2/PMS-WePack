@@ -28,13 +28,6 @@ if (builder.Environment.IsProduction())
     });
 }
 
-// if (builder.Environment.IsDevelopment())
-// {
-//     builder.WebHost.ConfigureKestrel(options =>
-//     {
-//         options.ListenAnyIP(7225);
-//     });
-// }
 // Configure CORS to make API requests from your host machine and the web service in the Docker network.
 builder.Services.AddCors(options =>
 {
