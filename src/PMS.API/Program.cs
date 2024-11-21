@@ -11,8 +11,20 @@ using PMS.Infrastructure.Interfaces;
 using PMS.Infrastructure.Repository;
 using PMS.Infrastructure.Repository.Base;
 using PMS.Infrastructure.Shopify;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load the ssl certificate
+var certificate = new X509Certificate2("combined.pfx");
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(443, listenOptions =>
+    {
+        listenOptions.UseHttps(certificate);
+    });
+});
 
 // // Add Key Vault to configuration
 // if (builder.Environment.IsProduction())
@@ -37,7 +49,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowPmsWeb",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5002", "http://pms-wepack-web:8080")
+            policy.WithOrigins("http://localhost:5002", "http://pms-wepack-web:8080", "https://ca-wepack-web.bluestone-4e633029.swedencentral.azurecontainerapps.io/")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });

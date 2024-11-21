@@ -1,10 +1,11 @@
 # Dockerfile.api
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+COPY src/PMS.API/combined.pfx /app/src/PMS.API/combined.pfx
 EXPOSE 8080
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["src/PMS.API/PMS.API.csproj", "PMS.API/"]
 COPY ["src/PMS.Application/PMS.Application.csproj", "PMS.Application/"]

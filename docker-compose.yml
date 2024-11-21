@@ -3,9 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
+    image: pms-api-production:latest
     container_name: pms-api-production
     ports:
-      - "7225:8080"
+      - "5184:8080"
+      - "7225:443"
     networks:
       - pms-network
     environment:
@@ -16,9 +18,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
+    image: pms-web-production:latest
     container_name: pms-web-production
     ports:
       - "5002:8080"
+      - "7232:443"
     networks:
       - pms-network
     environment:
