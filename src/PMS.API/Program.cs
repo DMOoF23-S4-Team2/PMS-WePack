@@ -11,22 +11,8 @@ using PMS.Infrastructure.Interfaces;
 using PMS.Infrastructure.Repository;
 using PMS.Infrastructure.Repository.Base;
 using PMS.Infrastructure.Shopify;
-using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
-
-if (builder.Environment.IsProduction())
-{
-    // Load the ssl certificate
-    var certificate = new X509Certificate2("combined.pfx");
-    builder.WebHost.ConfigureKestrel(options =>
-    {
-        options.ListenAnyIP(443, listenOptions =>
-        {
-            listenOptions.UseHttps(certificate);
-        });
-    });
-}
 
 // Configure CORS to make API requests from your host machine and the web service in the Docker network.
 builder.Services.AddCors(options =>
@@ -36,8 +22,7 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(
                 "http://localhost:5002", 
-                "https://localhost:7232",
-                "https://ca-wepack-web.bluestone-4e633029.swedencentral.azurecontainerapps.io")
+                "https://localhost:7232")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -72,10 +57,8 @@ var app = builder.Build();
 
 app.UseCors("AllowPmsWeb");
 
-// Add default route
 app.MapGet("/", () => Results.Ok("Welcome to the API!"));
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
