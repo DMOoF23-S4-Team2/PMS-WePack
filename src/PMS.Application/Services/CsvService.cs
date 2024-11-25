@@ -67,8 +67,8 @@ namespace PMS.Application.Services
         public async Task GetProduct(string filepath){             
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             // Getting the first product
-            string productSku = products[0].Sku;
-            await _productService.GetProduct(productSku); 
+            int productId = products[0].Id;
+            await _productService.GetProduct(productId); 
         }
 
         public async Task GetProducts(string filepath){ 

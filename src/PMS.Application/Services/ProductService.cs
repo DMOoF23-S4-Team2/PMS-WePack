@@ -40,9 +40,9 @@ namespace PMS.Application.Services
             await _productRepository.DeleteAsync(product);
         }
 
-        public async Task<ProductDto> GetProduct(string sku)
+        public async Task<ProductDto> GetProduct(int id)
         {
-            var product = await GetEntityFromRepositoryWith(sku);
+            var product = await GetEntityFromRepositoryWith(id);
             var productDto = ObjectMapper.Mapper.Map<ProductDto>(product);
             return productDto;
         }
@@ -161,11 +161,20 @@ namespace PMS.Application.Services
             if (existingSku != null )
                 throw new ValidationException($"Sku {productDto.Sku} already exists");
         }
-         private async Task ValidateIfExist(Product product)
+         private async Task ValidateIfExist(Product updatedProduct)
         {
-            var existingProduct = await _productRepository.GetBySkuAsync(product.Sku);
-            if (existingProduct != null && existingProduct.Id != product.Id)
-                throw new ValidationException($"Sku {product.Sku} already exists");
+            // Fetch the original product by ID
+            var originalProduct = await _productRepository.GetByIdAsync(updatedProduct.Id);
+            // Check if the SKU has changed
+            if (originalProduct.Sku != updatedProduct.Sku)
+            {
+                // Validate if the new SKU already exists in the database
+                var existingProductWithNewSku = await _productRepository.GetBySkuAsync(updatedProduct.Sku);
+                if (existingProductWithNewSku != null && existingProductWithNewSku.Id != updatedProduct.Id)
+                {
+                    throw new ValidationException($"Sku {updatedProduct.Sku} already exists.");
+                }
+            }
         }
         private async Task ValidateIfExist(IEnumerable<ProductWithoutIdDto> productDtos)
         {

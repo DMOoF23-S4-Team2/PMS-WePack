@@ -9,7 +9,7 @@ namespace PMS.Application.Interfaces
     public interface IProductService
     {
         public Task<IEnumerable<ProductDto>> GetProducts();
-        public Task<ProductDto> GetProduct(string sku);
+        public Task<ProductDto> GetProduct(int id);
         public Task<ProductWithoutIdDto> CreateProduct(ProductWithoutIdDto productDto);
         public Task UpdateProduct(int id, ProductDto productDto);
         public Task DeleteProduct(string sku);

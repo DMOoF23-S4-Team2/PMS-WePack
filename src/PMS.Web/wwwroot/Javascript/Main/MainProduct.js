@@ -36,7 +36,7 @@ export function renderAllProducts(products) {
                     <td>${product.price}</td>
                     <td>${product.currency}</td>
                     <td class="actions-container">
-                        <button class="edit-btn" data-sku="${product.sku}"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="edit-btn" data-id="${product.id}"><i class="fa-solid fa-pencil"></i></button>
                         <button class="delete-btn" data-sku="${product.sku}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
@@ -70,9 +70,9 @@ export function renderAllProducts(products) {
     const editButtons = document.querySelectorAll(".edit-btn");
     editButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const productSku = e.currentTarget.dataset.sku;  // Get the product Sku from the button
+            const productId = e.currentTarget.dataset.id;  // Get the product Sku from the button
 
-            showUpdateModal(productSku, updateProduct);  // Show the update modal and pass the product Sku            
+            showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product Sku            
         });
     });
 }

@@ -2,9 +2,9 @@ import { showMessage } from "../../Components/MessageBox.js"
 import { getAllProducts } from "./GetProducts.js";
 import { renderAllProducts } from "../Main/MainProduct.js";
 
-export async function updateProduct(productSku, updatedData) {
+export async function updateProduct(productId, updatedData) {
     try {
-        const response = await fetch(`https://localhost:7225/api/Product/${productSku}`, {
+        const response = await fetch(`https://localhost:7225/api/Product/${productId}`, {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
@@ -13,23 +13,24 @@ export async function updateProduct(productSku, updatedData) {
         });
 
         if (!response.ok) {
-            console.error(`Failed to update product with ID ${productSku}.`);
+            console.error(`Failed to update product with ID ${productId}.`);
             showMessage(`Failed to update product`, false);
             return;
         }
 
-        console.log(`Product with Sku ${productSku} updated successfully.`);
+        console.log(`Product with Id ${productId} updated successfully.`);
         showMessage("Product updated successfully!", true); 
 
     } catch (error) {
-        console.error('Error updating product:', error);
+        console.error('Error updating product:', error);        
+        console.log(updateData)
         showMessage(`Failed to update product`, false);
     }
 }
 
-export async function showUpdateModal(productSku, updateProductCallback) {
+export async function showUpdateModal(productId, updateProductCallback) {
 
-    const response = await fetch(`https://localhost:7225/api/Product/${productSku}`);
+    const response = await fetch(`https://localhost:7225/api/Product/${productId}`);
     const product = await response.json(); 
 
     // Create the <dialog> element
@@ -128,6 +129,7 @@ export async function showUpdateModal(productSku, updateProductCallback) {
 
         const Data = {
             productDto: {
+                id: productId,
                 sku: updatedData.get('sku'),
                 ean: updatedData.get('ean'),
                 name: updatedData.get('name'),
@@ -149,7 +151,7 @@ export async function showUpdateModal(productSku, updateProductCallback) {
         };
         
         // Call the updateProduct function with the product ID and updated data
-        await updateProductCallback(productSku, Data.productDto);
+        await updateProductCallback(productId, Data.productDto);
 
         // Fetch updated product list and re-render it
         const updatedProducts = await getAllProducts();

@@ -74,9 +74,9 @@ public class ProductController : ControllerBase{
     }
 
     // GET: Single Product from ID
-    [HttpGet("{sku}")]
-    public async Task<IActionResult> GetProduct(string sku){
-        var product = await productService.GetProduct(sku);
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProduct(int id){
+        var product = await productService.GetProduct(id);
         if (product == null){
             return NotFound();
         }
@@ -119,7 +119,7 @@ public class ProductController : ControllerBase{
         catch (ArgumentNullException)
         {
             // Return a 404 if the category was not found
-            return NotFound($"Product with ID {id} not found.");
+            return NotFound($"Product with Id {id} not found.");
         }
         catch (Exception ex)
         {
