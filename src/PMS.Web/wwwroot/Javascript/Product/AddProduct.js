@@ -112,11 +112,11 @@ export function renderAddProductModal() {
                 <div class="units-container">
                     <div>
                         <label for="price">Price</label>
-                        <input required id="price" type="number" name="price">
+                        <input required id="price" step="any" type="number" name="price">
                     </div>
                     <div>
                         <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" type="number" name="specialPrice">
+                        <input id="specialPrice" step="any" type="number" name="specialPrice">
                     </div>    
                 </div> 
 
@@ -152,11 +152,11 @@ export function renderAddProductModal() {
                 <div class="units-container">
                     <div>
                         <label for="weight">Weight</label>
-                        <input id="weight" type="number" name="weight">
+                        <input id="weight" step="any" type="number" name="weight">
                     </div>
                     <div>
                         <label for="cost">Cost</label>
-                        <input id="cost" type="number" name="cost">
+                        <input id="cost" step="any" type="number" name="cost">
                     </div>    
                 </div>    
 

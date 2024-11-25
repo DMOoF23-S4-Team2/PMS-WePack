@@ -57,11 +57,11 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 <div class="units-container">
                     <div>
                         <label for="price">Price</label>
-                        <input required id="price" type="number" name="price" value="${product.price}">
+                        <input required id="price" step="any" type="number" name="price" value="${product.price}">
                     </div>
                     <div>
                         <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" type="number" name="specialPrice" value="${product.specialPrice || ''}">
+                        <input id="specialPrice" step="any" type="number" name="specialPrice" value="${product.specialPrice || ''}">
                     </div>    
                 </div> 
 
@@ -97,11 +97,11 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 <div class="units-container">
                     <div>
                         <label for="weight">Weight</label>
-                        <input id="weight" type="number" name="weight" value="${product.weight || ''}">
+                        <input id="weight" step="any" type="number" name="weight" value="${product.weight || ''}">
                     </div>
                     <div>
                         <label for="cost">Cost</label>
-                        <input id="cost" type="number" name="cost" value="${product.cost || ''}">
+                        <input id="cost" step="any" type="number" name="cost" value="${product.cost || ''}">
                     </div>    
                 </div>    
 
