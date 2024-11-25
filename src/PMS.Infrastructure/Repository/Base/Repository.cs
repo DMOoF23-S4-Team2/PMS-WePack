@@ -14,6 +14,19 @@ namespace PMS.Infrastructure.Repository.Base
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
+         public async Task<T> GetByIdAsync(int id)
+        {
+            try
+            {
+                var entity = await _dbContext.Set<T>().FindAsync(id);
+                return entity!;
+            }
+            catch (Exception)
+            {
+                throw new InfrastructureException("Error loading entity");
+            }
+        }
+
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             try

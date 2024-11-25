@@ -10,18 +10,5 @@ namespace PMS.Infrastructure.Repository
         public CategoryRepository(PMSContext dbContext) : base(dbContext)
         {
         }
-
-       public async Task<Category> GetByIdAsync(int id)
-        {
-            try
-            {
-                var entity = await _dbContext.Set<Category>().FindAsync(id);
-                return entity!;
-            }
-            catch (Exception)
-            {
-                throw new InfrastructureException("Error loading entity");
-            }
-        }
     }
 }

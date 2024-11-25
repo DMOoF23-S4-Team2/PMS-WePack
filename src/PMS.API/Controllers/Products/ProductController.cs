@@ -107,19 +107,19 @@ public class ProductController : ControllerBase{
     }
 
     // PUT: Update Category from ID
-    [HttpPut("{sku}")]
-    public async Task<IActionResult> UpdateProduct(string sku, [FromBody] ProductWithoutIdDto productDto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
     {                        
         try {
             // Try to update the category
-            await productService.UpdateProduct(sku, productDto);
+            await productService.UpdateProduct(id, productDto);
             // Returns 204
             return NoContent();
         }
         catch (ArgumentNullException)
         {
             // Return a 404 if the category was not found
-            return NotFound($"Product with ID {sku} not found.");
+            return NotFound($"Product with ID {id} not found.");
         }
         catch (Exception ex)
         {
@@ -130,7 +130,7 @@ public class ProductController : ControllerBase{
 
         // PUT: Update multiple products
         [HttpPut("updateMany")]
-        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> productDtos)
+        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductDto> productDtos)
         {
             try
             {

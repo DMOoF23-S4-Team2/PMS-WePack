@@ -28,15 +28,20 @@ namespace PMS.Infrastructure.Repository
             try
             {
                 // Fetch products matching the provided SKUs
-                var entities = await _dbContext.Set<Product>()
-                                            .Where(e => skus.Contains(EF.Property<string>(e, "Sku")))
-                                            .ToListAsync();
-                return entities;
+                 return await _dbContext.Products
+                .Where(p => skus.Contains(p.Sku))
+                .ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new InfrastructureException("Error loading entities", ex);
             }
+        }
+        public async Task<IReadOnlyList<Product>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _dbContext.Set<Product>()
+                .Where(p => ids.Contains(p.Id))
+                .ToListAsync();
         }
         public async Task AddManyAsync(IEnumerable<Product> products)
         {
@@ -53,14 +58,27 @@ namespace PMS.Infrastructure.Repository
 
         public async Task UpdateManyAsync(IEnumerable<Product> products)
         {
-            try
+           try
             {
-            _dbContext.Set<Product>().UpdateRange(products);
-            await _dbContext.SaveChangesAsync();
+                // Step 1: Detach any already-tracked entities
+                foreach (var product in products)
+                {
+                    var trackedEntity = _dbContext.ChangeTracker.Entries<Product>()
+                        .FirstOrDefault(e => e.Entity.Id == product.Id);
+
+                    if (trackedEntity != null)
+                    {
+                        trackedEntity.State = EntityState.Detached;
+                    }
+                }
+
+                // Step 2: Update the new entities
+                _dbContext.Set<Product>().UpdateRange(products);
+                await _dbContext.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-            throw new InfrastructureException("Error updating entities");
+                throw new InfrastructureException("Error updating entities", ex);
             }
         }
 
