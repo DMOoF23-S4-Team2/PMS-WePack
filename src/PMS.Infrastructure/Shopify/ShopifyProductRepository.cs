@@ -8,7 +8,6 @@ using PMS.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
 
-
 namespace PMS.Infrastructure.Shopify
 {
   public class ShopifyProductRepository : IShopifyProductRepository
@@ -29,8 +28,9 @@ namespace PMS.Infrastructure.Shopify
     }
 
     public async Task<Product> AddProductAsync(Product product)
-    {
-      var mutation = ConstructProductMutation(product, "productCreate");
+    {      
+      
+      var mutation = ConstructProductMutation(product);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
@@ -40,15 +40,20 @@ namespace PMS.Infrastructure.Shopify
       {
         var errorContent = await response.Content.ReadAsStringAsync();
         throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
+      }      
+      // Cast response into string
+      var result = await response.Content.ReadAsStringAsync();      
+      // Try parse the response
+      try {
+        var json = JsonNode.Parse(result);                
+        var productCreateNode = json?["data"]?["productCreate"] ?? throw new Exception("ProductCreate data not found", new Exception(result));        
+        var productData = productCreateNode["product"] ?? throw new Exception("Error creating product", new Exception(result));
+        return MapProduct(productData);
+      } 
+      catch (Exception ex){
+        throw new Exception("An error occurred while adding product", ex);
       }
 
-      var result = await response.Content.ReadAsStringAsync();
-      var json = JsonNode.Parse(result);
-      var dataNode = json?["data"] ?? throw new Exception("Data not found");
-      var productCreateNode = dataNode["productCreate"] ?? throw new Exception("Product creation data not found");
-      var productData = productCreateNode["product"] ?? throw new Exception("Error creating product");
-
-      return MapProduct(productData);
     }
 
     // Create multiple products
@@ -74,14 +79,21 @@ namespace PMS.Infrastructure.Shopify
         var errorContent = await response.Content.ReadAsStringAsync();
         throw new Exception($"Request failed with status code {response.StatusCode}: {errorContent}");
       }
-
+      // Cast response into string
       var result = await response.Content.ReadAsStringAsync();
-      var json = JsonNode.Parse(result);
-      var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
-      var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
-      var productData = productNode;
+      try {
+        var json = JsonNode.Parse(result);                
+        var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
+        var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
+        var productData = productNode;
+        // System.Console.WriteLine(productData);
 
-      return MapProduct(productData);
+        return MapProduct(productData);
+      } 
+      catch (Exception ex){
+        throw new Exception("An error occurred while getting product", ex);
+      }
+
     }
 
     // Get all products
@@ -109,7 +121,7 @@ namespace PMS.Infrastructure.Shopify
     // Update a single product
     public async Task UpdateProductAsync(Product product)
     {
-      var mutation = ConstructProductMutation(product, "productUpdate");
+      var mutation = ConstructProductMutation(product);
 
       var content = new StringContent(JsonSerializer.Serialize(new { query = mutation }), Encoding.UTF8, "application/json");
       _httpClient.DefaultRequestHeaders.Add("X-Shopify-Access-Token", _accessToken);
@@ -170,63 +182,67 @@ namespace PMS.Infrastructure.Shopify
         throw;
       }
     }
-
-    private string ConstructProductMutation(Product product, string mutationType)
+    // Constructs a GraphQL query to POST products
+    private string ConstructProductMutation(Product product)
     {
+      var productMetafields = new List<string>();
+      
+      if (product.Material != null && product.Material.Count > 0)
+      {                    
+        productMetafields.Add($@"
+            {{
+                namespace: ""custom"",
+                key: ""multiple_material"",
+                value: ""{ConvertListToJsonString(product.Material)}"",
+                type: ""list.single_line_text_field""
+            }}");
+      }
+
+      var variantMetafields = new List<string>();
+      if (!string.IsNullOrEmpty(product.SupplierSku))
+      {
+        variantMetafields.Add($@"
+            {{
+                namespace: ""custom"",
+                key: ""supplier_sku"",
+                value: {JsonSerializer.Serialize(product.SupplierSku)},
+                type: ""single_line_text_field""
+            }}");
+      }
+
+      var productMetafieldsString = string.Join(",", productMetafields);
+      var variantMetafieldsString = string.Join(",", variantMetafields);
+
       return $@"
     mutation {{
-      {mutationType}(input: {{
-        title: ""{product.Name}""
-        bodyHtml: ""{product.Description}""
-        vendor: ""{product.Supplier}""
-        productType: ""{product.ProductType}""
-        tags: ""{product.ProductGroup}""
-        variants: [{{
-          sku: ""{product.Sku}""
-          weight: {product.Weight.ToString(CultureInfo.InvariantCulture)}
-          barcode: ""{product.Ean}""
-          price: {product.Price.ToString(CultureInfo.InvariantCulture)}
-          compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")}
-          selectedOptions: [{{
-            name: ""Farve""
-            value: ""{product.Color}""
-          }}]
-          metafields: [{{
-            namespace: ""custom""
-            key: ""supplier_sku""
-            value: ""{product.SupplierSku}""
-            valueType: ""STRING""
-          }}]
-        }}]
-        metafields: [{{
-          namespace: ""custom""
-          key: ""multiple_material""
-          value: ""{product.Material}""
-          valueType: ""STRING""
-        }}, {{
-          namespace: ""custom""
-          key: ""template_number""
-          value: ""{product.TemplateNo}""
-          valueType: ""INTEGER""
-        }}, {{
-          namespace: ""custom""
-          key: ""week_list""
-          value: ""{product.List}""
-          valueType: ""INTEGER""
-        }}]
-      }}) {{
-        product {{
-          id
-          title
+        productCreate(input: {{
+            title: {JsonSerializer.Serialize(product.Name)},
+            bodyHtml: {JsonSerializer.Serialize(product.Description)},
+            vendor: {JsonSerializer.Serialize(product.Supplier)},
+            productType: {JsonSerializer.Serialize(product.ProductType)},
+            tags: {JsonSerializer.Serialize(product.ProductGroup)},
+            metafields: [{productMetafieldsString}],
+            variants: [{{
+                sku: {JsonSerializer.Serialize(product.Sku)},
+                weight: {product.Weight.ToString(CultureInfo.InvariantCulture)},
+                barcode: {JsonSerializer.Serialize(product.Ean)},
+                price: {product.Price.ToString(CultureInfo.InvariantCulture)},
+                compareAtPrice: {(product.SpecialPrice > 0 ? product.SpecialPrice.ToString(CultureInfo.InvariantCulture) : "null")},
+                metafields: [{variantMetafieldsString}]
+            }}]
+        }}) {{
+            product {{
+                id
+                title
+            }}
+            userErrors {{
+                field
+                message
+            }}
         }}
-        userErrors {{
-          field
-          message
-        }}
-      }}
     }}";
     }
-
+    // Constructs a GraphQL query to GET products
     private string ConstructProductQuery(string? id = null)
     {
       if (!string.IsNullOrEmpty(id))
@@ -350,10 +366,9 @@ namespace PMS.Infrastructure.Shopify
     }";
       }
     }
-
+    // Map JSON response into the Product datatype
     private Product MapProduct(JsonNode productData)
     {
-
       var product = new Product
       {
         Name = productData["title"]?.ToString() ?? string.Empty,
@@ -382,10 +397,11 @@ namespace PMS.Infrastructure.Shopify
           .AsArray()
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
-        // Custom fields
-        Material = productData["metafields"]?["edges"]
+        // Custom fields  
+        Material = ConvertJsonStringToList(productData["metafields"]?["edges"]
           ?.AsArray()
-          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty,
+          ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty),            
+        
         TemplateNo = int.TryParse(productData["metafields"]?["edges"]
           ?.AsArray()
           ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "template_number")?["node"]?["value"]?.ToString(), out var templateNoValue) ? templateNoValue : 0,
@@ -397,9 +413,36 @@ namespace PMS.Infrastructure.Shopify
       return product;
     }
 
+    // Used for Posting
+    private string ConvertListToJsonString(List<string> items)
+    {
+      // Serializer list to string: (["material"])
+      string jsonString = JsonSerializer.Serialize(items);      
+      // Escpare to json chars: ([\"material\"])
+      string escapeJsonString = EscapeJsonString(jsonString);
+      return escapeJsonString;
+    }
+    
+    // Used for Getting
+    private List<string> ConvertJsonStringToList(string items)
+    {      
+      List<string> listItems = new List<string>();
+      if (!string.IsNullOrEmpty(items))
+      {
+        // Deserialize the JSON-encoded string into a list of strings
+        listItems = JsonSerializer.Deserialize<List<string>>(items);
+      }
+      return listItems;
+    }
+    private string EscapeJsonString(string value)
+    {
+      return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+
     private string GetShopifyId(string id)
     {
       return id.Split('/').LastOrDefault() ?? string.Empty;
     }
+  
   }
 }

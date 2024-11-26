@@ -27,8 +27,7 @@ namespace PMS.Application.Validators
             RuleFor(product => product.Color)
                 .MaximumLength(255);
 
-            RuleFor(product => product.Material)
-                .MaximumLength(255);
+            RuleFor(product => product.Material);
 
             RuleFor(product => product.ProductType)
                 .MaximumLength(255);

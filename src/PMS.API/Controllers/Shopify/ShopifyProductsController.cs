@@ -30,9 +30,9 @@ namespace PMS.API.Controllers.Shopify
         public async Task<IActionResult> GetProductById(string id)
         {
             try
-            {
+            {                                
                 var product = await _shopifyProductService.GetShopifyProductById(id);
-                return Ok(product);
+                return Ok(product);                
             }
             catch (KeyNotFoundException ex)
             {
