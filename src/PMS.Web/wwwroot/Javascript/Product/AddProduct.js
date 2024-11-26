@@ -1,11 +1,12 @@
 import { showMessage } from "../../Components/MessageBox.js"
 import { renderAllProducts } from "../Main/MainProduct.js";
 import { getAllProducts } from "./GetProducts.js";
-
+import { getApiUrl } from "../config.js";
 
 export async function addProduct(productData) {
     try {
-        const response = await fetch("https://localhost:7225/api/Product", {
+        const API_URL = await getApiUrl();
+        const response = await fetch(`${API_URL}/api/Product`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"  

@@ -1,29 +1,31 @@
-version: '3.8'
-
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
-    environment:
-      SA_PASSWORD: "Team2Semester4"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserverdata:/var/opt/mssql
-
-  webapi:
+  api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: webapi
+      dockerfile: Dockerfile.api
+    image: pms-api-production:latest
+    container_name: pms-api-production
+    ports:
+      - "5184:8080"
+    networks:
+      - pms-network
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-      - sqlserver
-    # volumes:
-    #   - ./apply-migrations.sh:/app/apply-migrations.sh
-    # command: /bin/bash /app/apply-migrations.sh && dotnet PMS.API.dll
+      - ASPNETCORE_ENVIRONMENT=Production
+      - AzureDBConnectionString=${AzureDBConnectionString}
 
-volumes:
-  sqlserverdata:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    image: pms-web-production:latest
+    container_name: pms-web-production
+    ports:
+      - "5002:8080"
+    networks:
+      - pms-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+networks:
+  pms-network:
+    driver: bridge

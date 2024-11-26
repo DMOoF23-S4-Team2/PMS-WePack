@@ -1,0 +1,19 @@
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+
+EXPOSE 8080
+
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["src/PMS.Web/PMS.Web.csproj", "PMS.Web/"]
+RUN dotnet restore "PMS.Web/PMS.Web.csproj"
+
+COPY src/ .
+WORKDIR "/src/PMS.Web"
+RUN dotnet publish -c Release -o /app/build
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/build .
+
+ENTRYPOINT ["dotnet", "PMS.Web.dll"]

@@ -1,4 +1,5 @@
-using Microsoft.EntityFrameworkCore;
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using PMS.Application.Interfaces;
 using PMS.Application.Services;
 using PMS.Core.Interfaces;
@@ -13,13 +14,15 @@ using PMS.Infrastructure.Shopify;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure CORS to allow specific origins
+// Configure CORS to make API requests from your host machine and the web service in the Docker network.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowPmsWeb",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5002") // Add other origins as needed
+            policy.WithOrigins(
+                "http://localhost:5002", 
+                "https://localhost:7232")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -41,12 +44,9 @@ builder.Services.AddScoped<IShopifyProductService, ShopifyProductService>();
 builder.Services.AddScoped<ICsvService, CsvService>();
 builder.Services.AddScoped<ICsvHandler, CsvHandler>();
 
-//! Register DbContext with local DB (WePackTest)
-//NOTE - Remember to run [ docker-compose  up -d ] in the root folder to start the local DB
-builder.Services.AddDbContext<PMSContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDB"));
-});
+// Register DbContext with Azure DB
+var sqlConnection = builder.Configuration["AzureDBConnectionString"];
+builder.Services.AddSqlServer<PMSContext>(sqlConnection, options => options.EnableRetryOnFailure());
 
 // Register controllers
 builder.Services.AddControllers();
@@ -57,14 +57,15 @@ var app = builder.Build();
 
 app.UseCors("AllowPmsWeb");
 
-// Configure the HTTP request pipeline.
+app.MapGet("/", () => Results.Ok("Welcome to the API!"));
+
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseRouting();
 app.MapControllers();
 

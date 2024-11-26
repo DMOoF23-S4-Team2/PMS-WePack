@@ -1,17 +1,19 @@
 import { showMessage } from "../../Components/MessageBox.js";
+import { getApiUrl } from "../config.js";
 
 let products = [];
 
 export async function getAllProducts() {
     try {
-        const res = await fetch("https://localhost:7225/api/Product/products");
+		const API_URL = await getApiUrl(); // Fetch the API URL dynamically
+		const res = await fetch(`${API_URL}/api/Product/products`);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
 
-        const data = await res.json();
-        products = data;
+		const data = await res.json();
+		products = data;
 
         return products;
     } catch (error) {
