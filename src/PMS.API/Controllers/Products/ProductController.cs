@@ -14,7 +14,6 @@ public class ProductController : ControllerBase{
         this.productService = productService ?? throw new ArgumentNullException(nameof(productService));
     }
 
-    // POST: New Product
     [HttpPost]
     public async Task<IActionResult> CreateProduct([FromBody] ProductWithoutIdDto productDto){
         try {                                
@@ -26,7 +25,6 @@ public class ProductController : ControllerBase{
         } 
     }
 
-    // POST: Add multiple products
     [HttpPost("addMany")]
     public async Task<IActionResult> AddManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> productDtos)
     {
@@ -41,24 +39,20 @@ public class ProductController : ControllerBase{
         }
     }
 
-    // DELETE: Delete Product from ID
     [HttpDelete("{sku}")]
     public async Task<IActionResult> DeleteProduct(string sku) {
-        if (productService == null) 
-        {
-            return BadRequest("Service unavailable.");
-        }
-
         try {
             await productService.DeleteProduct(sku);
+            return NoContent();
         }
         catch (ArgumentNullException){
             return NotFound();
         }
-        return NoContent();
+        catch (Exception ex) {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
     }
 
-    // DELETE: Delete multiple products by IDs
     [HttpDelete("deleteMany")]
     public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> dtoList)
     {
@@ -73,73 +67,64 @@ public class ProductController : ControllerBase{
         }
     }
 
-    // GET: Single Product from ID
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProduct(int id){
-        var product = await productService.GetProduct(id);
-        if (product == null){
-            return NotFound();
+        try {
+            var product = await productService.GetProduct(id);
+            if (product == null){
+                return NotFound();
+            }
+            return Ok(product);
         }
-        return Ok(product);
+        catch (Exception ex) {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
     }
 
-    // GET: Products
     [HttpGet("products")]
     public async Task<IActionResult> GetProducts()
     {
-        // Ensure productService is not null
-        if (productService == null)
-        {
-            return Problem("Category service is not available.");
-        }        
-        
-        // Get Products
-        var products = await productService.GetProducts();
-        
-        // If products where not found
-        if (products == null)
-        {
-            return NotFound("No products found.");
+        try {
+            var products = await productService.GetProducts();
+            if (products == null)
+            {
+                return NotFound("No products found.");
+            }
+            return Ok(products);
         }
-
-        // Return if everything is awesome
-        return Ok(products);
+        catch (Exception ex) {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
     }
 
-    // PUT: Update Category from ID
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
     {                        
         try {
-            // Try to update the category
             await productService.UpdateProduct(id, productDto);
-            // Returns 204
             return NoContent();
         }
         catch (ArgumentNullException)
         {
-            // Return a 404 if the category was not found
             return NotFound($"Product with Id {id} not found.");
         }
         catch (Exception ex)
         {
-            // Catch any other exceptions and return a 500 error
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }  
 
-        // PUT: Update multiple products
-        [HttpPut("updateMany")]
-        public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductDto> productDtos)
+    [HttpPut("updateMany")]
+    public async Task<IActionResult> UpdateManyProducts([FromBody] IEnumerable<ProductDto> productDtos)
+    {
+        try
         {
-            try
-            {
-                await productService.UpdateManyProducts(productDtos);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            await productService.UpdateManyProducts(productDtos);
+            return NoContent();
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error: {ex.Message}");
+        }
+    }
 }

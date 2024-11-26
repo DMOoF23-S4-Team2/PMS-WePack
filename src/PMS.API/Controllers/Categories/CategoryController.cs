@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using PMS.Application.DTOs.Category;
 using PMS.Application.Interfaces;
 
-
 namespace PMS.API.Controllers
 {    
     [Route("api/[controller]")]    
@@ -18,7 +17,6 @@ namespace PMS.API.Controllers
             this.categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
         }
 
-        // POST: New Category
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryWithoutIdDto categoryDto){
             try {                                
@@ -30,73 +28,63 @@ namespace PMS.API.Controllers
             }                           
         }
 
-        // GET: Single Category from ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id){            
-            var category = await categoryService.GetCategory(id);            
-            if (category == null){
-                return NotFound();
+            try {
+                var category = await categoryService.GetCategory(id);            
+                if (category == null){
+                    return NotFound();
+                }
+                return Ok(category);
             }
-            return Ok(category);
+            catch (Exception ex) {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
         }
 
-        // GET: Categories
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories()
         {            
-            // Ensure categoryService is not null
-            if (categoryService == null)
-            {
-                return Problem("Category service is not available.");
+            try {
+                var categories = await categoryService.GetCategories();
+                if (categories == null)
+                {
+                    return NotFound("No categories found.");
+                }
+                return Ok(categories);
             }
-            // Getting categories
-            var categories = await categoryService.GetCategories();
-            
-            // If categories where not found
-            if (categories == null)
-            {
-                return NotFound("No categories found.");
+            catch (Exception ex) {
+                return StatusCode(500, $"Error: {ex.Message}");
             }
-            
-            // All good? Return!
-            return Ok(categories);
         }
         
-        // DELETE: Delete Category from ID
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id) {
-            if (categoryService == null) 
-            {
-                return BadRequest("Service unavailable.");
-            }
-
             try {
                 await categoryService.DeleteCategory(id);
+                return NoContent();
             }
             catch (ArgumentNullException){
                 return NotFound();
             }
-            return NoContent();
+            catch (Exception ex) {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
         }
         
-        // PUT: Update Category from ID
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryWithoutIdDto categoryDto)
         {                        
             try {
-                // Try to update the category
                 await categoryService.UpdateCategory(id, categoryDto);
-                // Returns 204
                 return NoContent();
             }
             catch (ArgumentNullException)
             {
-                // Return a 404 if the category was not found
                 return NotFound($"Category with ID {id} not found.");
             }
             catch (Exception ex)
             {
-                // Catch any other exceptions and return a 500 error
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         } 
