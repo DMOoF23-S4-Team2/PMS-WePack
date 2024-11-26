@@ -53,59 +53,89 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 <input required id="name" name="name" value="${product.name}">
 
                 <label for="description">Description</label>
-                <textarea id="description" name="description">${product.description}</textarea>  
+                <textarea id="description" name="description">${
+					product.description
+				}</textarea>  
                 
                 <label for="category">Category</label>
-                <input id="category" name="category" value="${product.category}">
+                <input id="category" name="category" value="${
+					product.category
+				}">
 
                 <div class="units-container">
                     <div>
                         <label for="price">Price</label>
-                        <input required id="price" step="any" type="number" name="price" value="${product.price}">
+                        <input required id="price" step="any" type="number" name="price" value="${
+							product.price
+						}">
                     </div>
                     <div>
                         <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" step="any" type="number" name="specialPrice" value="${product.specialPrice || ''}">
+                        <input id="specialPrice" step="any" type="number" name="specialPrice" value="${
+							product.specialPrice || ""
+						}">
                     </div>    
                 </div> 
 
                 <label for="supplier">Supplier</label>
-                <input id="supplier" name="supplier" value="${product.supplier}">
+                <input id="supplier" name="supplier" value="${
+					product.supplier
+				}">
 
                 <label for="supplierSku">Supplier SKU</label>
-                <input id="supplierSku" name="supplierSku" value="${product.supplierSku}">
+                <input id="supplierSku" name="supplierSku" value="${
+					product.supplierSku
+				}">
                 
             </div>
             <div class="form-container">                
                 <label for="templateNo">Template No</label>
-                <input id="templateNo" type="number" name="templateNo" value="${product.templateNo || ''}">
+                <input id="templateNo" type="number" name="templateNo" value="${
+					product.templateNo || ""
+				}">
 
                 <label for="productType">Product type</label>
-                <input id="productType" name="productType" value="${product.productType}">
+                <input id="productType" name="productType" value="${
+					product.productType
+				}">
 
                 <label for="productGroup">Product group</label>
-                <input id="productGroup" name="productGroup" value="${product.productGroup}">
+                <input id="productGroup" name="productGroup" value="${
+					product.productGroup
+				}">
 
                 <label for="currency">Currency</label>
-                <input id="currency" name="currency" value="${product.currency}">
+                <input id="currency" name="currency" value="${
+					product.currency
+				}">
 
-                <label for="material">Material</label>
-                <input id="material" name="material" value="${product.material}">
+
+                <label for="material">Material (comma-separated)</label>
+                <textarea id="material" name="material" placeholder="Enter materials separated by commas">${
+					product.material?.join(", ") || ""
+				}</textarea>
+
 
                 <label for="color">Color</label>
                 <input id="color" name="color" value="${product.color}">
 
                 <label for="list">List</label>
-                <input id="list" type="number" name="list" value="${product.list || ''}">
+                <input id="list" type="number" name="list" value="${
+					product.list || ""
+				}">
 
                 <div class="units-container">
                     <div>
                         <label for="weight">Weight</label>
-                        <input id="weight" step="any" type="number" name="weight" value="${product.weight || ''}">
+                        <input id="weight" step="any" type="number" name="weight" value="${
+							product.weight || ""
+						}">
                     </div>
                     <div>
                         <label for="cost">Cost</label>
-                        <input id="cost" step="any" type="number" name="cost" value="${product.cost || ''}">
+                        <input id="cost" step="any" type="number" name="cost" value="${
+							product.cost || ""
+						}">
                     </div>    
                 </div>    
 
@@ -143,7 +173,9 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 productType: updatedData.get('productType'),
                 productGroup: updatedData.get('productGroup'),
                 currency: updatedData.get('currency'),
-                material: updatedData.get('material'),
+                                material: updatedData.get('material') 
+                           ? updatedData.get('material').split(',').map(item => item.trim()) 
+                           : [],
                 color: updatedData.get('color'),
                 supplier: updatedData.get('supplier'),
                 supplierSku: updatedData.get('supplierSku'),
