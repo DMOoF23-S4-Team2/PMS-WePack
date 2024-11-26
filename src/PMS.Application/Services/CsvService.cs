@@ -95,21 +95,21 @@ namespace PMS.Application.Services
             await _productService.UpdateProduct(productId, firstProduct); 
         } 
   
-        public async Task UpdateManyProducts(string filepath){ 
+         public async Task UpdateManyProducts(string filepath){ 
             List<ProductDto> products = getProductWithIDFromCsv(filepath);
             await _productService.UpdateManyProducts(products);      
         }
 
         public async Task DeleteProduct(string filepath){ 
             // Get the products from the CSV, and get the list of <ProductWithoutIdDto>
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
             // Getting the first product
-            int productId = products[0].Id;
-            await _productService.DeleteProduct(productId);   
+            string productSku = products[0].Sku;
+            await _productService.DeleteProduct(productSku);   
         }
 
         public async Task DeleteManyProducts(string filepath){ 
-            List<ProductDto> products = getProductWithIDFromCsv(filepath);
+            List<ProductWithoutIdDto> products = getProductWithoutIDFromCsv(filepath);
             await _productService.DeleteManyProducts(products);             
         }
         

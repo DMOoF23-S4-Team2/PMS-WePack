@@ -42,15 +42,15 @@ public class ProductController : ControllerBase{
     }
 
     // DELETE: Delete Product from ID
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct(int id) {
+    [HttpDelete("{sku}")]
+    public async Task<IActionResult> DeleteProduct(string sku) {
         if (productService == null) 
         {
             return BadRequest("Service unavailable.");
         }
 
         try {
-            await productService.DeleteProduct(id);
+            await productService.DeleteProduct(sku);
         }
         catch (ArgumentNullException){
             return NotFound();
@@ -60,7 +60,7 @@ public class ProductController : ControllerBase{
 
     // DELETE: Delete multiple products by IDs
     [HttpDelete("deleteMany")]
-    public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductDto> dtoList)
+    public async Task<IActionResult> DeleteManyProducts([FromBody] IEnumerable<ProductWithoutIdDto> dtoList)
     {
         try
         {
@@ -119,7 +119,7 @@ public class ProductController : ControllerBase{
         catch (ArgumentNullException)
         {
             // Return a 404 if the category was not found
-            return NotFound($"Product with ID {id} not found.");
+            return NotFound($"Product with Id {id} not found.");
         }
         catch (Exception ex)
         {

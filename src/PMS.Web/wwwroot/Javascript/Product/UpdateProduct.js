@@ -11,20 +11,21 @@ export async function updateProduct(productId, updatedData) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updatedData)  // Send the updated product data in the request body
+            body: JSON.stringify(updatedData) 
         });
 
         if (!response.ok) {
             console.error(`Failed to update product with ID ${productId}.`);
-            showMessage(`Failed to update product`, false);  // Show error message
+            showMessage(`Failed to update product`, false);
             return;
         }
 
-        console.log(`Product with ID ${productId} updated successfully.`);
-        showMessage("Product updated successfully!", true);  // Show success message
+        console.log(`Product with Id ${productId} updated successfully.`);
+        showMessage("Product updated successfully!", true); 
 
     } catch (error) {
-        console.error('Error updating product:', error);
+        console.error('Error updating product:', error);        
+        console.log(updateData)
         showMessage(`Failed to update product`, false);
     }
 }
@@ -60,11 +61,11 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 <div class="units-container">
                     <div>
                         <label for="price">Price</label>
-                        <input required id="price" type="number" name="price" value="${product.price}">
+                        <input required id="price" step="any" type="number" name="price" value="${product.price}">
                     </div>
                     <div>
                         <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" type="number" name="specialPrice" value="${product.specialPrice || ''}">
+                        <input id="specialPrice" step="any" type="number" name="specialPrice" value="${product.specialPrice || ''}">
                     </div>    
                 </div> 
 
@@ -100,11 +101,11 @@ export async function showUpdateModal(productId, updateProductCallback) {
                 <div class="units-container">
                     <div>
                         <label for="weight">Weight</label>
-                        <input id="weight" type="number" name="weight" value="${product.weight || ''}">
+                        <input id="weight" step="any" type="number" name="weight" value="${product.weight || ''}">
                     </div>
                     <div>
                         <label for="cost">Cost</label>
-                        <input id="cost" type="number" name="cost" value="${product.cost || ''}">
+                        <input id="cost" step="any" type="number" name="cost" value="${product.cost || ''}">
                     </div>    
                 </div>    
 
@@ -116,10 +117,8 @@ export async function showUpdateModal(productId, updateProductCallback) {
         </form>
     `;
     
-    // Append the dialog to the document body
     document.body.appendChild(updateDialog);
 
-    // Show the dialog
     updateDialog.showModal();
 
     // // Get references to Yes and No buttons
@@ -128,13 +127,13 @@ export async function showUpdateModal(productId, updateProductCallback) {
     const updateForm = document.getElementById('update-product-form');
 
     updateForm.addEventListener('submit', async (e) => {
-        e.preventDefault();  // Prevent form from refreshing the page
+        e.preventDefault(); 
 
         let updatedData = new FormData(updateForm)
 
-        // Get the updated data from the form inputs
         const Data = {
             productDto: {
+                id: productId,
                 sku: updatedData.get('sku'),
                 ean: updatedData.get('ean'),
                 name: updatedData.get('name'),
@@ -162,14 +161,13 @@ export async function showUpdateModal(productId, updateProductCallback) {
         const updatedProducts = await getAllProducts();
         renderAllProducts(updatedProducts);
 
-
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close();
+        updateDialog.remove();
     });
 
     // Handle the No button click
     noBtn.addEventListener('click', () => {
-        updateDialog.close(); // Close the dialog
-        updateDialog.remove(); // Remove the dialog from the DOM
+        updateDialog.close(); 
+        updateDialog.remove();
     });
 }

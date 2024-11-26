@@ -9,7 +9,7 @@ export async function addCategory(categoryData) {
         const response = await fetch(`${API_URL}/api/Category`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"  // Specify that we're sending JSON
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(categoryData)
         });
@@ -21,14 +21,12 @@ export async function addCategory(categoryData) {
         const data = await response.json();
         console.log("Category added successfully:", data);
 
-         // Show success message
          showMessage("Category added successfully!", true);
 
         return data;
     } catch (error) {
-        console.error("Failed to add Category:", error.message);
 
-        // Show error message
+        console.error("Failed to add Category:", error.message);
         showMessage(`Failed to add Category`, false);
     }
 }
@@ -98,8 +96,8 @@ export function renderAddCategoryModal() {
         </form>
     `;
 
-    document.body.appendChild(addCategoryDialog);  // Append the modal to the DOM
-    addCategoryDialog.showModal();  // Show the modal
+    document.body.appendChild(addCategoryDialog); 
+    addCategoryDialog.showModal(); 
 
     // Add form handler for submitting the form
     addCategoryFormHandler(addCategoryDialog);
@@ -108,6 +106,6 @@ export function renderAddCategoryModal() {
     const closeModalBtn = addCategoryDialog.querySelector('.close-modal-btn');
     closeModalBtn.addEventListener('click', () => {
         addCategoryDialog.close();
-        addCategoryDialog.remove();  // Remove the dialog after closing
+        addCategoryDialog.remove();
     });
 }

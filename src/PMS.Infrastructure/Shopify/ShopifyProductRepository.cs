@@ -82,10 +82,11 @@ namespace PMS.Infrastructure.Shopify
       // Cast response into string
       var result = await response.Content.ReadAsStringAsync();
       try {
-        var json = JsonNode.Parse(result);        
+        var json = JsonNode.Parse(result);                
         var dataNode = json?["data"] ?? throw new Exception($"Data not found: {result}");
         var productNode = dataNode["product"] ?? throw new Exception($"Product not found: {result}");
         var productData = productNode;
+        // System.Console.WriteLine(productData);
 
         return MapProduct(productData);
       } 
@@ -181,7 +182,7 @@ namespace PMS.Infrastructure.Shopify
         throw;
       }
     }
-
+    // Constructs a GraphQL query to POST products
     private string ConstructProductMutation(Product product)
     {
       var productMetafields = new List<string>();
@@ -241,7 +242,7 @@ namespace PMS.Infrastructure.Shopify
         }}
     }}";
     }
-    
+    // Constructs a GraphQL query to GET products
     private string ConstructProductQuery(string? id = null)
     {
       if (!string.IsNullOrEmpty(id))
@@ -365,10 +366,9 @@ namespace PMS.Infrastructure.Shopify
     }";
       }
     }
-
+    // Map JSON response into the Product datatype
     private Product MapProduct(JsonNode productData)
     {
-
       var product = new Product
       {
         Name = productData["title"]?.ToString() ?? string.Empty,
@@ -397,7 +397,7 @@ namespace PMS.Infrastructure.Shopify
           .AsArray()
           .FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "supplier_sku")?["node"]?["value"]?.ToString() ?? string.Empty,
 
-        // Custom fields               
+        // Custom fields  
         Material = ConvertJsonStringToList(productData["metafields"]?["edges"]
           ?.AsArray()
           ?.FirstOrDefault(edge => edge?["node"]?["key"]?.ToString() == "multiple_material")?["node"]?["value"]?.ToString() ?? string.Empty),            
@@ -413,6 +413,7 @@ namespace PMS.Infrastructure.Shopify
       return product;
     }
 
+    // Used for Posting
     private string ConvertListToJsonString(List<string> items)
     {
       // Serializer list to string: (["material"])
@@ -421,11 +422,16 @@ namespace PMS.Infrastructure.Shopify
       string escapeJsonString = EscapeJsonString(jsonString);
       return escapeJsonString;
     }
-
+    
+    // Used for Getting
     private List<string> ConvertJsonStringToList(string items)
-    {
-      // Items eg. ["Ægte Læder","Rhinsten"]
-      List<string> listItems = JsonSerializer.Deserialize<List<string>>(items);      
+    {      
+      List<string> listItems = new List<string>();
+      if (!string.IsNullOrEmpty(items))
+      {
+        // Deserialize the JSON-encoded string into a list of strings
+        listItems = JsonSerializer.Deserialize<List<string>>(items);
+      }
       return listItems;
     }
     private string EscapeJsonString(string value)

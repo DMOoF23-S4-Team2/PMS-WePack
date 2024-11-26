@@ -14,6 +14,19 @@ namespace PMS.Infrastructure.Repository.Base
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
+         public async Task<T> GetByIdAsync(int id)
+        {
+            try
+            {
+                var entity = await _dbContext.Set<T>().FindAsync(id);
+                return entity!;
+            }
+            catch (Exception)
+            {
+                throw new InfrastructureException("Error loading entity");
+            }
+        }
+
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             try
@@ -27,18 +40,7 @@ namespace PMS.Infrastructure.Repository.Base
         }
 
         //NOTE - this method uses null forgiving operator (!) in the returned entity and should be handled in Application layer
-        public async Task<T> GetByIdAsync(int id)
-        {
-            try
-            {
-                var entity = await _dbContext.Set<T>().FindAsync(id);
-                return entity!;
-            }
-            catch (Exception)
-            {
-                throw new InfrastructureException("Error loading entity");
-            }
-        }
+       
 
         public async Task<T> AddAsync(T entity)
         {
@@ -79,44 +81,6 @@ namespace PMS.Infrastructure.Repository.Base
                 throw new InfrastructureException("Error deleting entity");
             }
         }
-
-        public async Task AddManyAsync(IEnumerable<T> entities)
-        {
-            try
-            {
-            await _dbContext.Set<T>().AddRangeAsync(entities);
-            await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-            throw new InfrastructureException("Error adding entities");
-            }
-        }
-
-        public async Task UpdateManyAsync(IEnumerable<T> entities)
-        {
-            try
-            {
-            _dbContext.Set<T>().UpdateRange(entities);
-            await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-            throw new InfrastructureException("Error updating entities");
-            }
-        }
-
-        public async Task DeleteManyAsync(IEnumerable<T> entities)
-        {
-            try
-            {
-            _dbContext.Set<T>().RemoveRange(entities);
-            await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-            throw new InfrastructureException("Error deleting entities");
-            }
-        }
     }
+        
 }
