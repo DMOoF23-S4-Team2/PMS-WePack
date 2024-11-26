@@ -37,7 +37,7 @@ export function renderAllProducts(products) {
                     <td>${product.currency}</td>
                     <td class="actions-container">
                         <button class="edit-btn" data-id="${product.id}"><i class="fa-solid fa-pencil"></i></button>
-                        <button class="delete-btn" data-id="${product.id}"><i class="fa-solid fa-trash"></i></button>
+                        <button class="delete-btn" data-sku="${product.sku}"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('')}
@@ -53,14 +53,15 @@ export function renderAllProducts(products) {
     const deleteButtons = document.querySelectorAll(".delete-btn");
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const productId = e.currentTarget.dataset.id;  // Get the product ID from the button
+            const productSku = e.currentTarget.dataset.sku;  // Get the product Sku from the button
+
              // Find the product details (name and SKU) from the clicked row
             const productRow = e.currentTarget.closest('tr');
             const productName = productRow.querySelector('td:nth-child(3)').textContent;  // Assuming the 3rd <td> is the name
-            const productSku = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the SKU
+            const productSkuName = productRow.querySelector('td:nth-child(2)').textContent;  // Assuming the 2nd <td> is the SKU
 
-        // Show the delete modal and pass the product ID, name, and SKU
-        showDeleteModal(productId, productName, productSku, deleteProduct);
+       
+        showDeleteModal(productSku, productName, productSkuName, deleteProduct);
             
         });
     });
@@ -69,9 +70,9 @@ export function renderAllProducts(products) {
     const editButtons = document.querySelectorAll(".edit-btn");
     editButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            const productId = e.currentTarget.dataset.id;  // Get the product ID from the button
-            showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product ID
-            
+            const productId = e.currentTarget.dataset.id;  // Get the product Sku from the button
+
+            showUpdateModal(productId, updateProduct);  // Show the update modal and pass the product Sku            
         });
     });
 }

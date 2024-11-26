@@ -6,5 +6,6 @@ namespace PMS.Core.Repositories;
 
 public interface ICategoryRepository : IRepository<Category>
 {
+    Task<Category> GetByIdAsync(int id);
 
 }

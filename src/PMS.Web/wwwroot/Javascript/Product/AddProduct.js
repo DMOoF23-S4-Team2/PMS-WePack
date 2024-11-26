@@ -8,7 +8,7 @@ export async function addProduct(productData) {
         const response = await fetch("https://localhost:7225/api/Product", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"  // Specify that we're sending JSON
+                "Content-Type": "application/json"  
             },
             body: JSON.stringify(productData)
         });
@@ -20,14 +20,12 @@ export async function addProduct(productData) {
         const data = await response.json();
         console.log("Product added successfully:", data);
 
-         // Show success message
          showMessage("Product added successfully!", true);
 
         return data;
     } catch (error) {
         console.error("Failed to add product:", error.message);
 
-        // Show error message
         showMessage(`Failed to add product`, false);
     }
 }
@@ -46,8 +44,8 @@ export function addProductFormHandler(dialog) {
                 ean: productData.get('ean'),
                 name: productData.get('name'),
                 description: productData.get('description'),
-                price: parseFloat(productData.get('price')),  // Parse as float
-                specialPrice: parseFloat(productData.get('specialPrice')) || 0,  // Default to 0 if empty
+                price: parseFloat(productData.get('price')), 
+                specialPrice: parseFloat(productData.get('specialPrice')) || 0, 
                 productType: productData.get('productType'),
                 productGroup: productData.get('productGroup'),
                 currency: productData.get('currency'),
@@ -55,24 +53,23 @@ export function addProductFormHandler(dialog) {
                 color: productData.get('color'),
                 supplier: productData.get('supplier'),
                 supplierSku: productData.get('supplierSku'),
-                templateNo: parseInt(productData.get('templateNo')) || 0,  // Default to 0 if empty
-                list: parseInt(productData.get('list')) || 0,  // Default to 0 if empty
-                weight: parseFloat(productData.get('weight')) || 0,  // Default to 0 if empty
-                cost: parseFloat(productData.get('cost')) || 0  // Default to 0 if empty
+                templateNo: parseInt(productData.get('templateNo')) || 0, 
+                list: parseInt(productData.get('list')) || 0, 
+                weight: parseFloat(productData.get('weight')) || 0, 
+                cost: parseFloat(productData.get('cost')) || 0 
             }
         };
 
         console.log("Data being sent:", Data);
 
         try {
-            await addProduct(Data.productDto);  // Wait for the product to be added
+            await addProduct(Data.productDto);  
 
-            dialog.close();  // Close the dialog
-            dialog.remove();  // Remove dialog from DOM
+            dialog.close();  
+            dialog.remove();  
 
             const updatedProducts = await getAllProducts();  // Fetch updated categories
             renderAllProducts(updatedProducts);  // Rerender the table with new categories
-
 
             form.reset();  // Reset the form after successful submission
         } catch (error) {
@@ -115,11 +112,11 @@ export function renderAddProductModal() {
                 <div class="units-container">
                     <div>
                         <label for="price">Price</label>
-                        <input required id="price" type="number" name="price">
+                        <input required id="price" step="any" type="number" name="price">
                     </div>
                     <div>
                         <label for="specialPrice">Special Price</label>
-                        <input id="specialPrice" type="number" name="specialPrice">
+                        <input id="specialPrice" step="any" type="number" name="specialPrice">
                     </div>    
                 </div> 
 
@@ -155,11 +152,11 @@ export function renderAddProductModal() {
                 <div class="units-container">
                     <div>
                         <label for="weight">Weight</label>
-                        <input id="weight" type="number" name="weight">
+                        <input id="weight" step="any" type="number" name="weight">
                     </div>
                     <div>
                         <label for="cost">Cost</label>
-                        <input id="cost" type="number" name="cost">
+                        <input id="cost" step="any" type="number" name="cost">
                     </div>    
                 </div>    
 
@@ -171,7 +168,7 @@ export function renderAddProductModal() {
         </form>
     `;
 
-    document.body.appendChild(addProductDialog);  // Append the modal to the DOM
+    document.body.appendChild(addProductDialog); 
     addProductDialog.showModal();  // Show the modal
 
     // Add form handler for submitting the form
@@ -181,7 +178,7 @@ export function renderAddProductModal() {
     const closeModalBtn = addProductDialog.querySelector('.close-modal-btn');
     closeModalBtn.addEventListener('click', () => {
         addProductDialog.close();
-        addProductDialog.remove();  // Remove the dialog after closing
+        addProductDialog.remove(); 
     });
 }
 

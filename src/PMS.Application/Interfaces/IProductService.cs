@@ -12,9 +12,9 @@ namespace PMS.Application.Interfaces
         public Task<ProductDto> GetProduct(int id);
         public Task<ProductWithoutIdDto> CreateProduct(ProductWithoutIdDto productDto);
         public Task UpdateProduct(int id, ProductDto productDto);
-        public Task DeleteProduct(int id);
+        public Task DeleteProduct(string sku);
         public Task AddManyProducts(IEnumerable<ProductWithoutIdDto> productDtos);
         public Task UpdateManyProducts(IEnumerable<ProductDto> productDtos);
-        public Task DeleteManyProducts(IEnumerable<ProductDto> productDtos);
+        public Task DeleteManyProducts(IEnumerable<ProductWithoutIdDto> productDtos);
     }
 }

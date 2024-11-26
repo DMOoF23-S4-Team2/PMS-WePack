@@ -16,7 +16,6 @@ export async function deleteCategory(categoryId) {
         }
 
         console.log(`Category with ID ${categoryId} deleted successfully.`);
-        // Show success message
         showMessage("Category deleted successfully!", true);
 
         // Fetch updated Category list and re-render it
@@ -24,8 +23,8 @@ export async function deleteCategory(categoryId) {
         renderAllCategories(updatedCategories);
 
     } catch (error) {
+
         console.error('Error deleting Category:', error);
-        // Show error message
         showMessage(`Failed to delete Category`, false);
     }
 }
@@ -44,10 +43,8 @@ export function showDeleteModal(categoryId, categoryName, deleteProductCallback)
         </div>
     `;
     
-    // Append the dialog to the document body
     document.body.appendChild(deleteDialog);
 
-    // Show the dialog
     deleteDialog.showModal();
 
     // Get references to Yes and No buttons
@@ -57,13 +54,13 @@ export function showDeleteModal(categoryId, categoryName, deleteProductCallback)
     // Handle the Yes button click
     yesBtn.addEventListener('click', async () => {
         await deleteProductCallback(categoryId);  // Call the deleteProduct function
-        deleteDialog.close(); // Close the dialog
-        deleteDialog.remove(); // Remove the dialog from the DOM
+        deleteDialog.close();
+        deleteDialog.remove();
     });
 
     // Handle the No button click
     noBtn.addEventListener('click', () => {
-        deleteDialog.close(); // Close the dialog
-        deleteDialog.remove(); // Remove the dialog from the DOM
+        deleteDialog.close();
+        deleteDialog.remove();
     });
 }
