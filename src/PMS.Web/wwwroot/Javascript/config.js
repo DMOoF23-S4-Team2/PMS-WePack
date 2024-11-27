@@ -22,7 +22,7 @@ async function fetchConfig() {
 		console.error("Error loading configuration:", error);
 		// Provide a fallback value for development
 		return {
-			apiUrl: "http://localhost:7225",
+			apiUrl: "http://localhost:5184",
 		};
 	}
 }

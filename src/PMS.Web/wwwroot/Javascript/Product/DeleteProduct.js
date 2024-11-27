@@ -6,9 +6,9 @@ import { getApiUrl } from "../config.js";
 export async function deleteProduct(productSku) {
     try {
         const API_URL = await getApiUrl();
-        const response = await fetch(`${API_URL}/api/Product/${productId}`, {
-            method: 'DELETE'
-        });
+        const response = await fetch(`${API_URL}/api/Product/${productSku}`, {
+			method: "DELETE",
+		});
 
         if (!response.ok) {
             console.error(`Failed to delete product with ID ${productSku}.`);

@@ -131,7 +131,7 @@ public class CsvServiceTest
         // Act
         await csvService.DetermineMethod("test-filepath-delete.csv");        
         // Assert        
-        mockedProductService.Verify(service => service.DeleteProduct(1), Times.Once);
+        mockedProductService.Verify(service => service.DeleteProduct("LC01-76-1038-1"), Times.Once);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class CsvServiceTest
         // Act
         await csvService.DetermineMethod("test-filepath-delete.csv");        
         // Assert        
-        mockedProductService.Verify(service => service.DeleteManyProducts(It.IsAny<IEnumerable<ProductDto>>()), Times.Once);   
+        mockedProductService.Verify(service => service.DeleteManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()), Times.Once);   
     }    
 
 

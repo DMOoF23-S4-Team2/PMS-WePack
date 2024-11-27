@@ -40,26 +40,31 @@ export function addProductFormHandler(dialog) {
         let productData = new FormData(form);
 
         const Data = {
-            productDto: {
-                sku: productData.get('sku'),
-                ean: productData.get('ean'),
-                name: productData.get('name'),
-                description: productData.get('description'),
-                price: parseFloat(productData.get('price')), 
-                specialPrice: parseFloat(productData.get('specialPrice')) || 0, 
-                productType: productData.get('productType'),
-                productGroup: productData.get('productGroup'),
-                currency: productData.get('currency'),
-                material: productData.get('material'),
-                color: productData.get('color'),
-                supplier: productData.get('supplier'),
-                supplierSku: productData.get('supplierSku'),
-                templateNo: parseInt(productData.get('templateNo')) || 0, 
-                list: parseInt(productData.get('list')) || 0, 
-                weight: parseFloat(productData.get('weight')) || 0, 
-                cost: parseFloat(productData.get('cost')) || 0 
-            }
-        };
+			productDto: {
+				sku: productData.get("sku"),
+				ean: productData.get("ean"),
+				name: productData.get("name"),
+				description: productData.get("description"),
+				price: parseFloat(productData.get("price")),
+				specialPrice: parseFloat(productData.get("specialPrice")) || 0,
+				productType: productData.get("productType"),
+				productGroup: productData.get("productGroup"),
+				currency: productData.get("currency"),
+				material: productData.get("material")
+					? productData
+							.get("material")
+							.split(",")
+							.map((item) => item.trim())
+					: [],
+				color: productData.get("color"),
+				supplier: productData.get("supplier"),
+				supplierSku: productData.get("supplierSku"),
+				templateNo: parseInt(productData.get("templateNo")) || 0,
+				list: parseInt(productData.get("list")) || 0,
+				weight: parseFloat(productData.get("weight")) || 0,
+				cost: parseFloat(productData.get("cost")) || 0,
+			},
+		};
 
         console.log("Data being sent:", Data);
 
@@ -141,8 +146,8 @@ export function renderAddProductModal() {
                 <label for="currency">Currency</label>
                 <input id="currency" name="currency">
 
-                <label for="material">Material</label>
-                <input id="material" name="material">
+                <label for="material">Material (comma-separated)</label>
+                <textarea id="material" name="material" placeholder="e.g., Cotton, Polyester, Wool"></textarea>
 
                 <label for="color">Color</label>
                 <input id="color" name="color">

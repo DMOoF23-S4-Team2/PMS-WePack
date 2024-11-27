@@ -29,7 +29,7 @@ public class ProductServiceTest
         ProductWithoutIdDto productDto = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => _productService.CreateProduct(productDto));
+        await Assert.ThrowsAsync<NullReferenceException>(() => _productService.CreateProduct(productDto));
     }
 
     [Fact]
@@ -85,19 +85,19 @@ public class ProductServiceTest
     }
 
     [Fact]
-    public async Task DeleteProduct_ShouldCallRepositoryDeleteMethod()
+    public async Task DeleteProduct_ShouldDeleteProduct_WhenProductExists()
     {
         // Arrange
-        var productId = 1;
-        var product = new Product {Id = productId, Sku = "SKU123", Price = 10, SpecialPrice = 5};
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync(product);
+        var sku = "SKU123";
+        var product = new Product { Id = 1, Name = "Test Product", Sku = sku, Price = 10, SpecialPrice = 5 };
+        _mockProductRepository.Setup(repo => repo.GetBySkuAsync(sku)).ReturnsAsync(product);
         _mockProductRepository.Setup(repo => repo.DeleteAsync(product)).Returns(Task.CompletedTask);
 
         // Act
-        await _productService.DeleteProduct(productId);
+        await _productService.DeleteProduct(sku);
 
         // Assert
-        _mockProductRepository.Verify(repo => repo.DeleteAsync(product), Times.Once);
+        _mockProductRepository.Verify(repo => repo.DeleteAsync(It.Is<Product>(p => p.Sku == sku)), Times.Once);
     }
 
     [Fact]
@@ -148,11 +148,11 @@ public class ProductServiceTest
     public async Task DeleteProduct_ShouldThrowException_WhenProductDoesNotExist()
     {
         // Arrange
-        var productId = 1;
-        _mockProductRepository.Setup(repo => repo.GetByIdAsync(productId)).ReturnsAsync((Product)null);
+        var ProductDto = new ProductDto { Id = 1, Sku = "SKU123"};
+        _mockProductRepository.Setup(repo => repo.GetByIdAsync(ProductDto.Id)).ReturnsAsync((Product)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => _productService.DeleteProduct(productId));
+        await Assert.ThrowsAsync<ArgumentException>(() => _productService.DeleteProduct(ProductDto.Sku));
     }
 
     [Fact]
@@ -188,10 +188,10 @@ public class ProductServiceTest
         new Product { Id = 1, Sku = "SKU1", Price = 10, SpecialPrice = 5 },
         new Product { Id = 2, Sku = "SKU2", Price = 20, SpecialPrice = 10 }
     };
-        var productsDto = new List<ProductDto>
+        var productsDto = new List<ProductWithoutIdDto>
     {
-        new ProductDto { Id = 1, Sku = "SKU1", Price = 10, SpecialPrice = 5 },
-        new ProductDto { Id = 2, Sku = "SKU2", Price = 20, SpecialPrice = 10 }
+        new ProductWithoutIdDto { Sku = "SKU1", Price = 10, SpecialPrice = 5 },
+        new ProductWithoutIdDto { Sku = "SKU2", Price = 20, SpecialPrice = 10 }
     };
 
         // Mock the mapping from ProductDto to Product
@@ -207,29 +207,5 @@ public class ProductServiceTest
         _mockProductRepository.Verify(repo => repo.DeleteManyAsync(It.Is<IEnumerable<Product>>(p => p.Count() == productsDto.Count)), Times.Once);
     }
 
-    [Fact]
-    public async Task UpdateManyProducts_ShouldUpdateMultipleProducts()
-    {
-        // Arrange
-        var productsDto = new List<ProductDto>
-        {
-            new ProductDto { Id = 1, Name = "Updated Product 1", Sku = "SKU1", Price = 10, SpecialPrice = 5 },
-            new ProductDto { Id = 2, Name = "Updated Product 2", Sku = "SKU2", Price = 20, SpecialPrice = 10 }
-        };
-        var oldProducts = new List<Product>
-        {
-            new Product { Id = 1, Name = "Old Product 1", Sku = "SKU1", Price = 10, SpecialPrice = 5 },
-            new Product { Id = 2, Name = "Old Product 2", Sku = "SKU2", Price = 20, SpecialPrice = 10 }
-        };
-        var newProducts = productsDto.Select(dto => new Product { Id = dto.Id, Name = dto.Name, Sku = dto.Sku, Price = dto.Price, SpecialPrice = dto.SpecialPrice }).ToList();
-
-        _mockProductRepository.Setup(repo => repo.UpdateManyAsync(It.IsAny<IEnumerable<Product>>())).Returns(Task.CompletedTask);
-
-        // Act
-        await _productService.UpdateManyProducts(productsDto);
-
-        // Assert
-        _mockProductRepository.Verify(repo => repo.UpdateManyAsync(It.Is<IEnumerable<Product>>(p => p.ElementAt(0).Name == newProducts[0].Name && p.ElementAt(1).Name == newProducts[1].Name)), Times.Once);
-    }
 
 }

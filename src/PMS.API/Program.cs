@@ -1,5 +1,3 @@
-using Azure.Identity;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using PMS.Application.Interfaces;
 using PMS.Application.Services;
 using PMS.Core.Interfaces;

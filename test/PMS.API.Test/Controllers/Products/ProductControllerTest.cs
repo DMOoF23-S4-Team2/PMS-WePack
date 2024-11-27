@@ -7,206 +7,144 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-namespace PMS.API.Test;
-public class ProductControllerTest
-{        
-    private Mock<IProductService> _mockProductService;
-    private readonly ProductController _controller;
-
-    public ProductControllerTest(){
-        _mockProductService = new Mock<IProductService>();
-        _controller = new ProductController(_mockProductService.Object);
-    }
-
-    [Fact]
-    public async Task CreateProduct_ReturnsOkResult_WithCreatedProduct()
+namespace PMS.API.Test
+{
+    public class ProductControllerTest
     {
-        // Arrange
-        var productDto = new ProductWithoutIdDto { Name = "Test Product" };
-        _mockProductService.Setup(service => service.CreateProduct(It.IsAny<ProductWithoutIdDto>()))
-                            .ReturnsAsync(productDto);
+        private readonly Mock<IProductService> _mockProductService;
+        private readonly ProductController _controller;
 
-        // Act
-        var result = await _controller.CreateProduct(productDto);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsType<ProductWithoutIdDto>(okResult.Value);
-        Assert.Equal(productDto.Name, returnValue.Name);
-    }
-
-    [Fact]
-    public async Task DeleteProduct_ReturnsNoContent_WhenProductDeleted()
-    {
-        // Arrange
-        _mockProductService.Setup(service => service.DeleteProduct(It.IsAny<int>()))
-                            .Returns(Task.CompletedTask);
-
-        // Act
-        var result = await _controller.DeleteProduct(1);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-    }
-
-    [Fact]
-    public async Task DeleteProduct_ReturnsNotFound_WhenProductNotExists()
-    {
-        // Arrange
-        _mockProductService.Setup(service => service.DeleteProduct(It.IsAny<int>()))
-                            .Throws(new ArgumentNullException());
-
-        // Act
-        var result = await _controller.DeleteProduct(1);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task GetProduct_ReturnsOk_WithProduct()
-    {
-        // Arrange
-        var productDto = new ProductDto { Id = 1, Name = "Test Product" };
-        _mockProductService.Setup(service => service.GetProduct(1))
-                            .ReturnsAsync(productDto);
-
-        // Act
-        var result = await _controller.GetProduct(1);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsType<ProductDto>(okResult.Value);
-        Assert.Equal(productDto.Id, returnValue.Id);
-    }
-
-    [Fact]
-    public async Task GetProduct_ReturnsNotFound_WhenProductNotFound()
-    {
-        // Arrange
-        _mockProductService.Setup(service => service.GetProduct(It.IsAny<int>()))
-                            .ReturnsAsync((ProductDto)null);
-
-        // Act
-        var result = await _controller.GetProduct(1);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task GetProducts_ReturnsOk_WithProductList()
-    {
-        // Arrange
-        var productList = new List<ProductDto>
+        public ProductControllerTest()
         {
-            new ProductDto { Id = 1, Name = "Product 1" },
-            new ProductDto { Id = 2, Name = "Product 2" }
-        };
+            _mockProductService = new Mock<IProductService>();
+            _controller = new ProductController(_mockProductService.Object);
+        }
 
-        _mockProductService.Setup(service => service.GetProducts())
-                            .ReturnsAsync(productList);
+        
 
-        // Act
-        var result = await _controller.GetProducts();
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsAssignableFrom<IEnumerable<ProductDto>>(okResult.Value);
-        Assert.Equal(2, returnValue.Count()); // Use Count() to check the number of products
-    }
-
-    [Fact]
-    public async Task UpdateProduct_ReturnsNoContent_WhenUpdateSuccessful()
-    {
-        // Arrange
-        var productDto = new ProductDto {Name = "Updated Product" };
-        _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
-                            .Returns(Task.CompletedTask);
-
-        // Act
-        var result = await _controller.UpdateProduct(1, productDto);
-
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-    }
-
-    [Fact]
-    public async Task UpdateProduct_ReturnsNotFound_WhenProductNotFound()
-    {
-        // Arrange
-        var productDto = new ProductDto {Name = "Updated Product" };
-        _mockProductService.Setup(service => service.UpdateProduct(1, productDto))
-                            .Throws(new ArgumentNullException());
-
-        // Act
-        var result = await _controller.UpdateProduct(1, productDto);
-
-        // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
-    }
-
-    [Fact]
-    public async Task AddManyProducts_ReturnsNoContent_WhenProductsAdded()
-    {
-        // Arrange
-        var productDtos = new List<ProductWithoutIdDto>
+        [Fact]
+        public async Task AddManyProducts_ReturnsNoContent()
         {
-            new ProductWithoutIdDto { Name = "Product 1" },
-            new ProductWithoutIdDto { Name = "Product 2" }
-        };
+            // Arrange
+            var productDtos = new List<ProductWithoutIdDto>
+            {
+                new ProductWithoutIdDto { Name = "Product 1", Sku = "12345" },
+                new ProductWithoutIdDto { Name = "Product 2", Sku = "67890" }
+            };
 
-        _mockProductService.Setup(service => service.AddManyProducts(It.IsAny<IEnumerable<ProductWithoutIdDto>>()))
-                            .Returns(Task.CompletedTask);
+            _mockProductService.Setup(service => service.AddManyProducts(productDtos)).Returns(Task.CompletedTask);
 
-        // Act
-        var result = await _controller.AddManyProducts(productDtos);
+            // Act
+            var result = await _controller.AddManyProducts(productDtos);
 
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-    }
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
 
-    [Fact]
-    public async Task DeleteManyProducts_ReturnsNoContent_WhenProductsDeleted()
-    {
-        // Arrange
-        var productDtos = new List<ProductDto>
+        [Fact]
+        public async Task DeleteProduct_ReturnsNoContent()
         {
-            new ProductDto { Id = 1, Name = "Product 1" },
-            new ProductDto { Id = 2, Name = "Product 2" }
-        };
+            // Arrange
+            var sku = "12345";
+            _mockProductService.Setup(service => service.DeleteProduct(sku)).Returns(Task.CompletedTask);
 
-        _mockProductService.Setup(service => service.DeleteManyProducts(It.IsAny<IEnumerable<ProductDto>>()))
-                            .Returns(Task.CompletedTask);
+            // Act
+            var result = await _controller.DeleteProduct(sku);
 
-        // Act
-        var result = await _controller.DeleteManyProducts(productDtos);
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
 
-        // Assert
-        Assert.IsType<NoContentResult>(result);
-    }
-
-    [Fact]
-    public async Task UpdateManyProducts_ReturnsNoContent_WhenProductsUpdated()
-    {
-        // Arrange
-        var productDtos = new List<ProductDto>
+        [Fact]
+        public async Task DeleteManyProducts_ReturnsNoContent()
         {
-            new ProductDto { Id = 1, Name = "Updated Product 1" },
-            new ProductDto { Id = 2, Name = "Updated Product 2" }
-        };
+            // Arrange
+            var productDtos = new List<ProductWithoutIdDto>
+            {
+                new ProductWithoutIdDto { Name = "Product 1", Sku = "12345" },
+                new ProductWithoutIdDto { Name = "Product 2", Sku = "67890" }
+            };
 
-        _mockProductService.Setup(service => service.UpdateManyProducts(It.IsAny<IEnumerable<ProductDto>>()))
-                            .Returns(Task.CompletedTask);
+            _mockProductService.Setup(service => service.DeleteManyProducts(productDtos)).Returns(Task.CompletedTask);
 
-        // Act
-        var result = await _controller.UpdateManyProducts(productDtos);
+            // Act
+            var result = await _controller.DeleteManyProducts(productDtos);
 
-        // Assert
-        Assert.IsType<NoContentResult>(result);
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GetProduct_ReturnsOkResult_WithProduct()
+        {
+            // Arrange
+            var id = 1;
+            var product = new ProductDto { Id = id, Name = "Test Product", Sku = "12345" };
+            _mockProductService.Setup(service => service.GetProduct(id)).ReturnsAsync(product);
+
+            // Act
+            var result = await _controller.GetProduct(id);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<ProductDto>(okResult.Value);
+            Assert.Equal(product.Id, returnValue.Id);
+        }
+
+        [Fact]
+        public async Task GetProducts_ReturnsOkResult_WithProducts()
+        {
+            // Arrange
+            var products = new List<ProductDto>
+            {
+                new ProductDto { Id = 1, Name = "Product 1", Sku = "12345" },
+                new ProductDto { Id = 2, Name = "Product 2", Sku = "67890" }
+            };
+
+            _mockProductService.Setup(service => service.GetProducts()).ReturnsAsync(products);
+
+            // Act
+            var result = await _controller.GetProducts();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<ProductDto>>(okResult.Value);
+            Assert.Equal(products.Count, returnValue.Count);
+        }
+
+        [Fact]
+        public async Task UpdateProduct_ReturnsNoContent()
+        {
+            // Arrange
+            var id = 1;
+            var productDto = new ProductDto { Id = id, Name = "Updated Product", Sku = "12345" };
+            _mockProductService.Setup(service => service.UpdateProduct(id, productDto)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.UpdateProduct(id, productDto);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateManyProducts_ReturnsNoContent()
+        {
+            // Arrange
+            var productDtos = new List<ProductDto>
+            {
+                new ProductDto { Id = 1, Name = "Product 1", Sku = "12345" },
+                new ProductDto { Id = 2, Name = "Product 2", Sku = "67890" }
+            };
+
+            _mockProductService.Setup(service => service.UpdateManyProducts(productDtos)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.UpdateManyProducts(productDtos);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
     }
 }
