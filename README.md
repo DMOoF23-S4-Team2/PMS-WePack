@@ -68,18 +68,31 @@ Available commands:
 - update (updates product(s))
 - delete (deletes product(s))
 
-### Docker commands
-`docker build`<br/>
-`docker compose up`<br/>
+## How to run the system
 
-### Dotnet commands
-`dotnet build`<br/>
-`dotnet restore`<br/>
-`dotnet list package`<br/>
-`dotnet test`<br/>
-`dotnet ef database update --project src/PMS.Infrastructure/PMS.Infrastructure.csproj --startup-project src/PMS.API/PMS.API.csproj`<br/>
-`dotnet aspnet-codegenerator controller -name CategoryController -async -api -outDir Controllers/Category`<br/>
+### Run Locally
+Start debugger in Visual Studio with PMS All to run both backend and frontend. this will start the API with swagger and the Web project, but the databse be able to run since the firewall will black unknown connections.
 
+### Run with docker
+To run the system with docker, you need to have docker installed on your machine.
+1. Open a terminal and navigate to the root of the project.
+2. Run the following command to build and start the docker images:
+```
+docker-compose up build
+```
+3. Check that the images are running with:
+```
+docker ps
+```
+You should see two images running, one for the API and one for the Web.
+```
+pms-web-production:latest
+pms-api-production:latest
+```
+4. Open a browser and navigate to http://localhost:5002 to see the web application. and http://localhost:5184 to see the API documentation.
+When running with Docker the app runs in hosted enviroment and swagger is not available.
 
-#### URL
-`[localhost:port]/swagger/index.html`
+### Hosted version
+To se the full the working app. please go to the hosted version on Azure. You can also make calls directly to the api.
+- [Azure Wepack web container-app](https://ca-wepack-web.bluestone-4e633029.swedencentral.azurecontainerapps.io/).
+- [Azure Wepack api container-app](https://ca-wepack-api.bluestone-4e633029.swedencentral.azurecontainerapps.io/).
